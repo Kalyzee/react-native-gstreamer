@@ -61,7 +61,7 @@ build/
 
 android/.gradle
 android/.idea
-android/app/src/org/
-android/app/src/main/assets/
-android/app/proguard-rules.pro
-android/app/src/main/java/org/freedesktop/gstreamer/
+android/src/org/
+android/src/main/assets/
+android/proguard-rules.pro
+android/src/main/java/org/freedesktop/gstreamer/
