@@ -9,8 +9,16 @@
       "react-component",
       "react-native",
       "android",
-      "ios",
+      "ios"
     ],
+    "rnpm": {
+      "android": {
+        "packageInstance": "new ReactGstPackage()"
+      }
+    },
+    "peerDependencies": {
+      "react-native": ">=0.13"
+    },    
     "nativePackage": true,
     "license": "GPLv3",
     "readmeFilename": "README.md"
