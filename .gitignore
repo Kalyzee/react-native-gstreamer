@@ -65,3 +65,7 @@ android/src/org/
 android/src/main/assets/
 android/proguard-rules.pro
 android/src/main/java/org/freedesktop/gstreamer/
+android/.externalNativeBuild
+android/gst-build-armeabi
+android/gst-build-armeabi-v7a
+android/gst-build-armeabi0
