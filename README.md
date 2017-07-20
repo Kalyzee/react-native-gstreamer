@@ -18,3 +18,7 @@ Android part :
 
 
 Getting started :
+
+```
+  npm install react-native-gstreamer --save
+```
