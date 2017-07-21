@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ReactGstPlayerManager extends SimpleViewManager<GstPlayer> {
 
-  public static final String REACT_CLASS = "ProgressBar";
+  public static final String REACT_CLASS = "GstPlayer";
 
   @Override
   public String getName() {

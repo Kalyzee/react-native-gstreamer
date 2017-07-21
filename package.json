@@ -16,9 +16,12 @@
         "packageInstance": "new ReactGstPackage()"
       }
     },
+    "dependencies":{
+      "react": "16.0.0-alpha.12"
+    },
     "peerDependencies": {
       "react-native": ">=0.13"
-    },    
+    },
     "nativePackage": true,
     "license": "GPLv3",
     "readmeFilename": "README.md"
