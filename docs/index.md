@@ -9,16 +9,6 @@ id: home
 React native GStreamer is an audio/video player built for react-native using GStreamer framework.
 It handles everything GStreamer can natively handle. For more informations, you can go here : https://gstreamer.freedesktop.org/
 
-## TL;DR
-
-To install react-native-gstreamer you need to use NPM :
-> npm install --save
-
-Then you can use it in your project :
-```
-import { GSTPlayer } from 'react-native-gstreamer'
-```
-
 ## IOS
 
 ### Dependencies
