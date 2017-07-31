@@ -31,6 +31,6 @@
 /* From GStreamerBackendDelegate */
 -(void) gstreamerInitialized;
 -(void) gstreamerSetUIMessage:(NSString *)message;
--(void) setDefaultUri:(NSString *)uri;
+-(void) setUri:(NSString *)uri;
 
 @end

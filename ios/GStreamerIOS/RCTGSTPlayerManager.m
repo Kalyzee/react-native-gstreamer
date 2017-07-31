@@ -19,7 +19,7 @@
 RCT_EXPORT_MODULE();
 RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGSTPlayerController)
 {
-  [self->rctGstPlayer setDefaultUri:json];
+  [self->rctGstPlayer setUri:json];
 }
 
 @synthesize bridge = _bridge;

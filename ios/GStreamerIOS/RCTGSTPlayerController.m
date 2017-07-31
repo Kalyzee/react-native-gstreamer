@@ -24,9 +24,9 @@
   gst_backend = [[GStreamerBackend alloc] init:self videoView:video_view];
 }
 
--(void)setDefaultUri:(NSString*)_uriSource
+-(void)setUri:(NSString *)_uri
 {
-  uri = _uriSource;
+  uri = _uri;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -65,7 +65,7 @@
     message_label.text = @"Ready";
     version_label.text = [NSString stringWithFormat:@"GStreamer Version : %@", [gst_backend getGStreamerVersion]];
     
-    [gst_backend setUriSource:uri];
+    [gst_backend setUri:uri];
     NSLog(@"%@", uri);
     [self play:self];
   });

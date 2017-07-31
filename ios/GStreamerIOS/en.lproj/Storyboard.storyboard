@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="cdx-zN-Cm8">
-    <device id="retina5_5" orientation="portrait">
-        <adaptation id="fullscreen"/>
+    <device id="ipad10_5" orientation="landscape">
+        <adaptation id="splitview1_2"/>
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
@@ -17,24 +17,24 @@
                         <viewControllerLayoutGuide type="bottom" id="qRZ-43-Xp7"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="RJa-DH-r1N">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="551" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view userInteractionEnabled="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="689"/>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
+                                <rect key="frame" x="0.0" y="0.0" width="551" height="795"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AHC-3W-Y6u" userLabel="Bottom">
-                                <rect key="frame" x="0.0" y="697.33333333333348" width="414" height="38.666666666666629"/>
+                                <rect key="frame" x="0.0" y="795" width="551" height="39"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Version..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KNE-s0-e6p" userLabel="VersionMessage">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="19.333333333333258"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="551" height="19.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Initializing..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O10-JH-nhy" userLabel="GStreamerMessage">
-                                        <rect key="frame" x="0.0" y="19.333333333333258" width="414" height="19.333333333333371"/>
+                                        <rect key="frame" x="0.0" y="19.5" width="551" height="19.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -47,15 +47,39 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="AHC-3W-Y6u" secondAttribute="trailing" id="2Zg-Bo-g3n"/>
-                            <constraint firstAttribute="trailing" secondItem="Kjh-W3-1b8" secondAttribute="trailing" id="3YI-7Q-Igk"/>
-                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="AHC-3W-Y6u" secondAttribute="bottom" id="CVk-SF-5Kw"/>
-                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="OLa-Vd-AC5"/>
-                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="Y3d-ol-wbj"/>
-                            <constraint firstItem="AHC-3W-Y6u" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="ZUx-eV-4Xq"/>
-                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="top" secondItem="RJa-DH-r1N" secondAttribute="top" id="iu1-Z7-0La"/>
-                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="xq4-Ox-hER"/>
+                            <constraint firstAttribute="trailing" secondItem="AHC-3W-Y6u" secondAttribute="trailing" id="9NU-Xb-ure"/>
+                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="top" secondItem="RJa-DH-r1N" secondAttribute="top" id="cDA-y3-qXf"/>
+                            <constraint firstItem="AHC-3W-Y6u" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="cTR-aZ-LHz"/>
+                            <constraint firstAttribute="trailing" secondItem="Kjh-W3-1b8" secondAttribute="trailing" id="hIH-kp-vnx"/>
+                            <constraint firstItem="AHC-3W-Y6u" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="qp4-Il-rIN"/>
+                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="AHC-3W-Y6u" secondAttribute="bottom" id="teK-21-7NG"/>
+                            <constraint firstItem="AHC-3W-Y6u" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="wd1-7G-jqr"/>
+                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="x2n-c1-wqk"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="cDA-y3-qXf"/>
+                                <exclude reference="hIH-kp-vnx"/>
+                                <exclude reference="x2n-c1-wqk"/>
+                                <exclude reference="9NU-Xb-ure"/>
+                                <exclude reference="cTR-aZ-LHz"/>
+                                <exclude reference="qp4-Il-rIN"/>
+                                <exclude reference="wd1-7G-jqr"/>
+                                <exclude reference="teK-21-7NG"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="constraints">
+                                <include reference="cDA-y3-qXf"/>
+                                <include reference="hIH-kp-vnx"/>
+                                <include reference="x2n-c1-wqk"/>
+                                <include reference="9NU-Xb-ure"/>
+                                <include reference="cTR-aZ-LHz"/>
+                                <include reference="qp4-Il-rIN"/>
+                                <include reference="wd1-7G-jqr"/>
+                                <include reference="teK-21-7NG"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
                         <outlet property="footer_stack_view" destination="AHC-3W-Y6u" id="0RJ-6E-Yt6"/>
