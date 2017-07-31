@@ -4,7 +4,7 @@ title: A React-Native library to play media sources
 id: home
 ---
 
-#react-native-gstreamer
+# react-native-gstreamer
 
 React native GStreamer is an audio/video player built for react-native using GStreamer framework.
 It handles everything GStreamer can natively handle. For more informations, you can go here : https://gstreamer.freedesktop.org/
