@@ -38,7 +38,7 @@ Gstreamer tutorial : https://gstreamer.freedesktop.org/documentation/tutorials/i
 
 ###  Usage
 
-```
+```javascript
 import { GSTPlayer } from 'react-native-gstreamer'
 ...
 render: function() {

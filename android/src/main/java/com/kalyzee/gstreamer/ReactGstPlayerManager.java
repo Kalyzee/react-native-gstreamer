@@ -48,12 +48,10 @@ public class ReactGstPlayerManager extends SimpleViewManager<GstPlayer> {
     return gst;
   }
 
-  @ReactProp(name = "indeterminate",
-          defaultBoolean = false)
-  public void setIndeterminate(GstPlayer view,
-                               boolean indeterminate) {
-    Log.i("KAST", "SETTEXT");
-
+  @ReactProp(name = "uri")
+  public void setUri(GstPlayer view,
+                               String uri) {
+    view.setMediaUri(uri);
   }
 
 
