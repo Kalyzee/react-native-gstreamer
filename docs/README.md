@@ -14,7 +14,6 @@ You also need the GStreamer framework. To do so, please download and install the
 
 You can open the project with <b>xcode</b> :
  - Open the file : <b>ios/GStreamerIOS.xcodeproj</b>
- - Build it :)
 
 ### Resources
 
