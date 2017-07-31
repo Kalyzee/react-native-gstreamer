@@ -12,18 +12,21 @@
 #import <React/RCTLog.h>
 
 #import "RCTGSTPlayerManager.h"
-#import "RCTGSTPlayerController.h"
+#import "ViewWrapper.h"
 
 @implementation RCTGSTPlayerManager
 
 RCT_EXPORT_MODULE();
-RCT_EXPORT_VIEW_PROPERTY(defaultUri, NSString);
+RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGSTPlayerController)
+{
+  [self->rctGstPlayer setDefaultUri:json];
+}
 
 @synthesize bridge = _bridge;
 
 - (UIView *)view
 {
-  RCTGSTPlayerController *rctGstPlayer = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:nil] instantiateViewControllerWithIdentifier:@"RCTGSTPlayerController"];
+  self->rctGstPlayer = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:nil] instantiateViewControllerWithIdentifier:@"RCTGSTPlayerController"];
 
   return rctGstPlayer.view;
 }

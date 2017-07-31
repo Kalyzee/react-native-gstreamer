@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "GStreamerBackendDelegate.h"
+#import "GStreamerBackend.h"
 
 
 @interface RCTGSTPlayerController : UIViewController <GStreamerBackendDelegate> {
@@ -21,7 +22,8 @@
   IBOutlet UIStackView *footer_stack_view;
 }
 
-@property (retain,nonatomic) NSString *uri;
+@property (retain, nonatomic) NSString *uri;
+@property (retain, nonatomic) GStreamerBackend *gst_backend;
 
 -(IBAction) play:(id)sender;
 -(IBAction) pause:(id)sender;
@@ -29,5 +31,6 @@
 /* From GStreamerBackendDelegate */
 -(void) gstreamerInitialized;
 -(void) gstreamerSetUIMessage:(NSString *)message;
+-(void) setDefaultUri:(NSString *)uri;
 
 @end

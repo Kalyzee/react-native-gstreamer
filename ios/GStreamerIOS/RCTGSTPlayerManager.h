@@ -9,10 +9,13 @@
 #ifndef RCTGSTPlayerManager_h
 #define RCTGSTPlayerManager_h
 
-
 #import <React/RCTViewManager.h>
+#import "RCTGSTPlayerController.h"
 
-@interface RCTGSTPlayerManager : RCTViewManager
+
+@interface RCTGSTPlayerManager : RCTViewManager {
+  RCTGSTPlayerController *rctGstPlayer;
+}
 @end
 
 #endif /* RCTGSTPlayerManager_h */

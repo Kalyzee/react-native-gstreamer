@@ -20,24 +20,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="689"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AHC-3W-Y6u" userLabel="Bottom">
-                                <rect key="frame" x="0.0" y="696" width="414" height="40"/>
+                                <rect key="frame" x="0.0" y="697.33333333333348" width="414" height="38.666666666666629"/>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Version..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KNE-s0-e6p" userLabel="VersionMessage">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="20"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="19.333333333333258"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Initializing..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O10-JH-nhy" userLabel="GStreamerMessage">
-                                        <rect key="frame" x="0.0" y="20" width="414" height="20"/>
+                                        <rect key="frame" x="0.0" y="19.333333333333258" width="414" height="19.333333333333371"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="boolean" keyPath="keyPath" value="YES"/>
+                                        </userDefinedRuntimeAttributes>
                                     </label>
                                 </subviews>
                             </stackView>
@@ -47,6 +50,7 @@
                             <constraint firstAttribute="trailing" secondItem="AHC-3W-Y6u" secondAttribute="trailing" id="2Zg-Bo-g3n"/>
                             <constraint firstAttribute="trailing" secondItem="Kjh-W3-1b8" secondAttribute="trailing" id="3YI-7Q-Igk"/>
                             <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="AHC-3W-Y6u" secondAttribute="bottom" id="CVk-SF-5Kw"/>
+                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="OLa-Vd-AC5"/>
                             <constraint firstItem="Kjh-W3-1b8" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="Y3d-ol-wbj"/>
                             <constraint firstItem="AHC-3W-Y6u" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="ZUx-eV-4Xq"/>
                             <constraint firstItem="Kjh-W3-1b8" firstAttribute="top" secondItem="RJa-DH-r1N" secondAttribute="top" id="iu1-Z7-0La"/>
@@ -62,7 +66,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IX9-YR-L52" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-189.59999999999999" y="-78.710644677661179"/>
+            <point key="canvasLocation" x="-189.85507246376812" y="-79.076086956521749"/>
         </scene>
     </scenes>
 </document>

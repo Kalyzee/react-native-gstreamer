@@ -7,17 +7,12 @@
 //
 
 #import "RCTGSTPlayerController.h"
-#import "GStreamerBackend.h"
 #import <UIKit/UIKit.h>
-
-@interface RCTGSTPlayerController () {
-  GStreamerBackend *gst_backend;
-}
-@end
 
 @implementation RCTGSTPlayerController
 
 @synthesize uri;
+@synthesize gst_backend;
 
 /*
  * Methods from RCTGSTPlayerController
@@ -26,13 +21,12 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  // uri = @"rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov";
   gst_backend = [[GStreamerBackend alloc] init:self videoView:video_view];
 }
 
--(void)setDefaultUri:(NSString*)_uri
+-(void)setDefaultUri:(NSString*)_uriSource
 {
-  uri = _uri;
+  uri = _uriSource;
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -71,7 +65,7 @@
     message_label.text = @"Ready";
     version_label.text = [NSString stringWithFormat:@"GStreamer Version : %@", [gst_backend getGStreamerVersion]];
     
-    [gst_backend setUri:uri];
+    [gst_backend setUriSource:uri];
     NSLog(@"%@", uri);
     [self play:self];
   });

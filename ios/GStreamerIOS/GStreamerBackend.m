@@ -91,9 +91,9 @@ GST_DEBUG_CATEGORY_STATIC (debug_category);
   }
 }
 
--(void) setUri:(NSString*)uri
+-(void) setUriSource:(NSString*)_uriSource
 {
-  const char *char_uri = [uri UTF8String];
+  const char *char_uri = [_uriSource UTF8String];
   g_object_set(pipeline, "uri", char_uri, NULL);
   GST_DEBUG ("URI set to %s", char_uri);
 }

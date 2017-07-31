@@ -25,7 +25,7 @@
 
 -(void) pause;
 
--(void) setUri:(NSString*)uri;
+-(void) setUriSource:(NSString*)_uriSource;
 
 @end
 
