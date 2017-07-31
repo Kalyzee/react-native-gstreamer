@@ -56,3 +56,12 @@ render: function() {
     )
 }
 ```
+
+#### Options
+```
+| Option | Effect                          |
+|:------:|---------------------------------|
+|   uri  | Defines the source of the media |
+|        |                                 |
+|        |                                 |
+```
