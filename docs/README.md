@@ -45,7 +45,7 @@ import { GSTPlayer } from 'react-native-gstreamer'
 render: function() {
     let uri = "your-uri"
     return (
-        <GSTView
+        <GSTPlayer
             uri={uri}
         />
     )

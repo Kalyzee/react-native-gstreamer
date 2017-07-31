@@ -12,4 +12,4 @@ GSTPlayer.propTypes = {
   
 };
 
-export default requireNativeComponent('RCTGSTPlayer', GSTPlayer);
+export default requireNativeComponent('GSTPlayer', GSTPlayer);
