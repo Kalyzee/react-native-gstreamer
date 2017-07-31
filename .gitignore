@@ -69,3 +69,4 @@ android/.externalNativeBuild
 android/gst-build-armeabi
 android/gst-build-armeabi-v7a
 android/gst-build-armeabi0
+ios/build

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="cdx-zN-Cm8">
+    <device id="retina5_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Player Controller-->
+        <scene sceneID="cfQ-wu-trl">
+            <objects>
+                <viewController storyboardIdentifier="RCTGSTPlayerController" id="cdx-zN-Cm8" customClass="RCTGSTPlayerController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="njq-Up-dtb"/>
+                        <viewControllerLayoutGuide type="bottom" id="qRZ-43-Xp7"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="RJa-DH-r1N">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AHC-3W-Y6u" userLabel="Bottom">
+                                <rect key="frame" x="0.0" y="696" width="414" height="40"/>
+                                <subviews>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Version..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KNE-s0-e6p" userLabel="VersionMessage">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="20"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Initializing..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O10-JH-nhy" userLabel="GStreamerMessage">
+                                        <rect key="frame" x="0.0" y="20" width="414" height="20"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="AHC-3W-Y6u" secondAttribute="trailing" id="2Zg-Bo-g3n"/>
+                            <constraint firstAttribute="trailing" secondItem="Kjh-W3-1b8" secondAttribute="trailing" id="3YI-7Q-Igk"/>
+                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="AHC-3W-Y6u" secondAttribute="bottom" id="CVk-SF-5Kw"/>
+                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="Y3d-ol-wbj"/>
+                            <constraint firstItem="AHC-3W-Y6u" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="ZUx-eV-4Xq"/>
+                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="top" secondItem="RJa-DH-r1N" secondAttribute="top" id="iu1-Z7-0La"/>
+                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="xq4-Ox-hER"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="footer_stack_view" destination="AHC-3W-Y6u" id="0RJ-6E-Yt6"/>
+                        <outlet property="message_label" destination="O10-JH-nhy" id="I2Q-8E-SLS"/>
+                        <outlet property="version_label" destination="KNE-s0-e6p" id="pQF-kB-l8k"/>
+                        <outlet property="video_view" destination="Kjh-W3-1b8" id="QeA-ME-xsp"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IX9-YR-L52" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-189.59999999999999" y="-78.710644677661179"/>
+        </scene>
+    </scenes>
+</document>
