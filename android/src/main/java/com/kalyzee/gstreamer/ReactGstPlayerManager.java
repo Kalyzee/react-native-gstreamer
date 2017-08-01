@@ -33,18 +33,10 @@ public class ReactGstPlayerManager extends SimpleViewManager<GstPlayer> {
     return REACT_CLASS;
   }
 
-  public ReactGstPlayerManager(){
-    super();
-    Log.i("KAST", "KASTOK");
-  }
-
   @Override
   protected GstPlayer createViewInstance(
           ThemedReactContext reactContext) {
-    Log.i("KAST", "CREATE VIEW createViewInstance");
     GstPlayer gst = new GstPlayer(reactContext);
-    Log.i("KAST", "CREATE VIEW createViewInstance 2");
-
     return gst;
   }
 
@@ -52,6 +44,12 @@ public class ReactGstPlayerManager extends SimpleViewManager<GstPlayer> {
   public void setUri(GstPlayer view,
                                String uri) {
     view.setMediaUri(uri);
+  }
+
+  @ReactProp(name = "play")
+  public void setPlayState(GstPlayer view,
+                               boolean play) {
+    view.setPlay(play);
   }
 
 

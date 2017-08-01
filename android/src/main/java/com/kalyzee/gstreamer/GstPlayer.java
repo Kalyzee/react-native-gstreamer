@@ -25,6 +25,7 @@ public class GstPlayer extends SurfaceView implements SurfaceHolder.Callback {
   private native void nativeSurfaceInit(Object surface);
   private native void nativeSurfaceFinalize();
 
+  private boolean isReady;
 
   private int position;                 // Current position, reported by native code
   private int duration;                 // Current clip duration, reported by native code
@@ -67,7 +68,7 @@ public class GstPlayer extends SurfaceView implements SurfaceHolder.Callback {
 
   public void surfaceChanged(SurfaceHolder holder, int format, int width,
           int height) {
-      Log.i("GStreamer", "Surface changed to format " + format + " width "
+      Log.i("gst-player", "Surface changed to format " + format + " width "
               + width + " height " + height);
       nativeSurfaceInit (holder.getSurface());
   }
@@ -79,11 +80,11 @@ public class GstPlayer extends SurfaceView implements SurfaceHolder.Callback {
   }
 
   public void surfaceCreated(SurfaceHolder holder) {
-      Log.i("GStreamer", "Surface created: " + holder.getSurface());
+      Log.i("gst-player", "Surface created: " + holder.getSurface());
   }
 
   public void surfaceDestroyed(SurfaceHolder holder) {
-      Log.i("GStreamer", "Surface destroyed");
+      Log.i("gst-player", "Surface destroyed");
       nativeSurfaceFinalize ();
   }
 
@@ -99,7 +100,7 @@ public class GstPlayer extends SurfaceView implements SurfaceHolder.Callback {
   private void setMessage(final String message) {
 
     if (message.equals("State changed to READY")){
-          Log.i ("GStreamer", "READY "+ this.mediaUri);
+          Log.i ("gst-player", "READY "+ this.mediaUri);
           nativePlay();
       }
   }
@@ -112,7 +113,7 @@ public class GstPlayer extends SurfaceView implements SurfaceHolder.Callback {
   // Called from native code. Native code calls this once it has created its pipeline and
   // the main loop is running, so it is ready to accept commands.
   private void onGStreamerInitialized () {
-      Log.i ("GStreamer", "Gst initialized. Restoring state, playing:" + is_playing_desired);
+      Log.i ("gst-player", "Gst initialized. Restoring state, playing:" + is_playing_desired);
       nativeSetUri (mediaUri);
       nativeSetPosition (position);
       if (is_playing_desired) {
@@ -122,6 +123,19 @@ public class GstPlayer extends SurfaceView implements SurfaceHolder.Callback {
       }
   }
 
+
+  public void setPlay(boolean play){
+
+    is_playing_desired = play;
+
+    if(play && isReady){
+          nativePlay();
+    }else{
+      if (!play && isReady){
+        nativePause();
+      }
+    }
+  }
 
   static {
       System.loadLibrary("gstreamer_android");
