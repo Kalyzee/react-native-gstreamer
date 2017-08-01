@@ -1,14 +1,3 @@
-//
-//  GStreamerBackendDelegate.h
-//  GStreamerIOS
-//
-//  Created by Alann Sapone on 25/07/2017.
-//  Copyright © 2017 Facebook. All rights reserved.
-//
-
-#ifndef GStreamerBackendDelegate_h
-#define GStreamerBackendDelegate_h
-
 #import <Foundation/Foundation.h>
 
 @protocol GStreamerBackendDelegate <NSObject>
@@ -29,7 +18,3 @@
 -(void) setCurrentPosition:(NSInteger)position duration:(NSInteger)duration;
 
 @end
-
-
-
-#endif /* GStreamerBackendDelegate_h */

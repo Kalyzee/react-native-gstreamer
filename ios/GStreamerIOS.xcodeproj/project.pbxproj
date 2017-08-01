@@ -43,8 +43,8 @@
 		3E9AA3641F25F0AA0051BF86 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9AA3631F25F0AA0051BF86 /* CoreGraphics.framework */; };
 		3E9AA3821F2782220051BF86 /* gst_ios_init.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9AA3811F2782220051BF86 /* gst_ios_init.m */; };
 		3E9AA3851F278FBE0051BF86 /* EaglUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9AA3841F278FBE0051BF86 /* EaglUIView.m */; };
-		3E9AA38C1F2887770051BF86 /* RCTGSTPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E9AA38B1F2887770051BF86 /* RCTGSTPlayerController.m */; };
 		3EF5E3771F223CA200DD544E /* RCTGSTPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF5E3761F223CA200DD544E /* RCTGSTPlayerManager.m */; };
+		3EF7191B1F30BD04007429D8 /* RCTGSTPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF7191A1F30BD03007429D8 /* RCTGSTPlayerController.m */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 /* End PBXBuildFile section */
@@ -305,9 +305,9 @@
 		3E9AA3841F278FBE0051BF86 /* EaglUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EaglUIView.m; path = GStreamerIOS/EaglUIView.m; sourceTree = "<group>"; };
 		3E9AA3861F278FDA0051BF86 /* EaglUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EaglUIView.h; path = GStreamerIOS/EaglUIView.h; sourceTree = "<group>"; };
 		3E9AA38A1F2887770051BF86 /* RCTGSTPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCTGSTPlayerController.h; path = GStreamerIOS/RCTGSTPlayerController.h; sourceTree = "<group>"; };
-		3E9AA38B1F2887770051BF86 /* RCTGSTPlayerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCTGSTPlayerController.m; path = GStreamerIOS/RCTGSTPlayerController.m; sourceTree = "<group>"; };
 		3EF5E3581F223C5B00DD544E /* RCTGSTPlayerManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RCTGSTPlayerManager.h; path = GStreamerIOS/RCTGSTPlayerManager.h; sourceTree = "<group>"; };
 		3EF5E3761F223CA200DD544E /* RCTGSTPlayerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCTGSTPlayerManager.m; path = GStreamerIOS/RCTGSTPlayerManager.m; sourceTree = "<group>"; };
+		3EF7191A1F30BD03007429D8 /* RCTGSTPlayerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTGSTPlayerController.m; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
@@ -465,7 +465,7 @@
 				3E9AA3841F278FBE0051BF86 /* EaglUIView.m */,
 				3E9AA3861F278FDA0051BF86 /* EaglUIView.h */,
 				3E9AA38A1F2887770051BF86 /* RCTGSTPlayerController.h */,
-				3E9AA38B1F2887770051BF86 /* RCTGSTPlayerController.m */,
+				3EF7191A1F30BD03007429D8 /* RCTGSTPlayerController.m */,
 			);
 			name = GStreamerIOS;
 			sourceTree = "<group>";
@@ -1035,7 +1035,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				3E9AA3851F278FBE0051BF86 /* EaglUIView.m in Sources */,
-				3E9AA38C1F2887770051BF86 /* RCTGSTPlayerController.m in Sources */,
+				3EF7191B1F30BD04007429D8 /* RCTGSTPlayerController.m in Sources */,
 				3E9AA3821F2782220051BF86 /* gst_ios_init.m in Sources */,
 				3E9AA3591F25EE3E0051BF86 /* GStreamerBackend.m in Sources */,
 				3EF5E3771F223CA200DD544E /* RCTGSTPlayerManager.m in Sources */,

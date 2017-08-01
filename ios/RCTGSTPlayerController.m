@@ -26,8 +26,7 @@
 
 -(void)setUri:(NSString *)_uri
 {
-    uri = _uri;
-    [gst_backend setUri:uri];
+  [gst_backend setUri:_uri];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -67,7 +66,6 @@
     version_label.text = [NSString stringWithFormat:@"GStreamer Version : %@", [gst_backend getGStreamerVersion]];
     
     [gst_backend setUri:uri];
-    NSLog(@"%@", uri);
     [self play:self];
   });
 }
@@ -76,7 +74,6 @@
 {
   dispatch_async(dispatch_get_main_queue(), ^{
     message_label.text = message;
-    NSLog(@"%@", message);
   });
 }
 
