@@ -22,5 +22,5 @@
     "readmeFilename": "README.md",
     "publishConfig": {
    	 "access": "public"
-    },
+    }
 }
