@@ -1,26 +1,26 @@
 {
-    "name": "react-native-gstreamer",
-    "version": "0.0.1",
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/Kalyzee/react-native-gstreamer"
-    },
-    "keywords": [
-      "react-component",
-      "react-native",
-      "android",
-      "ios"
-    ],
-    "dependencies":{
-      "react": "16.0.0-alpha.12"
-    },
-    "peerDependencies": {
-      "react-native": ">=0.13"
-    },
-    "nativePackage": true,
-    "license": "GPLv3",
-    "readmeFilename": "README.md",
-    "publishConfig": {
-   	 "access": "public"
-    }
+  "name": "react-native-gstreamer",
+  "version": "0.0.3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kalyzee/react-native-gstreamer"
+  },
+  "keywords": [
+    "react-component",
+    "react-native",
+    "android",
+    "ios"
+  ],
+  "dependencies": {
+    "react": "16.0.0-alpha.12"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.13"
+  },
+  "nativePackage": true,
+  "license": "GPLv3",
+  "readmeFilename": "README.md",
+  "publishConfig": {
+    "access": "public"
+  }
 }
