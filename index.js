@@ -7,7 +7,7 @@ import { NativeModules, requireNativeComponent, View } from 'react-native';
 var iface = {
   name: 'GstPlayer',
   propTypes: {
-    indeterminate: PropTypes.bool,
+    uri: PropTypes.string,
     ...View.propTypes // include the default view properties
   }
 };

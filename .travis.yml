@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+  - "6"
+deploy:
+  provider: npm
+  email: bouguerra.ludovic@gmail.com
+  api_key:
+    secure: XCOoPF91aCkC7NqfT8EXWDy5FGn6qQ8r2f/C6WPqAnbRixOtXPrUwBFAknFlnALHIXx2GPziSJUFr88ZBaZzbI+urhscFHf08e3H/DuWWKYQgpAREAmUIji7FpBuCe2x1XyMOBSqeC8J5AWNzOwYnveHCj+PNwZ+e++7j0moo4oFsDac5vsBjRr/U0XSvI5BZ+IfphPplHeRXMLktG6UkiXGvVGV3+4SRDI8xK56J8KMfoOk96kh+B7sDpX6Kuc2pe3xZaM0XvqHMvE0vfDBs95ZF6LLyCO0PCeTO8YhlEwcfqzasTVuuLAP4pzXZpYO8GP+WVSOtSgmbJ03+hNeGQ9q3Yiwl2g6YQAH7uQaXFyVro8hCCSq2RzllIBSIzNtruOi8/nzkPAkwktNQv+S02OZv+1R3Qk50/MiLObd/5ouo6hhlj1xpn7XTmX93uErzVkWlktEfRGR3GvGp95qCFnedvV2BfPLkLsUJPdDd/tED93hjaHYjXjN8QVXFBlMXfDwPNlRKZlY7Ym9aAgmQ49uUa+H9xCdG1fwHjlTJrEEibejGe0Pz9mPSaV62Buhwrh8hktplirB+Ah/U5WrXO50s9QoZ9+68svCxzR3lkWkr6o645VLmslUK6XABbtrWY02W6PsDxg/kPWy9TgJsGNX8X0xSqto2LBsZH14UNE=
+  on:
+    tags: true
+    repo: Kalyzee/react-native-gstreamer

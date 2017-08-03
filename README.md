@@ -1,5 +1,9 @@
 # react-native-gstreamer
 
+![Travis CI](https://travis-ci.com/Kalyzee/react-native-gstreamer.svg?token=c7RPUv8pu3bda3czshqe&branch=master)
+
+
+
 React native Gstreamer Ios / Android
 
 Creates GstPlayer components which can play everythings gstreamer can play.
