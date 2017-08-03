@@ -74,4 +74,4 @@ android/gradlew
 android/gradlew.bat
 android/local.properties
 ios/build
-
+android/gradle
