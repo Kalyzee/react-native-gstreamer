@@ -39,7 +39,7 @@ We are going to create GstreamerTest test app which play a custom RTSP stream.
 Now install react-native-gstreamer dependencies
 
 ```
-npm install react-native-gstreamer@0.0.2 --save
+npm install react-native-gstreamer@0.0.4 --save
 react-native link
 ```
 
