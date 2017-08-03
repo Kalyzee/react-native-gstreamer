@@ -1,3 +1,7 @@
+/**
+* This source code is from gstreamer Tutorial 5 available here :
+*
+*/
 #include <string.h>
 #include <stdint.h>
 #include <jni.h>
