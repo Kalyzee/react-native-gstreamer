@@ -39,7 +39,7 @@ We are going to create GstreamerTest test app which play a custom RTSP stream.
 Now install react-native-gstreamer dependencies
 
 ```
-npm install react-native-gstreamer@0.0.4 --save
+npm install react-native-gstreamer@0.0.5 --save
 react-native link
 ```
 
@@ -63,7 +63,37 @@ ndk.dir=[NDK_R10e DIR]
 sdk.dir=/home/ludovic/Android/Sdk
 ```
 
+Then you can put theses lines into your App.js
+
+```
+import GstPlayer from 'react-native-gstreamer'
+
+
+``` 
+
+In render part :
+
+```
+        <GstPlayer uri="rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov"  style={styles.video}/>
+
+``` 
+
+
+in Style part : 
+
+```
+video: {
+      height: 281,
+      // flex: 1,
+      margin: 20,
+      width: 500
+    },
+```
+
+
 Then execute this command
 ```
 react-native run-android
 ```
+
+You will see plauyer
