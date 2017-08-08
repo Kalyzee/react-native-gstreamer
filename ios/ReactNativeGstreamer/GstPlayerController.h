@@ -12,7 +12,7 @@
 #import "GStreamerBackend.h"
 
 
-@interface RCTGSTPlayerController : UIViewController <GStreamerBackendDelegate> {
+@interface GstPlayerController : UIViewController <GStreamerBackendDelegate> {
   IBOutlet UILabel *version_label;
   IBOutlet UILabel *message_label;
   IBOutlet UIView *video_view;
@@ -23,6 +23,7 @@
 }
 
 @property (retain, nonatomic) NSString *uri;
+@property BOOL play;
 @property (retain, nonatomic) GStreamerBackend *gst_backend;
 
 -(IBAction) play:(id)sender;

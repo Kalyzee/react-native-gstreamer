@@ -1,4 +1,4 @@
-//
+  //
 //  RNTMapManager.h
 //  GStreamerIOS
 //
@@ -10,11 +10,11 @@
 #define RCTGSTPlayerManager_h
 
 #import <React/RCTViewManager.h>
-#import "RCTGSTPlayerController.h"
+#import "GstPlayerController.h"
 
 
-@interface RCTGSTPlayerManager : RCTViewManager {
-  RCTGSTPlayerController *rctGstPlayer;
+@interface GstPlayerManager : RCTViewManager {
+  GstPlayerController *rctGstPlayer;
 }
 @end
 

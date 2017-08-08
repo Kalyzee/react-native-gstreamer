@@ -6,10 +6,10 @@
 //  Copyright © 2017 Facebook. All rights reserved.
 //
 
-#import "RCTGSTPlayerController.h"
+#import "GstPlayerController.h"
 #import <UIKit/UIKit.h>
 
-@implementation RCTGSTPlayerController
+@implementation GstPlayerController
 
 @synthesize uri;
 @synthesize gst_backend;

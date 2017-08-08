@@ -2,6 +2,7 @@
 
 #include <gst/gst.h>
 #include <gst/video/video.h>
+#import "gst_ios_init.h"
 
 GST_DEBUG_CATEGORY_STATIC (debug_category);
 #define GST_CAT_DEFAULT debug_category
@@ -40,6 +41,7 @@ GST_DEBUG_CATEGORY_STATIC (debug_category);
 {
   if (self = [super init])
   {
+    gst_ios_init();
     self->ui_delegate = uiDelegate;
     self->ui_video_view = video_view;
     self->duration = GST_CLOCK_TIME_NONE;
@@ -113,6 +115,7 @@ GST_DEBUG_CATEGORY_STATIC (debug_category);
 -(void)setUIMessage:(gchar*) message
 {
   NSString *string = [NSString stringWithUTF8String:message];
+    NSLog(string);
   if(ui_delegate && [ui_delegate respondsToSelector:@selector(gstreamerSetUIMessage:)])
   {
     [ui_delegate gstreamerSetUIMessage:string];

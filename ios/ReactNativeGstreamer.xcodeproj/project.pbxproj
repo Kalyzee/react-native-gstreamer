@@ -1,0 +1,428 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3E0D16D91F346A20002A6FD4 /* EaglUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E0D16CD1F346A20002A6FD4 /* EaglUIView.m */; };
+		3E0D16DA1F346A20002A6FD4 /* gst_ios_init.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E0D16CF1F346A20002A6FD4 /* gst_ios_init.m */; };
+		3E0D16DB1F346A20002A6FD4 /* GStreamerBackend.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E0D16D11F346A20002A6FD4 /* GStreamerBackend.m */; };
+		3E0D16DC1F346A20002A6FD4 /* GstPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E0D16D31F346A20002A6FD4 /* GstPlayerController.m */; };
+		3E0D16DD1F346A20002A6FD4 /* GstPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E0D16D61F346A20002A6FD4 /* GstPlayerManager.m */; };
+		3E3F11A71F3853E00046300D /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E5D52691F346AED004BC949 /* Storyboard.storyboard */; };
+		3E48596F1F39C06E00AAA29B /* ssl in Resources */ = {isa = PBXBuildFile; fileRef = 3E48596E1F39C06E00AAA29B /* ssl */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3E0D16971F345F78002A6FD4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = include;
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3E0D16991F345F78002A6FD4 /* libReactNativeGStreamer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libReactNativeGStreamer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E0D16CC1F346A20002A6FD4 /* EaglUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EaglUIView.h; path = ReactNativeGstreamer/EaglUIView.h; sourceTree = "<group>"; };
+		3E0D16CD1F346A20002A6FD4 /* EaglUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EaglUIView.m; path = ReactNativeGstreamer/EaglUIView.m; sourceTree = "<group>"; };
+		3E0D16CE1F346A20002A6FD4 /* gst_ios_init.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gst_ios_init.h; path = ReactNativeGstreamer/gst_ios_init.h; sourceTree = "<group>"; };
+		3E0D16CF1F346A20002A6FD4 /* gst_ios_init.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = gst_ios_init.m; path = ReactNativeGstreamer/gst_ios_init.m; sourceTree = "<group>"; };
+		3E0D16D01F346A20002A6FD4 /* GStreamerBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GStreamerBackend.h; path = ReactNativeGstreamer/GStreamerBackend.h; sourceTree = "<group>"; };
+		3E0D16D11F346A20002A6FD4 /* GStreamerBackend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GStreamerBackend.m; path = ReactNativeGstreamer/GStreamerBackend.m; sourceTree = "<group>"; };
+		3E0D16D21F346A20002A6FD4 /* GStreamerBackendDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GStreamerBackendDelegate.h; path = ReactNativeGstreamer/GStreamerBackendDelegate.h; sourceTree = "<group>"; };
+		3E0D16D31F346A20002A6FD4 /* GstPlayerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GstPlayerController.m; path = ReactNativeGstreamer/GstPlayerController.m; sourceTree = "<group>"; };
+		3E0D16D41F346A20002A6FD4 /* GstPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GstPlayerController.h; path = ReactNativeGstreamer/GstPlayerController.h; sourceTree = "<group>"; };
+		3E0D16D51F346A20002A6FD4 /* GstPlayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GstPlayerManager.h; path = ReactNativeGstreamer/GstPlayerManager.h; sourceTree = "<group>"; };
+		3E0D16D61F346A20002A6FD4 /* GstPlayerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GstPlayerManager.m; path = ReactNativeGstreamer/GstPlayerManager.m; sourceTree = "<group>"; };
+		3E3F11831F34AC710046300D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ReactNativeGstreamer/Info.plist; sourceTree = "<group>"; };
+		3E3F118B1F34BF000046300D /* Resources.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Resources.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E3F118D1F34BF000046300D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3E48594C1F38BF5700AAA29B /* GStreamer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GStreamer.framework; path = ../../../../Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework; sourceTree = "<group>"; };
+		3E48596E1F39C06E00AAA29B /* ssl */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ssl; sourceTree = "<group>"; };
+		3E5D52691F346AED004BC949 /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Storyboard.storyboard; path = ../ReactNativeGstreamer/Storyboard.storyboard; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3E0D16961F345F78002A6FD4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E3F11881F34BF000046300D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3E0D16901F345F78002A6FD4 = {
+			isa = PBXGroup;
+			children = (
+				3E3F11831F34AC710046300D /* Info.plist */,
+				3E0D16CC1F346A20002A6FD4 /* EaglUIView.h */,
+				3E0D16CD1F346A20002A6FD4 /* EaglUIView.m */,
+				3E0D16CE1F346A20002A6FD4 /* gst_ios_init.h */,
+				3E0D16CF1F346A20002A6FD4 /* gst_ios_init.m */,
+				3E0D16D01F346A20002A6FD4 /* GStreamerBackend.h */,
+				3E0D16D11F346A20002A6FD4 /* GStreamerBackend.m */,
+				3E0D16D21F346A20002A6FD4 /* GStreamerBackendDelegate.h */,
+				3E0D16D31F346A20002A6FD4 /* GstPlayerController.m */,
+				3E0D16D41F346A20002A6FD4 /* GstPlayerController.h */,
+				3E0D16D51F346A20002A6FD4 /* GstPlayerManager.h */,
+				3E0D16D61F346A20002A6FD4 /* GstPlayerManager.m */,
+				3E3F118C1F34BF000046300D /* Resources */,
+				3E0D169A1F345F78002A6FD4 /* Products */,
+				3E48594B1F38BF5600AAA29B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		3E0D169A1F345F78002A6FD4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3E0D16991F345F78002A6FD4 /* libReactNativeGStreamer.a */,
+				3E3F118B1F34BF000046300D /* Resources.bundle */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3E3F118C1F34BF000046300D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3E48596E1F39C06E00AAA29B /* ssl */,
+				3E5D52691F346AED004BC949 /* Storyboard.storyboard */,
+				3E3F118D1F34BF000046300D /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		3E48594B1F38BF5600AAA29B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3E48594C1F38BF5700AAA29B /* GStreamer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3E0D16981F345F78002A6FD4 /* ReactNativeGStreamer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E0D16A21F345F78002A6FD4 /* Build configuration list for PBXNativeTarget "ReactNativeGStreamer" */;
+			buildPhases = (
+				3E0D16951F345F78002A6FD4 /* Sources */,
+				3E0D16961F345F78002A6FD4 /* Frameworks */,
+				3E0D16971F345F78002A6FD4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReactNativeGStreamer;
+			productName = ReactNativeGStreamer;
+			productReference = 3E0D16991F345F78002A6FD4 /* libReactNativeGStreamer.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		3E3F118A1F34BF000046300D /* Resources */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E3F118E1F34BF000046300D /* Build configuration list for PBXNativeTarget "Resources" */;
+			buildPhases = (
+				3E3F11871F34BF000046300D /* Sources */,
+				3E3F11881F34BF000046300D /* Frameworks */,
+				3E3F11891F34BF000046300D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Resources;
+			productName = Resources;
+			productReference = 3E3F118B1F34BF000046300D /* Resources.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3E0D16911F345F78002A6FD4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = "Alann Sapone (Kalyzée)";
+				TargetAttributes = {
+					3E0D16981F345F78002A6FD4 = {
+						CreatedOnToolsVersion = 8.3.3;
+						ProvisioningStyle = Automatic;
+					};
+					3E3F118A1F34BF000046300D = {
+						CreatedOnToolsVersion = 8.3.3;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 3E0D16941F345F78002A6FD4 /* Build configuration list for PBXProject "ReactNativeGstreamer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3E0D16901F345F78002A6FD4;
+			productRefGroup = 3E0D169A1F345F78002A6FD4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3E0D16981F345F78002A6FD4 /* ReactNativeGStreamer */,
+				3E3F118A1F34BF000046300D /* Resources */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3E3F11891F34BF000046300D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E3F11A71F3853E00046300D /* Storyboard.storyboard in Resources */,
+				3E48596F1F39C06E00AAA29B /* ssl in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3E0D16951F345F78002A6FD4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E0D16DA1F346A20002A6FD4 /* gst_ios_init.m in Sources */,
+				3E0D16DB1F346A20002A6FD4 /* GStreamerBackend.m in Sources */,
+				3E0D16D91F346A20002A6FD4 /* EaglUIView.m in Sources */,
+				3E0D16DC1F346A20002A6FD4 /* GstPlayerController.m in Sources */,
+				3E0D16DD1F346A20002A6FD4 /* GstPlayerManager.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E3F11871F34BF000046300D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3E0D16A01F345F78002A6FD4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"~/Library/Developer/GStreamer/iPhone.sdk\"",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lresolv",
+					"-lstdc++",
+				);
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		3E0D16A11F345F78002A6FD4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"~/Library/Developer/GStreamer/iPhone.sdk\"",
+					"\"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Developer/Library/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-lresolv",
+					"-lstdc++",
+				);
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3E0D16A31F345F78002A6FD4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"",
+					"$(SRCROOT)/../../../node_modules/react-native/React/**",
+				);
+				INFOPLIST_FILE = ./Info.plist;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		3E0D16A41F345F78002A6FD4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"",
+					"$(SRCROOT)/../../node_modules/react-native/React/**",
+				);
+				INFOPLIST_FILE = ./Info.plist;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		3E3F118F1F34BF000046300D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = Resources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		3E3F11901F34BF000046300D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Resources/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_BUNDLE_IDENTIFIER = Resources;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3E0D16941F345F78002A6FD4 /* Build configuration list for PBXProject "ReactNativeGstreamer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E0D16A01F345F78002A6FD4 /* Debug */,
+				3E0D16A11F345F78002A6FD4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E0D16A21F345F78002A6FD4 /* Build configuration list for PBXNativeTarget "ReactNativeGStreamer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E0D16A31F345F78002A6FD4 /* Debug */,
+				3E0D16A41F345F78002A6FD4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E3F118E1F34BF000046300D /* Build configuration list for PBXNativeTarget "Resources" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E3F118F1F34BF000046300D /* Debug */,
+				3E3F11901F34BF000046300D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3E0D16911F345F78002A6FD4 /* Project object */;
+}

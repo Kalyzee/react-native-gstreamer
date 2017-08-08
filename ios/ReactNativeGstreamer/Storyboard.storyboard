@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="cdx-zN-Cm8">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Gst Player Controller-->
+        <scene sceneID="cfQ-wu-trl">
+            <objects>
+                <viewController storyboardIdentifier="GstPlayerController" id="cdx-zN-Cm8" customClass="GstPlayerController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="njq-Up-dtb"/>
+                        <viewControllerLayoutGuide type="bottom" id="qRZ-43-Xp7"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="RJa-DH-r1N">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Initializing..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O10-JH-nhy" userLabel="GStreamerMessage">
+                                <rect key="frame" x="289.5" y="647.5" width="85.5" height="19.5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="keyPath" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="top" secondItem="RJa-DH-r1N" secondAttribute="top" id="cDA-y3-qXf"/>
+                            <constraint firstAttribute="trailing" secondItem="Kjh-W3-1b8" secondAttribute="trailing" id="hIH-kp-vnx"/>
+                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="krA-eY-nlP"/>
+                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="x2n-c1-wqk"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="O10-JH-nhy"/>
+                            </mask>
+                            <mask key="constraints">
+                                <exclude reference="cDA-y3-qXf"/>
+                                <exclude reference="hIH-kp-vnx"/>
+                                <exclude reference="x2n-c1-wqk"/>
+                                <exclude reference="krA-eY-nlP"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=regular-widthClass=compact">
+                            <mask key="constraints">
+                                <include reference="cDA-y3-qXf"/>
+                                <include reference="hIH-kp-vnx"/>
+                                <include reference="x2n-c1-wqk"/>
+                                <include reference="krA-eY-nlP"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <connections>
+                        <outlet property="message_label" destination="O10-JH-nhy" id="I2Q-8E-SLS"/>
+                        <outlet property="video_view" destination="Kjh-W3-1b8" id="QeA-ME-xsp"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IX9-YR-L52" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-190.01814882032667" y="-79.136690647482027"/>
+        </scene>
+    </scenes>
+</document>
