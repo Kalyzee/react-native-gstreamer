@@ -13,13 +13,15 @@
 
 
 @interface GstPlayerController : UIViewController <GStreamerBackendDelegate> {
-  IBOutlet UILabel *version_label;
-  IBOutlet UILabel *message_label;
-  IBOutlet UIView *video_view;
-  IBOutlet UIView *video_container_view;
-  IBOutlet NSLayoutConstraint *video_width_constraint;
-  IBOutlet NSLayoutConstraint *video_height_constraint;
-  IBOutlet UIStackView *footer_stack_view;
+    IBOutlet UILabel *version_label;
+    IBOutlet UILabel *message_label;
+    IBOutlet UIView *video_view;
+    IBOutlet UIView *video_container_view;
+    IBOutlet NSLayoutConstraint *video_width_constraint;
+    IBOutlet NSLayoutConstraint *video_height_constraint;
+    IBOutlet UIStackView *footer_stack_view;
+    int media_width;
+    int media_height;
 }
 
 @property (retain, nonatomic) NSString *uri;
