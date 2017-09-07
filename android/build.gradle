@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         minSdkVersion 16
@@ -27,7 +27,7 @@ android {
                 targets "gstreamer"
 
                 // All archs except MIPS and MIPS64 are supported
-                abiFilters 'x86' //'armeabi', 'armeabi-v7a', 'x86'
+                abiFilters 'armeabi-v7a' //'armeabi', 'armeabi-v7a', 'x86'
             }
         }
     }

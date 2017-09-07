@@ -9,6 +9,7 @@
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
 #include <gst/gst.h>
+#include <gst/audio/audio.h>
 #include <gst/video/video.h>
 #include <gst/video/videooverlay.h>
 #include <pthread.h>
@@ -47,12 +48,15 @@ typedef struct _CustomData {
     gint64 desired_position;      /* Position to seek to, once the pipeline is running */
     GstClockTime last_seek_time;  /* For seeking overflow prevention (throttling) */
     gboolean is_live;             /* Live streams do not use buffering */
+    GstElement* playbin;          /* Custom playbin to handle signals */
 } CustomData;
 
-/* playbin2 flags */
+/* playbin flags */
 typedef enum {
-    GST_PLAY_FLAG_TEXT = (1 << 2)  /* We want subtitle output */
-} GstPlayFlags;
+    GST_PLAY_FLAG_VIDEO         = (1 << 0), /* We want video output */
+    GST_PLAY_FLAG_AUDIO         = (1 << 1), /* We want audio output */
+    GST_PLAY_FLAG_TEXT          = (1 << 2)  /* We want subtitle output */
+  } GstPlayFlags;
 
 /* These global variables cache values which are not changing during execution */
 static pthread_t gst_app_thread;
@@ -341,6 +345,10 @@ static void check_initialization_complete(CustomData *data) {
     }
 }
 
+static void setup_source_cb(GstElement *pipeline, GstElement *source, CustomData *data) {
+    g_object_set (source, "latency", 0, NULL);
+}
+
 /* Main method for the native code. This is executed on its own thread. */
 static void *app_function(void *userdata) {
     JavaVMAttachArgs args;
@@ -357,7 +365,7 @@ static void *app_function(void *userdata) {
     data->context = g_main_context_new();
     g_main_context_push_thread_default(data->context);
 
-    /* Build pipeline */
+    /* Create Playbin object */
     data->pipeline = gst_parse_launch("playbin", &error);
     if (error) {
         gchar *message = g_strdup_printf("Unable to build pipeline: %s", error->message);
@@ -366,9 +374,11 @@ static void *app_function(void *userdata) {
         g_free(message);
         return NULL;
     }
+    g_signal_connect(G_OBJECT(data->pipeline), "source-setup", (GCallback) setup_source_cb, data);
 
     /* Disable subtitles */
     g_object_get(data->pipeline, "flags", &flags, NULL);
+    flags |= GST_PLAY_FLAG_VIDEO | GST_PLAY_FLAG_AUDIO;
     flags &= ~GST_PLAY_FLAG_TEXT;
     g_object_set(data->pipeline, "flags", flags, NULL);
 
@@ -456,7 +466,7 @@ void gst_native_set_uri(JNIEnv *env, jobject thiz, jstring uri) {
     const jbyte *char_uri = (*env)->GetStringUTFChars(env, uri, NULL);
     GST_DEBUG("Setting URI to %s", char_uri);
     if (data->target_state >= GST_STATE_READY)
-        gst_element_set_state(data->pipeline, GST_STATE_READY);
+    gst_element_set_state(data->pipeline, GST_STATE_READY);
     g_object_set(data->pipeline, "uri", char_uri, NULL);
     (*env)->ReleaseStringUTFChars(env, uri, char_uri);
     data->duration = GST_CLOCK_TIME_NONE;
