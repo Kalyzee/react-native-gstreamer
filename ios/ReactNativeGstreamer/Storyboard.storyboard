@@ -21,9 +21,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ve1-7k-yYv" userLabel="VideoContainer">
+                                <rect key="frame" x="0.0" y="20" width="375" height="647"/>
+                                <subviews>
+                                    <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kjh-W3-1b8" userLabel="Video" customClass="EaglUIView">
+                                        <rect key="frame" x="27.5" y="203" width="320" height="240"/>
+                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="320" id="B9H-dq-NWM"/>
+                                            <constraint firstAttribute="height" constant="240" id="Elr-v0-3ev"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="Kjh-W3-1b8" firstAttribute="centerX" secondItem="ve1-7k-yYv" secondAttribute="centerX" id="PoZ-5m-v6y"/>
+                                    <constraint firstItem="Kjh-W3-1b8" firstAttribute="centerY" secondItem="ve1-7k-yYv" secondAttribute="centerY" id="h77-tI-ea7"/>
+                                </constraints>
                             </view>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Initializing..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O10-JH-nhy" userLabel="GStreamerMessage">
                                 <rect key="frame" x="289.5" y="647.5" width="85.5" height="19.5"/>
@@ -38,34 +52,23 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="top" secondItem="RJa-DH-r1N" secondAttribute="top" id="cDA-y3-qXf"/>
-                            <constraint firstAttribute="trailing" secondItem="Kjh-W3-1b8" secondAttribute="trailing" id="hIH-kp-vnx"/>
-                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="Kjh-W3-1b8" secondAttribute="bottom" id="krA-eY-nlP"/>
-                            <constraint firstItem="Kjh-W3-1b8" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="x2n-c1-wqk"/>
+                            <constraint firstItem="ve1-7k-yYv" firstAttribute="leading" secondItem="RJa-DH-r1N" secondAttribute="leading" id="B4D-bN-kwu"/>
+                            <constraint firstItem="ve1-7k-yYv" firstAttribute="top" secondItem="njq-Up-dtb" secondAttribute="bottom" id="BRS-N0-eLb"/>
+                            <constraint firstItem="qRZ-43-Xp7" firstAttribute="top" secondItem="ve1-7k-yYv" secondAttribute="bottom" id="a4J-cg-PV5"/>
+                            <constraint firstAttribute="trailing" secondItem="ve1-7k-yYv" secondAttribute="trailing" id="fwP-cI-dDe"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
                                 <exclude reference="O10-JH-nhy"/>
                             </mask>
-                            <mask key="constraints">
-                                <exclude reference="cDA-y3-qXf"/>
-                                <exclude reference="hIH-kp-vnx"/>
-                                <exclude reference="x2n-c1-wqk"/>
-                                <exclude reference="krA-eY-nlP"/>
-                            </mask>
-                        </variation>
-                        <variation key="heightClass=regular-widthClass=compact">
-                            <mask key="constraints">
-                                <include reference="cDA-y3-qXf"/>
-                                <include reference="hIH-kp-vnx"/>
-                                <include reference="x2n-c1-wqk"/>
-                                <include reference="krA-eY-nlP"/>
-                            </mask>
                         </variation>
                     </view>
                     <connections>
                         <outlet property="message_label" destination="O10-JH-nhy" id="I2Q-8E-SLS"/>
-                        <outlet property="video_view" destination="Kjh-W3-1b8" id="QeA-ME-xsp"/>
+                        <outlet property="video_container_view" destination="ve1-7k-yYv" id="fEh-p4-mIO"/>
+                        <outlet property="video_height_constraint" destination="Elr-v0-3ev" id="QvX-Gl-lEN"/>
+                        <outlet property="video_view" destination="Kjh-W3-1b8" id="reR-6d-B2t"/>
+                        <outlet property="video_width_constraint" destination="B9H-dq-NWM" id="GZ3-yR-B84"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IX9-YR-L52" userLabel="First Responder" sceneMemberID="firstResponder"/>

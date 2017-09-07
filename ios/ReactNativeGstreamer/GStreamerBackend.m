@@ -323,6 +323,10 @@ static void state_changed_cb (GstBus *bus, GstMessage *msg, GStreamerBackend *se
   }
 }
 
+static void setup_source_cb(GstElement *pipeline, GstElement *source, void *data) {
+    g_object_set (source, "latency", 0, NULL);
+}
+
 /* Main method for the bus monitoring code */
 -(void) app_function
 {
@@ -346,6 +350,8 @@ static void state_changed_cb (GstBus *bus, GstMessage *msg, GStreamerBackend *se
     g_free (message);
     return;
   }
+    g_signal_connect(G_OBJECT(pipeline), "source-setup", (GCallback) setup_source_cb, NULL);
+
   
   /* Set the pipeline to READY, so it can already accept a window handle */
   gst_element_set_state(pipeline, GST_STATE_READY);
