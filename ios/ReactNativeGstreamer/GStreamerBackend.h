@@ -36,9 +36,13 @@
 /* Set the URI to be played */
 -(void) setUri:(NSString*)uri;
 
+/* Set the default playing state */
+-(void) setPlay:(BOOL)play;
+
 /* Set the position to seek to, in milliseconds */
 -(void) setPosition:(NSInteger)milliseconds;
 
 @end
 
 #endif /* GStreamerBackend_h */
+

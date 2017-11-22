@@ -29,7 +29,7 @@ android {
                 targets "gstreamer"
 
                 // All archs except MIPS and MIPS64 are supported
-                abiFilters 'armeabi', 'armeabi-v7a'
+                abiFilters 'x86', 'armeabi', 'armeabi-v7a'
             }
         }
     }

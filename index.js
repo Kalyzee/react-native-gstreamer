@@ -1,18 +1,34 @@
+import React from 'react'
+import { requireNativeComponent, View } from 'react-native'
 
-'use strict';
+const PropTypes = require('prop-types')
 
-import { PropTypes } from 'react';
-import { NativeModules, requireNativeComponent, View } from 'react-native';
+export default class GstPlayer extends React.Component {
 
-var iface = {
-  name: 'GstPlayer',
-  propTypes: {
+    onAudioLevelChange(message) {
+        const audio_level = message.nativeEvent.level
+        if (!this.props.onAudioLevelChange)
+            return
+
+        this.props.onAudioLevelChange(audio_level)
+    }
+
+    render() {
+        return (
+            <RCTGstPlayer
+                {...this.props}
+                onAudioLevelChange={this.onAudioLevelChange.bind(this)}
+            />
+        )
+    }
+}
+GstPlayer.propTypes = {
     uri: PropTypes.string,
     play: PropTypes.bool,
-    ...View.propTypes // include the default view properties
-  }
-};
-var GstPlayer = requireNativeComponent('GstPlayer', iface);
+    onAudioLevelChange: PropTypes.func,
+    ...View.propTypes
+}
 
-export default GstPlayer;
-
+var RCTGstPlayer = requireNativeComponent('GstPlayer', GstPlayer, {
+    nativeOnly: { onChange: true }
+})

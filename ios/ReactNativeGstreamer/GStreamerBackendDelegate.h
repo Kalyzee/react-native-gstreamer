@@ -17,4 +17,7 @@
 /* Called when the media position changes. Times in milliseconds */
 -(void) setCurrentPosition:(NSInteger)position duration:(NSInteger)duration;
 
+/* Called when the audio level changes */
+-(void) audioLevelChanged:(double)audioLevel;
+
 @end
