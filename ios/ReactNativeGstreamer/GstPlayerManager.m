@@ -17,22 +17,23 @@
 RCT_EXPORT_MODULE();
 RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, GstPlayerController)
 {
-    [self->rctGstPlayer setUri:json];
+    [self->rctGstPlayer setUri:[RCTConvert NSString:json]];
 }
 
 RCT_CUSTOM_VIEW_PROPERTY(play, BOOL, GstPlayerController)
 {
-    [self->rctGstPlayer setPlay:json];
+    [self->rctGstPlayer setPlay:[RCTConvert BOOL:json]];
 }
+
+RCT_EXPORT_VIEW_PROPERTY(onAudioLevelChange, RCTBubblingEventBlock)
+
 
 @synthesize bridge = _bridge;
 
 - (UIView *)view
 {
     NSBundle *_bundle = [NSBundle bundleWithURL:[[NSBundle mainBundle] URLForResource:@"Resources" withExtension:@"bundle"]];
-
     self->rctGstPlayer = [[UIStoryboard storyboardWithName:@"Storyboard" bundle:_bundle] instantiateViewControllerWithIdentifier:@"GstPlayerController"];
-
     return rctGstPlayer.view;
 }
 @end

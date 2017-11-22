@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "GStreamerBackendDelegate.h"
 #import "GStreamerBackend.h"
+#import <React/RCTBridgeModule.h>
 
 
 @interface GstPlayerController : UIViewController <GStreamerBackendDelegate> {
@@ -28,6 +29,8 @@
 
 -(IBAction) play:(id)sender;
 -(IBAction) pause:(id)sender;
+
+-(void) setAudioLevelCb:(void *)cb;
 
 /* From GStreamerBackendDelegate */
 -(void) gstreamerInitialized;
