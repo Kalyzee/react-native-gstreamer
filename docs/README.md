@@ -38,13 +38,13 @@ Once installed :
 * Project update
     * Open your project in Android Studio
     * Upgrade gradle (4.1 ATM) when prompted if you wish to be synchronized with this tutorial
-    * Fix Gradle wrapper and reimport project if requested
+    * Fix Gradle wrapper and re-import project if requested
     * Edit settings.gradle (change the projectDir) :
     ```gradle
     include ':react-native-gstreamer'
     project(':react-native-gstreamer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gstreamer/android/RCTGstPlayer')
     ```
-    * Resync Gradle. It might prompt you to update your maven repo. Let it do it the dirty job for you.
+    * Re-sync Gradle. It might prompt you to update your maven repo. Let it do it the dirty job for you.
 
 * Replace GStreamer library path in your project
     * Open the build.gradle from your project module
@@ -56,7 +56,7 @@ Once installed :
 
 * You are good to go !
 
-##### IOS
+##### iOS
 * GStreamer Preparation
     * Get the latest GStreamer Library for iOS at https://gstreamer.freedesktop.org/data/pkg/ios/
     * Install the downloaded package in the default path
@@ -75,7 +75,7 @@ Once installed :
     * Now select your project (under "TARGETS" item)
     * Go in the "Build Phases" tab
     * Expand "Link Binary With Libraries" section and click "+" Button
-    * Click "Add Ohter..." button and find "GStreamer.framework"
+    * Click "Add Other..." button and find "GStreamer.framework"
     * Click "+" again, filter "libiconv.2" and Add it
 
 * You are good to go !
