@@ -100,9 +100,15 @@ export default class App extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <GstPlayer
+                    style={styles.videoPlayer}
+                    uri={this.state.uri}
+                    ref="GstPlayer"
+                    autoPlay={true}
+                />
                 <View style={styles.controlBar}>
-                    <Button title="uri1" onPress={() => this.setState(this.uri1)}></Button>
-                    <Button title="uri2" onPress={() => this.setState(this.uri2)}></Button>
+                    <Button title="uri1" onPress={() => this.setState({ uri: this.uri1 })}></Button>
+                    <Button title="uri2" onPress={() => this.setState({ uri: this.uri2 })}></Button>
                     <Button title="Stop" onPress={() => this.refs.GstPlayer.stop()}></Button>
                     <Button title="Pause" onPress={() => this.refs.GstPlayer.pause()}></Button>
                     <Button title="Play" onPress={() => this.refs.GstPlayer.play()}></Button>
@@ -113,16 +119,12 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
+    container: { flex: 1 },
     controlBar: {
         flexDirection: "row",
         justifyContent: "space-between"
     },
-    videoPlayer: {
-        flex: 1
-    }
+    videoPlayer: { flex: 1 }
 })
 ```
 

@@ -163,7 +163,6 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
     
     // Run pipeline
     dispatch_async(background_queue, ^{
-        g_print("INITIALIZING DONE\n");
         rct_gst_run_loop();
     });
 }
@@ -175,12 +174,6 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
 
     if (self->drawableSurface != NULL)
         self->drawableSurface = NULL;
-    
-    free(new_uri);
-    
-    free(source);
-    free(message);
-    free(debug_info);
 }
 
 @end
