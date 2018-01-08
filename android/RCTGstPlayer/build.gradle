@@ -16,8 +16,6 @@ android {
 
                 if (project.hasProperty('gstAndroidRoot'))
                     gstRoot = project.gstAndroidRoot
-                else
-                    gstRoot = "/Users/asapone/Library/Developer/GStreamer/gstreamer-android-1.12.4"
 
                 if (gstRoot == null)
                     throw new GradleException('GSTREAMER_ROOT_ANDROID must be set, or "gstAndroidRoot" must be defined in your gradle.properties in the top level directory of the unpacked universal GStreamer Android binaries')

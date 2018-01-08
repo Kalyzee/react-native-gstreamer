@@ -1,10 +1,10 @@
 # react-native-gstreamer
 React native GStreamer is an audio/video player built for react-native using GStreamer framework.
-It handles everything GStreamer can natively handle. For more informations, you can go here : https://gstreamer.freedesktop.org/
+It handles everything GStreamer can natively handle. For more information, you can go here : https://gstreamer.freedesktop.org/
 
 ## Features
 * Plays anything a GStreamer playbin can play
-* Hardware accelerated decoding for better perfomances and extended battery life
+* Hardware accelerated decoding for better performances and extended battery life
 * Great with any kind of media, it was initially though for low latency streaming (RTSP)
 * Working for both Android and IOS
 
@@ -17,14 +17,69 @@ It handles everything GStreamer can natively handle. For more informations, you 
     npm install --save react-native-gstreamer
 
 ## How to link to your project
-<span style="color:red"><b>Don't use react-native link.</b></span>
+<span style="color:red"><b>/!\ Be sure to read everything carefully : GStreamer is a  C Library. It will be necessary to finalize the linking manually.</b></span>
 
-GStreamer uses an external C Library. It will be easier if you link it manualy to your project.
+Once installed : 
+* Be sure you have at least one run your app through <b>react-native run-android</b> cli so your project is initialized correctly for Android platform
+* Run the usual: <b>react-native link react-native-gstreamer</b> from your project folder
+
 #### Android
-TODO
 
-#### IOS
-TODO
+* GStreamer Preparation
+    * Get the latest GStreamer Library for Android at https://gstreamer.freedesktop.org/data/pkg/android/
+    * Extract it wherever you like
+    
+* Android Studio Preparation
+    * Open Android Studio
+    * Go to "Tools -> Android -> SDK Manager"
+    * Go to the SDK Tools tab
+    * Be sure to have CMake, LLDB, NDK installed and up to date
+
+* Project update
+    * Open your project in Android Studio
+    * Upgrade gradle (4.1 ATM) when prompted if you wish to be synchronized with this tutorial
+    * Fix Gradle wrapper and reimport project if requested
+    * Edit settings.gradle (change the projectDir) :
+    ```gradle
+    include ':react-native-gstreamer'
+    project(':react-native-gstreamer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gstreamer/android/RCTGstPlayer')
+    ```
+    * Resync Gradle. It might prompt you to update your maven repo. Let it do it the dirty job for you.
+
+* Replace GStreamer library path in your project
+    * Open the build.gradle from your project module
+    * Add the following to the end of your file :
+    ```gradle
+    project.ext.set("gstAndroidRoot", "/absolute/path/to/gstreamer/android/library")
+    ```
+    * Note that the required path is the one containing all the platforms
+
+* You are good to go !
+
+##### IOS
+* GStreamer Preparation
+    * Get the latest GStreamer Library for iOS at https://gstreamer.freedesktop.org/data/pkg/ios/
+    * Install the downloaded package in the default path
+    * Running your app now would give you many linker errors...
+
+* Linking with GStreamer library
+    * Select your project item in the file explorer
+    * Select the project (above TARGETS item)
+    * Select the "Build Settings" tab and select "All" displaying
+    * Filter with name : "Other linker Flags"
+    * Double click slowly on the field to edit it textually
+    * Add (copy paste) the following flags : <i>
+        -lresolv -lstdc++ -framework CoreFoundation -framework Foundation  -framework AVFoundation -framework CoreMedia -framework CoreVideo -framework CoreAudio -framework AudioToolbox -weak_framework VideoToolbox -framework OpenGLES -framework AssetsLibrary -framework QuartzCore -framework AssetsLibrary</i>
+    * Now filter with "Framework Search Paths"
+    * Add : "~/Library/Developer/GStreamer/iPhone.sdk"
+    * Now select your project (under "TARGETS" item)
+    * Go in the "Build Phases" tab
+    * Expand "Link Binary With Libraries" section and click "+" Button
+    * Click "Add Ohter..." button and find "GStreamer.framework"
+    * Click "+" again, filter "libiconv.2" and Add it
+
+* You are good to go !
+
 
 ## Basic usage
 ```js
@@ -45,12 +100,6 @@ export default class App extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <GstPlayer
-                    style={styles.videoPlayer}
-                    uri={this.state.uri}
-                    autoPlay={true}
-                    ref="GstPlayer"
-                />
                 <View style={styles.controlBar}>
                     <Button title="uri1" onPress={() => this.setState(this.uri1)}></Button>
                     <Button title="uri2" onPress={() => this.setState(this.uri2)}></Button>
@@ -77,7 +126,7 @@ const styles = StyleSheet.create({
 })
 ```
 
-## Avaliable properties
+## Available properties
 
 #### Parameters
 | Parameter             | Type    | Default   | Description                                                                                                                                                                                                                    |
@@ -104,11 +153,3 @@ const styles = StyleSheet.create({
 | play()                      | Plays the current media (Alias for setGstState to GstState.PLAYING)                                            |
 | pause()                     | Pauses the current media (Alias for setGstState to GstState.PAUSED)                                            |
 | stop()                      | Stops the current media (Alias for setGstState to GstState.READY)                                              |
-
-### IOS
-
-#### Dependencies
-
-You need <b>xcode</b> to build anything.
-You also need the GStreamer framework. To do so, please download and install the latest avaliable from https://gstreamer.freedesktop.org/data/pkg/ios/
-

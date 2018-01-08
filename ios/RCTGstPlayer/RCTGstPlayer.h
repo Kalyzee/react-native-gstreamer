@@ -12,6 +12,7 @@
 #import <React/RCTViewManager.h>
 #import <Foundation/Foundation.h>
 #import "RCTGstPlayerController.h"
+#import "gst_ios_init.h"
 
 @interface RCTGstPlayer : RCTViewManager
 {

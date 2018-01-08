@@ -47,8 +47,6 @@ export default class GstPlayer extends React.Component {
         const { old_state, new_state } = _message.nativeEvent
         this.currentGstState = new_state
 
-        console.log(old_state, new_state)
-
         if (old_state === GstState.PAUSED && new_state === GstState.READY) {
             this.recreateView()
         }
@@ -72,7 +70,6 @@ export default class GstPlayer extends React.Component {
         }
 
         if (this.props.autoPlay) {
-            console.log("Play")
             this.play()
         }
     }

@@ -143,10 +143,7 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    // Init GStreamer
-    gst_ios_init();
-    
+
     // Preparing surface
     [self createDrawableSurface];
     
