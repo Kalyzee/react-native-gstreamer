@@ -4,11 +4,11 @@ import { requireNativeComponent, Text, View, UIManager, findNodeHandle, AppState
 const PropTypes = require('prop-types')
 
 export const GstState = {
-    GST_STATE_VOID_PENDING: 0,
-    GST_STATE_NULL: 1,
-    GST_STATE_READY: 2,
-    GST_STATE_PAUSED: 3,
-    GST_STATE_PLAYING: 4
+    VOID_PENDING: 0,
+    NULL: 1,
+    READY: 2,
+    PAUSED: 3,
+    PLAYING: 4
 }
 
 export default class GstPlayer extends React.Component {
@@ -49,7 +49,7 @@ export default class GstPlayer extends React.Component {
 
         console.log(old_state, new_state)
 
-        if (old_state === GstState.GST_STATE_PAUSED && new_state === GstState.GST_STATE_READY) {
+        if (old_state === GstState.PAUSED && new_state === GstState.READY) {
             this.recreateView()
         }
 
@@ -100,15 +100,15 @@ export default class GstPlayer extends React.Component {
 
     // Player state shortcuts
     play() {
-        this.setGstState(GstState.GST_STATE_PLAYING)
+        this.setGstState(GstState.PLAYING)
     }
 
     pause() {
-        this.setGstState(GstState.GST_STATE_PAUSED)
+        this.setGstState(GstState.PAUSED)
     }
 
     stop() {
-        this.setGstState(GstState.GST_STATE_READY)
+        this.setGstState(GstState.READY)
     }
 
     // Helper methods
@@ -146,8 +146,8 @@ export default class GstPlayer extends React.Component {
 GstPlayer.propTypes = {
 
     // Props
-    autoPlay: PropTypes.bool,
     uri: PropTypes.string,
+    autoPlay: PropTypes.bool,
     audioLevelRefreshRate: PropTypes.number,
     isDebugging: PropTypes.bool,
 
