@@ -67,6 +67,7 @@ android/RCTGstPlayer/.externalNativeBuild
 android/RCTGstPlayer/build/
 android/RCTGstPlayer/gst-build-armeabi/
 android/RCTGstPlayer/gst-build-armeabi-v7a/
+android/RCTGstPlayer/gst-build-arm64-v8a/
 android/RCTGstPlayer/gst-build-armeabi0/
 android/RCTGstPlayer/gst-build-x86/
 android/RCTGstPlayer/gst-build-x86_64/
