@@ -1,0 +1,401 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3EEA8ED21FEAB16400F41BAA /* RCTGstPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8ED11FEAB16400F41BAA /* RCTGstPlayerController.m */; };
+		3EEA8ED51FEAB68800F41BAA /* EaglUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8ED41FEAB68800F41BAA /* EaglUIView.m */; };
+		3EEA8ED81FEAB81100F41BAA /* DrawableSurfaceFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8ED71FEAB81100F41BAA /* DrawableSurfaceFactory.m */; };
+		3EEA8EEB1FEABC7300F41BAA /* gst_ios_init.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8EE91FEABC7300F41BAA /* gst_ios_init.m */; };
+		3EEA8EEF1FEABCB300F41BAA /* gstreamer_backend.c in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8EED1FEABCB200F41BAA /* gstreamer_backend.c */; };
+		3EEA8F391FEBBD0100F41BAA /* RctGstParentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8F381FEBBD0100F41BAA /* RctGstParentView.m */; };
+		3EF2E8851FEA700E00BCC58E /* RCTGstPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2E8841FEA700E00BCC58E /* RCTGstPlayer.m */; };
+		3EF2E8861FEA700E00BCC58E /* RCTGstPlayer.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3EF2E8831FEA700E00BCC58E /* RCTGstPlayer.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3EF2E87E1FEA700E00BCC58E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				3EF2E8861FEA700E00BCC58E /* RCTGstPlayer.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3EEA8ED01FEAB16400F41BAA /* RCTGstPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTGstPlayerController.h; sourceTree = "<group>"; };
+		3EEA8ED11FEAB16400F41BAA /* RCTGstPlayerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTGstPlayerController.m; sourceTree = "<group>"; };
+		3EEA8ED31FEAB68800F41BAA /* EaglUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EaglUIView.h; sourceTree = "<group>"; };
+		3EEA8ED41FEAB68800F41BAA /* EaglUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EaglUIView.m; sourceTree = "<group>"; };
+		3EEA8ED61FEAB81100F41BAA /* DrawableSurfaceFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawableSurfaceFactory.h; sourceTree = "<group>"; };
+		3EEA8ED71FEAB81100F41BAA /* DrawableSurfaceFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrawableSurfaceFactory.m; sourceTree = "<group>"; };
+		3EEA8EE91FEABC7300F41BAA /* gst_ios_init.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gst_ios_init.m; sourceTree = "<group>"; };
+		3EEA8EEA1FEABC7300F41BAA /* gst_ios_init.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gst_ios_init.h; sourceTree = "<group>"; };
+		3EEA8EED1FEABCB200F41BAA /* gstreamer_backend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstreamer_backend.c; path = ../../common/gstreamer_backend.c; sourceTree = "<group>"; };
+		3EEA8EEE1FEABCB300F41BAA /* gstreamer_backend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gstreamer_backend.h; path = ../../common/gstreamer_backend.h; sourceTree = "<group>"; };
+		3EEA8F371FEBBD0100F41BAA /* RctGstParentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RctGstParentView.h; sourceTree = "<group>"; };
+		3EEA8F381FEBBD0100F41BAA /* RctGstParentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RctGstParentView.m; sourceTree = "<group>"; };
+		3EF2E8801FEA700E00BCC58E /* libRCTGstPlayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTGstPlayer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3EF2E8831FEA700E00BCC58E /* RCTGstPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTGstPlayer.h; sourceTree = "<group>"; };
+		3EF2E8841FEA700E00BCC58E /* RCTGstPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTGstPlayer.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3EF2E87D1FEA700E00BCC58E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3EEA8EE81FEABC2D00F41BAA /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				3EEA8ED61FEAB81100F41BAA /* DrawableSurfaceFactory.h */,
+				3EEA8ED71FEAB81100F41BAA /* DrawableSurfaceFactory.m */,
+				3EEA8EEA1FEABC7300F41BAA /* gst_ios_init.h */,
+				3EEA8EE91FEABC7300F41BAA /* gst_ios_init.m */,
+				3EEA8ED31FEAB68800F41BAA /* EaglUIView.h */,
+				3EEA8ED41FEAB68800F41BAA /* EaglUIView.m */,
+				3EEA8F371FEBBD0100F41BAA /* RctGstParentView.h */,
+				3EEA8F381FEBBD0100F41BAA /* RctGstParentView.m */,
+			);
+			name = utils;
+			sourceTree = "<group>";
+		};
+		3EEA8EEC1FEABCAA00F41BAA /* common */ = {
+			isa = PBXGroup;
+			children = (
+				3EEA8EED1FEABCB200F41BAA /* gstreamer_backend.c */,
+				3EEA8EEE1FEABCB300F41BAA /* gstreamer_backend.h */,
+			);
+			name = common;
+			sourceTree = "<group>";
+		};
+		3EF2E8771FEA700E00BCC58E = {
+			isa = PBXGroup;
+			children = (
+				3EF2E8821FEA700E00BCC58E /* RCTGstPlayer */,
+				3EF2E8811FEA700E00BCC58E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3EF2E8811FEA700E00BCC58E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3EF2E8801FEA700E00BCC58E /* libRCTGstPlayer.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3EF2E8821FEA700E00BCC58E /* RCTGstPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				3EEA8EEC1FEABCAA00F41BAA /* common */,
+				3EEA8EE81FEABC2D00F41BAA /* utils */,
+				3EEA8ED01FEAB16400F41BAA /* RCTGstPlayerController.h */,
+				3EEA8ED11FEAB16400F41BAA /* RCTGstPlayerController.m */,
+				3EF2E8831FEA700E00BCC58E /* RCTGstPlayer.h */,
+				3EF2E8841FEA700E00BCC58E /* RCTGstPlayer.m */,
+			);
+			path = RCTGstPlayer;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3EF2E87F1FEA700E00BCC58E /* RCTGstPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3EF2E8891FEA700E00BCC58E /* Build configuration list for PBXNativeTarget "RCTGstPlayer" */;
+			buildPhases = (
+				3EF2E87C1FEA700E00BCC58E /* Sources */,
+				3EF2E87D1FEA700E00BCC58E /* Frameworks */,
+				3EF2E87E1FEA700E00BCC58E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RCTGstPlayer;
+			productName = RCTGstPlayer;
+			productReference = 3EF2E8801FEA700E00BCC58E /* libRCTGstPlayer.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3EF2E8781FEA700E00BCC58E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = Kalyzee;
+				TargetAttributes = {
+					3EF2E87F1FEA700E00BCC58E = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 3EF2E87B1FEA700E00BCC58E /* Build configuration list for PBXProject "RCTGstPlayer" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3EF2E8771FEA700E00BCC58E;
+			productRefGroup = 3EF2E8811FEA700E00BCC58E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3EF2E87F1FEA700E00BCC58E /* RCTGstPlayer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3EF2E87C1FEA700E00BCC58E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3EEA8ED51FEAB68800F41BAA /* EaglUIView.m in Sources */,
+				3EF2E8851FEA700E00BCC58E /* RCTGstPlayer.m in Sources */,
+				3EEA8ED81FEAB81100F41BAA /* DrawableSurfaceFactory.m in Sources */,
+				3EEA8F391FEBBD0100F41BAA /* RctGstParentView.m in Sources */,
+				3EEA8EEF1FEABCB300F41BAA /* gstreamer_backend.c in Sources */,
+				3EEA8ED21FEAB16400F41BAA /* RCTGstPlayerController.m in Sources */,
+				3EEA8EEB1FEABC7300F41BAA /* gst_ios_init.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3EF2E8871FEA700E00BCC58E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk\"";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lresolv",
+					"-lstdc++",
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					Foundation,
+					"-framework",
+					AVFoundation,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreVideo,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					AudioToolbox,
+					"-weak_framework",
+					VideoToolbox,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					AssetsLibrary,
+					"-framework",
+					QuartzCore,
+					"-framework",
+					AssetsLibrary,
+				);
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		3EF2E8881FEA700E00BCC58E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk\"";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-lresolv",
+					"-lstdc++",
+					"-framework",
+					CoreFoundation,
+					"-framework",
+					Foundation,
+					"-framework",
+					AVFoundation,
+					"-framework",
+					CoreMedia,
+					"-framework",
+					CoreVideo,
+					"-framework",
+					CoreAudio,
+					"-framework",
+					AudioToolbox,
+					"-weak_framework",
+					VideoToolbox,
+					"-framework",
+					OpenGLES,
+					"-framework",
+					AssetsLibrary,
+					"-framework",
+					QuartzCore,
+					"-framework",
+					AssetsLibrary,
+				);
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3EF2E88A1FEA700E00BCC58E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KDWH2BR82R;
+				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3EF2E88B1FEA700E00BCC58E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KDWH2BR82R;
+				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3EF2E87B1FEA700E00BCC58E /* Build configuration list for PBXProject "RCTGstPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EF2E8871FEA700E00BCC58E /* Debug */,
+				3EF2E8881FEA700E00BCC58E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3EF2E8891FEA700E00BCC58E /* Build configuration list for PBXNativeTarget "RCTGstPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EF2E88A1FEA700E00BCC58E /* Debug */,
+				3EF2E88B1FEA700E00BCC58E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3EF2E8781FEA700E00BCC58E /* Project object */;
+}

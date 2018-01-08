@@ -1,0 +1,22 @@
+//
+//  RCTGstPlayer.h
+//  RCTGstPlayer
+//
+//  Created by Alann on 20/12/2017.
+//  Copyright © 2017 Kalyzee. All rights reserved.
+//
+
+#ifndef RCTGstPlayer_h
+#define RCTGstPlayer_h
+
+#import <React/RCTViewManager.h>
+#import <Foundation/Foundation.h>
+#import "RCTGstPlayerController.h"
+
+@interface RCTGstPlayer : RCTViewManager
+{
+    RCTGstPlayerController* playerController;
+}
+@end
+
+#endif /* RCTGstPlayer_h */
