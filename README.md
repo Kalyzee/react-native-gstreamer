@@ -20,8 +20,8 @@ It handles everything GStreamer can natively handle. For more information, you c
 ## How to link to your project
 <span style="color:red"><b>/!\ Be sure to read everything carefully : GStreamer is a  C Library. It will be necessary to finalize the linking manually.</b></span>
     
-* [Linking for Android](./linking_android.md)
-* [Linking for iOS](./linking_ios.md)
+* [Linking for Android](./docs/linking_android.md)
+* [Linking for iOS](./docs/linking_ios.md)
 
 ## Basic usage
 
