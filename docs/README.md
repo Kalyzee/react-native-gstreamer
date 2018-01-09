@@ -82,6 +82,7 @@ Once installed :
 
 
 ## Basic usage
+
 ```js
 import React, { Component } from 'react'
 import { StyleSheet, View, Button } from 'react-native'
@@ -131,6 +132,7 @@ const styles = StyleSheet.create({
 ## Available properties
 
 #### Parameters
+
 | Parameter             | Type    | Default   | Description                                                                                                                                                                                                                    |
 |-----------------------|---------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | uri                   | String  | undefined | Path to the desired media to play                                                                                                                                                                                              |
@@ -138,7 +140,9 @@ const styles = StyleSheet.create({
 | audioLevelRefreshRate | Integer | 100       | Defines the frequency of audio volume analysis in milliseconds. Helpful to design a vumeter                                                                                                                                    |
 | isDebugging           | Boolean | false     | When set to true, it will show a videotestsrc instead of a default playbin. Helpful to check if an issue is coming from playbin or not. Please note that for now, you need to restart the player in order to apply this change |
 
+
 #### Callbacks
+
 | Method                                                           | Description                                                                                                                            |
 |------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
 | onPlayerInit()                                                   |  Called when the player is ready. Could be useful to display/hide a loading notification                                               |
@@ -148,10 +152,13 @@ const styles = StyleSheet.create({
 | onEOS()                                                          | Called when a media stream is ended                                                                                                    |
 | onElementError(String source, String message, String debug_info) | Called when an internal component of GStreamer playbin's pipeline has met an error. It can be helpful to debug any media playing issue |
 
+
 #### Methods
+
 | Method                      | Description                                                                                                    |
 |-----------------------------|----------------------------------------------------------------------------------------------------------------|
 | setGstState(GstState state) | Call this if you want to call GStreamer states yourself. You should use GstState enum import to select a state |
 | play()                      | Plays the current media (Alias for setGstState to GstState.PLAYING)                                            |
 | pause()                     | Pauses the current media (Alias for setGstState to GstState.PAUSED)                                            |
 | stop()                      | Stops the current media (Alias for setGstState to GstState.READY)                                              |
+
