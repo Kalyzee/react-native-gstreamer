@@ -1,6 +1,6 @@
 {
     "name": "react-native-gstreamer",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "description": "react-native-gstreamer is a generic video player for iOS and Android using GStreamer API.",
     "main": "index.js",
     "readmeFilename": "README.md",
