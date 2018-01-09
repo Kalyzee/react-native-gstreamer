@@ -3,6 +3,7 @@
     "version": "2.0.2",
     "description": "react-native-gstreamer is a generic video player for iOS and Android using GStreamer API.",
     "main": "index.js",
+    "readme": "docs/README.md",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
