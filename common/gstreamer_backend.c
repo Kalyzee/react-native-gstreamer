@@ -62,7 +62,8 @@ RctGstAudioLevel *rct_gst_get_audio_level()
 void rct_gst_set_uri(gchar* _uri)
 {
     rct_gst_get_configuration()->uri = _uri;
-    apply_uri();
+    if (pipeline)
+        apply_uri();
 }
 
 void rct_gst_set_audio_level_refresh_rate(gint audio_level_refresh_rate)
@@ -305,7 +306,7 @@ void rct_gst_init(RctGstConfiguration *configuration)
     }
 
     // Apply URI
-    if (!rct_gst_get_configuration()->isDebugging)
+    if (!rct_gst_get_configuration()->isDebugging && pipeline != NULL)
         apply_uri();
     
     if (rct_gst_get_configuration()->onInit) {
@@ -339,6 +340,10 @@ void rct_gst_terminate()
     
     g_free(configuration);
     g_free(audio_level);
+    
+    pipeline = NULL;
+    configuration = NULL;
+    audio_level = NULL;
 }
 
 gchar *rct_gst_get_info()

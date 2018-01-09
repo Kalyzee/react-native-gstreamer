@@ -1,5 +1,5 @@
 import React from 'react'
-import { requireNativeComponent, Text, View, UIManager, findNodeHandle, AppState } from 'react-native'
+import { requireNativeComponent, Text, View, UIManager, findNodeHandle, AppState, Platform } from 'react-native'
 
 const PropTypes = require('prop-types')
 
@@ -28,6 +28,11 @@ export default class GstPlayer extends React.Component {
 
     appStateChanged = (nextAppState) => {
         if (this.appState.match(/inactive|background/) && nextAppState === 'active') {
+
+            // On iOS we need to recreate video sink to bypass a bug with vtdec when video freezes
+            if (Platform.OS === 'ios') {
+                this.recreateView()
+            }
             this.play()
         } else {
             this.stop()
@@ -48,7 +53,10 @@ export default class GstPlayer extends React.Component {
         this.currentGstState = new_state
 
         if (old_state === GstState.PAUSED && new_state === GstState.READY) {
-            this.recreateView()
+
+            // On iOS we need to recreate video sink to bypass a bug with vtdec when video freezes
+            if (Platform.OS === 'ios')
+                this.recreateView()
         }
 
         if (this.props.onStateChanged)
@@ -84,6 +92,10 @@ export default class GstPlayer extends React.Component {
 
         if (this.props.onElementError)
             this.props.onElementError(source, message, debug_info)
+    }
+
+    shouldComponentUpdate() {
+        return true
     }
 
     // Methods

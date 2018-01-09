@@ -17,14 +17,20 @@ RCT_EXPORT_MODULE();
 // Shared properties
 RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGstPlayerController)
 {
-    g_print("RCT_CUSTOM_VIEW_PROPERTY -> uri\n");
     NSString *uri = [RCTConvert NSString:json];
-    rct_gst_set_uri((gchar *)[uri UTF8String]);
+    NSLog(@"RCTGstPlayer : URI : %s - LENGTH : %d", uri, uri.length);
+    if (uri.length > 0)
+        rct_gst_set_uri((gchar *)[uri UTF8String]);
 }
 RCT_CUSTOM_VIEW_PROPERTY(audioLevelRefreshRate, NSNumber, RCTGstPlayerController)
 {
     gint* audioLevelRefreshRate = [[RCTConvert NSNumber:json] integerValue];
     rct_gst_set_audio_level_refresh_rate(audioLevelRefreshRate);
+}
+RCT_CUSTOM_VIEW_PROPERTY(isDebugging, BOOL, RCTGstPlayerController)
+{
+    gboolean isDebugging = [RCTConvert BOOL:json];
+    rct_gst_set_debugging(isDebugging);
 }
 
 // Shared events
