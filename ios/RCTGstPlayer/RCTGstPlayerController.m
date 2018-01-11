@@ -164,7 +164,7 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
     [super viewDidLoad];
     
     // Preparing surface
-    [self createDrawableSurface];
+    [self recreateView];
     
     // Preparing configuration
     configuration = rct_gst_get_configuration();
@@ -181,23 +181,20 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
     rct_gst_init(configuration);
     
     // Run pipeline
-    if (background_queue != NULL)
-        dispatch_async(background_queue, ^{
-            rct_gst_run_loop();
-        });
+    rct_gst_run_loop();
 }
 
 // Memory management
 - (void)dealloc
 {
     NSLog(@"Deallocate RCTGstPlayer");
-    rct_gst_terminate();
     g_free(new_uri);
     g_free(source);
     g_free(message);
     g_free(debug_info);
     g_free(audioLevel);
     
+    rct_gst_terminate();
     if (self->drawableSurface != NULL)
         self->drawableSurface = NULL;
 }

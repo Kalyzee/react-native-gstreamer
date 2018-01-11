@@ -13,6 +13,7 @@ GST_DEBUG_CATEGORY_STATIC(rct_gst_player);
 // Globals items
 RctGstAudioLevel* audio_level;
 RctGstConfiguration* configuration;
+pthread_t gst_app_thread;
 
 GstElement *pipeline;
 GMainLoop *main_loop;
@@ -234,6 +235,11 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, gpointer *user_
     return TRUE;
 }
 
+// Remove latency as much as possible
+static void cb_setup_source(GstElement *pipeline, GstElement *source, void *data) {
+    g_object_set (source, "latency", 0, NULL);
+}
+
 static gboolean cb_async_done(GstBus *bus, GstMessage *message, gpointer user_data)
 {
     return TRUE;
@@ -289,6 +295,9 @@ void rct_gst_init(RctGstConfiguration *configuration)
     // Prepare playbin pipeline. If playbin not working, will display an error video signal
     launch_command = (!rct_gst_get_configuration()->isDebugging) ? "playbin" : "videotestsrc ! glimagesink name=video-sink";
     pipeline = gst_parse_launch(launch_command, NULL);
+    
+    // Remove latency as much as possible
+    g_signal_connect(G_OBJECT(pipeline), "source-setup", (GCallback) cb_setup_source, NULL);
     
     // Preparing bus
     bus = gst_element_get_bus(pipeline);

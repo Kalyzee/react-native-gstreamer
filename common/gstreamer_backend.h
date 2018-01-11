@@ -12,6 +12,7 @@
 #include <math.h>
 #include <gst/gst.h>
 #include <gst/video/video.h>
+#include <pthread.h>
 
 // Audio level definition
 typedef struct {
