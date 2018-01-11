@@ -24,6 +24,8 @@ RctGstParentView *c_view;
 gchar *new_uri;
 gchar *source, *message, *debug_info;
 
+RctGstAudioLevel* audioLevel;
+
 NSNumber* oldState;
 NSNumber* newState;
 
@@ -51,6 +53,8 @@ dispatch_queue_t events_queue;
         source = g_malloc(sizeof(gchar));
         message = g_malloc(sizeof(gchar));
         debug_info = g_malloc(sizeof(gchar));
+        
+        audioLevel = g_malloc(sizeof(RctGstAudioLevel));
     }
     return self;
 }
@@ -73,6 +77,7 @@ dispatch_queue_t events_queue;
 // Destroy an old drawable surface
 - (void) destroyDrawableSurface
 {
+    g_print("destroyDrawableSurface\n");
     if (self->drawableSurface) {
         [self->drawableSurface removeFromSuperview];
     }
@@ -109,13 +114,19 @@ void onStateChanged(GstState old_state, GstState new_state) {
 }
 
 void onVolumeChanged(RctGstAudioLevel* audioLevel) {
+    
+    /*audioLevel->decay = _audioLevel->decay;
+    audioLevel->peak = _audioLevel->peak;
+    audioLevel->rms = _audioLevel->rms;*/
+    
     if (events_queue != NULL)
         dispatch_async(events_queue, ^{
-        c_view.onVolumeChanged(@{
-                                 @"decay": @(audioLevel->decay),
-                                 @"rms": @(audioLevel->rms),
-                                 @"peak": @(audioLevel->peak),
-                                 });
+            NSLog(@"Peak : %d", audioLevel->peak);
+            c_view.onVolumeChanged(@{
+                                     @"decay": @(audioLevel->decay),
+                                     @"rms": @(audioLevel->rms),
+                                     @"peak": @(audioLevel->peak),
+                                     });
         });
 }
 
@@ -123,7 +134,7 @@ void onUriChanged(gchar* newUri) {
     new_uri = g_strdup(newUri);
     if (events_queue != NULL)
         dispatch_async(events_queue, ^{
-        c_view.onUriChanged(@{ @"new_uri": [NSString stringWithUTF8String:new_uri] });
+            c_view.onUriChanged(@{ @"new_uri": [NSString stringWithUTF8String:new_uri] });
         });
 }
 
@@ -151,7 +162,7 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
     // Preparing surface
     [self createDrawableSurface];
     
@@ -165,7 +176,7 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
     configuration->onUriChanged = onUriChanged;
     configuration->onEOS = onEOS;
     configuration->onElementError = onElementError;
-
+    
     // Preparing pipeline
     rct_gst_init(configuration);
     
@@ -179,12 +190,14 @@ void onElementError(gchar *_source, gchar *_message, gchar *_debug_info) {
 // Memory management
 - (void)dealloc
 {
+    NSLog(@"Deallocate RCTGstPlayer");
     rct_gst_terminate();
     g_free(new_uri);
     g_free(source);
     g_free(message);
     g_free(debug_info);
-
+    g_free(audioLevel);
+    
     if (self->drawableSurface != NULL)
         self->drawableSurface = NULL;
 }

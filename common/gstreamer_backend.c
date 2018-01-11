@@ -323,6 +323,9 @@ void rct_gst_run_loop()
 void rct_gst_terminate()
 {
     /* Free resources */
+    
+    rct_gst_set_pipeline_state(GST_STATE_NULL);
+    
     if(video_sink != NULL)
         gst_object_unref(video_sink);
     
@@ -331,9 +334,6 @@ void rct_gst_terminate()
     
     if(drawable_surface != NULL)
         drawable_surface = NULL;
-    
-    rct_gst_set_pipeline_state(GST_STATE_NULL);
-    gst_object_unref(pipeline);
     
     g_source_remove(bus_watch_id);
     g_main_loop_unref(main_loop);
