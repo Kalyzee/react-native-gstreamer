@@ -14,17 +14,21 @@
 
 RCT_EXPORT_MODULE();
 
+gchar *g_uri = NULL;
+
 // Shared properties
 RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGstPlayerController)
 {
     NSString *uri = [RCTConvert NSString:json];
-    NSLog(@"RCTGstPlayer : URI : %s - LENGTH : %d", uri, uri.length);
+    g_uri = g_strdup([uri UTF8String]);
+    
+    NSLog(@"URI RCT_CUSTOM_VIEW : %s", g_uri);
     if (uri.length > 0)
-        rct_gst_set_uri((gchar *)[uri UTF8String]);
+        rct_gst_set_uri(g_uri);
 }
 RCT_CUSTOM_VIEW_PROPERTY(audioLevelRefreshRate, NSNumber, RCTGstPlayerController)
 {
-    gint* audioLevelRefreshRate = [[RCTConvert NSNumber:json] integerValue];
+    gint audioLevelRefreshRate = [[RCTConvert NSNumber:json] integerValue];
     rct_gst_set_audio_level_refresh_rate(audioLevelRefreshRate);
 }
 RCT_CUSTOM_VIEW_PROPERTY(isDebugging, BOOL, RCTGstPlayerController)
@@ -47,9 +51,6 @@ RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber 
     rct_gst_set_pipeline_state([_state intValue]);
 }
 
-RCT_EXPORT_METHOD(recreateView:(nonnull NSNumber *)reactTag){
-    [self->playerController recreateView];
-}
 
 // react-native init
 - (UIView *)view

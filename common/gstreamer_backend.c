@@ -13,7 +13,6 @@ GST_DEBUG_CATEGORY_STATIC(rct_gst_player);
 // Globals items
 RctGstAudioLevel* audio_level;
 RctGstConfiguration* configuration;
-pthread_t gst_app_thread;
 
 GstElement *pipeline;
 GMainLoop *main_loop;
@@ -21,7 +20,6 @@ guint bus_watch_id;
 GstBus *bus;
 
 // Video
-guintptr drawable_surface;
 GstVideoOverlay* video_overlay;
 
 // Audio
@@ -47,6 +45,7 @@ RctGstConfiguration *rct_gst_get_configuration()
         
         configuration->onInit = NULL;
         configuration->onEOS = NULL;
+        configuration->drawableSurface = NULL;
     }
     return configuration;
 }
@@ -64,13 +63,13 @@ void rct_gst_set_uri(gchar* _uri)
 {
     rct_gst_get_configuration()->uri = _uri;
     if (pipeline)
-        apply_uri();
+        rct_gst_apply_uri();
 }
 
 void rct_gst_set_audio_level_refresh_rate(gint audio_level_refresh_rate)
 {
     rct_gst_get_configuration()->audioLevelRefreshRate = audio_level_refresh_rate;
-    g_object_set(audio_level_element, "interval", audio_level_refresh_rate * 1000000, NULL);
+    // g_object_set(audio_level_element, "interval", audio_level_refresh_rate * 1000000, NULL);
 }
 
 void rct_gst_set_debugging(gboolean is_debugging)
@@ -84,24 +83,9 @@ void rct_gst_set_debugging(gboolean is_debugging)
  *********************/
 void rct_gst_set_drawable_surface(guintptr _drawableSurface)
 {
-    if(drawable_surface != NULL)
-        drawable_surface = NULL;
-    
-    drawable_surface = _drawableSurface;
-    
-    if(pipeline)
-    {
-        if (rct_gst_get_configuration()->isDebugging)
-            video_sink = gst_bin_get_by_name(pipeline, "video-sink");
-        else
-            video_sink = gst_element_factory_make("glimagesink", "video-sink");
-        
-        video_overlay = GST_VIDEO_OVERLAY(video_sink);
-        gst_video_overlay_prepare_window_handle(video_overlay);
-        
-        if (!rct_gst_get_configuration()->isDebugging)
-            g_object_set(GST_OBJECT(pipeline), "video-sink", video_sink, NULL);
-    }
+    g_print("rct_gst_set_drawable_surface\n");
+    rct_gst_get_configuration()->drawableSurface = _drawableSurface;
+    rct_gst_apply_drawable_surface();
 }
 
 /**********************
@@ -139,7 +123,13 @@ GstBusSyncReply cb_create_window(GstBus *bus, GstMessage *message, gpointer user
     if(!gst_is_video_overlay_prepare_window_handle_message(message))
         return GST_BUS_PASS;
     
-    gst_video_overlay_set_window_handle(video_overlay, drawable_surface);
+    g_print("cb_create_window\n");
+    if (video_overlay && rct_gst_get_configuration()->drawableSurface) {
+        g_print("cb_create_window -> ok\n");
+        gst_video_overlay_set_window_handle(video_overlay, rct_gst_get_configuration()->drawableSurface);
+    } else {
+        g_print("cb_create_window -> nok : overlay -> %p, surface -> %p\n", video_overlay, rct_gst_get_configuration()->drawableSurface);
+    }
     
     gst_message_unref(message);
     return GST_BUS_DROP;
@@ -288,7 +278,7 @@ GstStateChangeReturn rct_gst_set_pipeline_state(GstState state)
     return validity;
 }
 
-void rct_gst_init(RctGstConfiguration *configuration)
+void rct_gst_init()
 {
     gchar *launch_command;
 
@@ -304,7 +294,6 @@ void rct_gst_init(RctGstConfiguration *configuration)
     bus_watch_id = gst_bus_add_watch(bus, cb_bus_watch, NULL);
     
     // First time, need a surface to draw on - then use rct_gst_set_drawable_surface
-    rct_gst_set_drawable_surface(rct_gst_get_configuration()->initialDrawableSurface);
     gst_bus_set_sync_handler(bus,(GstBusSyncHandler)cb_create_window, pipeline, NULL);
     gst_object_unref(bus);
     
@@ -313,10 +302,28 @@ void rct_gst_init(RctGstConfiguration *configuration)
         audio_sink = create_audio_sink();
         g_object_set(pipeline, "audio-sink", audio_sink, NULL);
     }
+    
+    // Store video sink global items
+    if (rct_gst_get_configuration()->isDebugging)
+        video_sink = gst_bin_get_by_name(pipeline, "video-sink");
+    else
+        video_sink = gst_element_factory_make("glimagesink", "video-sink");
+
+    if (!rct_gst_get_configuration()->isDebugging)
+        g_object_set(GST_OBJECT(pipeline), "video-sink", video_sink, NULL);
+    
+    video_overlay = GST_VIDEO_OVERLAY(video_sink);
+    
+    g_print("Video sink : %p\n", video_sink);
+    g_print("Video overlay : %p\n", video_overlay);
 
     // Apply URI
-    if (!rct_gst_get_configuration()->isDebugging && pipeline != NULL)
-        apply_uri();
+    if (!rct_gst_get_configuration()->isDebugging && pipeline != NULL && rct_gst_get_configuration()->uri != NULL)
+        rct_gst_apply_uri();
+    
+    // Apply Drawable surface
+    if (pipeline != NULL & rct_gst_get_configuration()->drawableSurface != NULL)
+        rct_gst_apply_drawable_surface();
     
     if (rct_gst_get_configuration()->onInit) {
         rct_gst_get_configuration()->onInit();
@@ -327,32 +334,34 @@ void rct_gst_run_loop()
 {
     main_loop = g_main_loop_new(NULL, FALSE);
     g_main_loop_run(main_loop);
-}
+    
+    g_main_loop_unref (main_loop);
+    main_loop = NULL;
+    gst_element_set_state (pipeline, GST_STATE_NULL);
 
-void rct_gst_terminate()
-{
-    /* Free resources */
-    
-    rct_gst_set_pipeline_state(GST_STATE_NULL);
-    
     if(video_sink != NULL)
         gst_object_unref(video_sink);
     
     if(video_overlay != NULL)
         gst_object_unref(video_overlay);
     
-    if(drawable_surface != NULL)
-        drawable_surface = NULL;
+    if(rct_gst_get_configuration()->drawableSurface != NULL)
+        rct_gst_get_configuration()->drawableSurface = NULL;
     
     g_source_remove(bus_watch_id);
-    g_main_loop_unref(main_loop);
     
     g_free(configuration);
     g_free(audio_level);
-    
+
     pipeline = NULL;
     configuration = NULL;
     audio_level = NULL;
+}
+
+void rct_gst_terminate()
+{
+    /* Free resources */
+    g_main_loop_quit(main_loop);
 }
 
 gchar *rct_gst_get_info()
@@ -360,7 +369,13 @@ gchar *rct_gst_get_info()
     return gst_version_string();
 }
 
-void apply_uri()
+void rct_gst_apply_drawable_surface()
+{
+    g_print("rct_gst_apply_drawable_surface\n");
+    gst_video_overlay_prepare_window_handle(video_overlay);
+}
+
+void rct_gst_apply_uri()
 {
     rct_gst_set_pipeline_state(GST_STATE_READY);
     g_object_set(pipeline, "uri", rct_gst_get_configuration()->uri, NULL);

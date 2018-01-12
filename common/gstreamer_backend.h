@@ -12,7 +12,6 @@
 #include <math.h>
 #include <gst/gst.h>
 #include <gst/video/video.h>
-#include <pthread.h>
 
 // Audio level definition
 typedef struct {
@@ -26,7 +25,7 @@ typedef struct
 {
     gchar *uri;                                                     // Uri of the resource
     gint *audioLevelRefreshRate;                                    // Time in ms between each call of onVolumeChanged
-    guintptr initialDrawableSurface;                                // Pointer to drawable surface
+    guintptr drawableSurface;                                       // Pointer to drawable surface
     gboolean isDebugging;                                           // Loads debugging pipeline
     
     // Callbacks
@@ -51,11 +50,12 @@ void rct_gst_set_debugging(gboolean is_debugging);
 
 // Other
 GstStateChangeReturn rct_gst_set_pipeline_state(GstState state);
-void rct_gst_init(RctGstConfiguration *configuration);
+void rct_gst_init();
 void rct_gst_run_loop();
 void rct_gst_terminate();
 
 gchar *rct_gst_get_info();
-void apply_uri();
+void rct_gst_apply_drawable_surface();
+void rct_gst_apply_uri();
 
 #endif /* gstreamer_backend_h */

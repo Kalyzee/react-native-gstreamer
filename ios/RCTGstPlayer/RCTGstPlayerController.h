@@ -14,6 +14,4 @@
 @interface RCTGstPlayerController : UIViewController {
     RctGstParentView *_view;
 }
-- (void) recreateView;
-- (RctGstConfiguration *) getConfiguration;
 @end

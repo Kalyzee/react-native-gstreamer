@@ -12,10 +12,20 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <glib-object.h>
+#import <React/RCTViewManager.h>
 
 @interface EaglUIView : UIView {
     guintptr handle;
 }
+
+//react-native properties
+@property (nonatomic, copy) RCTBubblingEventBlock onPlayerInit;
+@property (nonatomic, copy) RCTBubblingEventBlock onStateChanged;
+@property (nonatomic, copy) RCTBubblingEventBlock onVolumeChanged;
+@property (nonatomic, copy) RCTBubblingEventBlock onUriChanged;
+@property (nonatomic, copy) RCTBubblingEventBlock onEOS;
+@property (nonatomic, copy) RCTBubblingEventBlock onElementError;
+
 
 // Getters
 - (guintptr) getHandle;

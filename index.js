@@ -28,10 +28,6 @@ export default class GstPlayer extends React.Component {
 
     appStateChanged = (nextAppState) => {
         if (this.appState.match(/inactive|background/) && nextAppState === 'active') {
-            // On iOS we need to recreate video sink to bypass a bug with vtdec when video freezes
-            if (Platform.OS === 'ios') {
-                // this.recreateView()
-            }
             this.play()
         } else {
             this.stop()
@@ -50,13 +46,6 @@ export default class GstPlayer extends React.Component {
     onStateChanged(_message) {
         const { old_state, new_state } = _message.nativeEvent
         this.currentGstState = new_state
-
-        if (old_state === GstState.PAUSED && new_state === GstState.READY) {
-
-            // On iOS we need to recreate video sink to bypass a bug with vtdec when video freezes
-            // if (Platform.OS === 'ios')
-                // this.recreateView()
-        }
 
         if (this.props.onStateChanged)
             this.props.onStateChanged(old_state, new_state)
@@ -121,15 +110,6 @@ export default class GstPlayer extends React.Component {
         this.setGstState(GstState.READY)
     }
 
-    // Helper methods
-    recreateView() {
-        UIManager.dispatchViewManagerCommand(
-            this.playerHandle,
-            UIManager.RCTGstPlayer.Commands.recreateView,
-            []
-        )
-    }
-
     render() {
         return (
             <RCTGstPlayer
@@ -178,7 +158,6 @@ GstPlayer.propTypes = {
     // Helper methods
     createDrawableSurface: PropTypes.func,
     destroyDrawableSurface: PropTypes.func,
-    recreateView: PropTypes.func,
 
     ...View.propTypes
 }

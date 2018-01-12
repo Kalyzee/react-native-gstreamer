@@ -19,14 +19,14 @@
     self = [super initWithFrame:frame];
     if (self) {
         self->handle = (guintptr)(id)self;
-        NSLog(@"Creating video surface with pointer : %lu", self->handle);
+        NSLog(@"Creating video surface : %@", self);
     }
     return self;
 }
 
 - (void)dealloc
 {
-    NSLog(@"Removing video surface with pointer : %lu", self->handle);
+    NSLog(@"Removing video surface : %@", self);
 }
 
 - (guintptr)getHandle
