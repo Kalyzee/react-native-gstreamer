@@ -14,7 +14,8 @@
     * Filter with name : "Other linker Flags"
     * Double click slowly on the field to edit it textually
     * Add (copy paste) the following flags : <i>
-        -lresolv -lstdc++ -framework CoreFoundation -framework Foundation  -framework AVFoundation -framework CoreMedia -framework CoreVideo -framework CoreAudio -framework AudioToolbox -weak_framework VideoToolbox -framework OpenGLES -framework AssetsLibrary -framework QuartzCore -framework AssetsLibrary</i>
+        -ObjC -lresolv -lstdc++ -framework CoreFoundation -framework Foundation  -framework AVFoundation -framework CoreMedia -framework CoreVideo -framework CoreAudio -framework AudioToolbox -weak_framework VideoToolbox -framework OpenGLES -framework AssetsLibrary -framework QuartzCore -framework AssetsLibrary</i>
+    * Filter "Enable Bitcode" and change its value to No
     * Now filter with "Framework Search Paths"
     * Add : "~/Library/Developer/GStreamer/iPhone.sdk"
     * Now select your project (under "TARGETS" item)
