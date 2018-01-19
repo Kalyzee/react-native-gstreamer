@@ -10,125 +10,98 @@
 // Log info
 GST_DEBUG_CATEGORY_STATIC(rct_gst_player);
 
-// Globals items
-RctGstAudioLevel* audio_level;
-RctGstConfiguration* configuration;
-
-GstElement *pipeline;
-GMainLoop *main_loop;
-guint bus_watch_id;
-GstBus *bus;
-
-// Video
-GstVideoOverlay* video_overlay;
-
-// Audio
-GstElement* audio_level_element;
-
-// Sinks
-GstElement *video_sink;
-GstElement *audio_sink;
-
-// Getters
-RctGstConfiguration *rct_gst_get_configuration()
-{
-    if (!configuration) {
-        configuration = g_malloc(sizeof(RctGstConfiguration));
-        configuration->audioLevelRefreshRate = 100;
-        configuration->uri = NULL;
-        configuration->isDebugging = FALSE;
-        
-        configuration->onElementError = NULL;
-        configuration->onStateChanged = NULL;
-        configuration->onVolumeChanged = NULL;
-        configuration->onUriChanged = NULL;
-        
-        configuration->onInit = NULL;
-        configuration->onEOS = NULL;
-        configuration->drawableSurface = NULL;
-    }
-    return configuration;
-}
-
-RctGstAudioLevel *rct_gst_get_audio_level()
-{
-    if (!audio_level) {
-        audio_level = g_malloc(sizeof(RctGstAudioLevel));
-    }
-    return audio_level;
-}
-
 // Setters
-void rct_gst_set_uri(gchar* _uri)
+void rct_gst_set_uri(RctGstUserData* user_data, gchar* _uri)
 {
-    rct_gst_get_configuration()->uri = _uri;
-    if (pipeline)
-        rct_gst_apply_uri();
+    user_data->configuration->uri = _uri;
+    if (user_data->pipeline && !user_data->configuration->isDebugging)
+        rct_gst_apply_uri(user_data);
 }
 
-void rct_gst_set_audio_level_refresh_rate(gint audio_level_refresh_rate)
+void rct_gst_set_audio_level_refresh_rate(RctGstUserData* user_data, gint audio_level_refresh_rate)
 {
-    rct_gst_get_configuration()->audioLevelRefreshRate = audio_level_refresh_rate;
+    user_data->configuration->audioLevelRefreshRate = audio_level_refresh_rate;
     // g_object_set(audio_level_element, "interval", audio_level_refresh_rate * 1000000, NULL);
 }
 
-void rct_gst_set_debugging(gboolean is_debugging)
+void rct_gst_set_debugging(RctGstUserData* user_data, gboolean is_debugging)
 {
-    rct_gst_get_configuration()->isDebugging = is_debugging;
+    user_data->configuration->isDebugging = is_debugging;
     // TODO : Recreate pipeline...
+}
+
+// User data
+RctGstUserData *rct_gst_init_user_data()
+{
+    // Create user data structure
+    RctGstUserData *user_data = g_malloc(sizeof(RctGstUserData));
+    
+    // Create audio level structure
+    user_data->audio_level = g_malloc(sizeof(RctGstAudioLevel));
+    
+    // Create configuration structure
+    user_data->configuration = g_malloc(sizeof(RctGstConfiguration));
+    user_data->configuration->audioLevelRefreshRate = 100;
+    user_data->configuration->isDebugging = FALSE;
+    
+    return user_data;
+}
+
+void rct_gst_free_user_data(RctGstUserData *user_data)
+{
+    g_free(user_data->configuration);
+    g_free(user_data->audio_level);
+    g_free(user_data);
 }
 
 /**********************
  VIDEO HANDLING METHODS
  *********************/
-void rct_gst_set_drawable_surface(guintptr _drawableSurface)
+void rct_gst_set_drawable_surface(RctGstUserData* user_data, guintptr _drawableSurface)
 {
     g_print("rct_gst_set_drawable_surface\n");
-    rct_gst_get_configuration()->drawableSurface = _drawableSurface;
-    rct_gst_apply_drawable_surface();
+    user_data->configuration->drawableSurface = _drawableSurface;
+    rct_gst_apply_drawable_surface(user_data);
 }
 
 /**********************
  AUDIO HANDLING METHODS
  *********************/
-GstElement* create_audio_sink()
+GstElement* create_audio_sink(RctGstUserData* user_data)
 {
-    // Prepare audio level structure
-    rct_gst_get_audio_level();
-    
     // New audio bin
     GstElement *leveledsink = gst_bin_new("leveledsink");
     
     // Create an audio level analyzing filter with 100ms refresh rate
-    audio_level_element = gst_element_factory_make("level", NULL);
+    user_data->audio_level_element = gst_element_factory_make("level", NULL);
     
     // Creating audio sink
     GstElement *audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");
-    gst_bin_add_many(GST_BIN(leveledsink), audio_level_element, audio_sink, NULL);
+    gst_bin_add_many(GST_BIN(leveledsink), user_data->audio_level_element, user_data->audio_sink, NULL);
     
     // Linking them
-    if(!gst_element_link(audio_level_element, audio_sink))
+    if(!gst_element_link(user_data->audio_level_element, user_data->audio_sink))
         g_printerr("Failed to link audio_level and audio_sink");
     
     // Creating pad and ghost pad
-    GstPad *levelPad = gst_element_get_static_pad(audio_level_element, "sink");
+    GstPad *levelPad = gst_element_get_static_pad(user_data->audio_level_element, "sink");
     gst_element_add_pad(leveledsink, gst_ghost_pad_new("sink", levelPad));
     gst_object_unref(GST_OBJECT(levelPad));
     
     return leveledsink;
 }
 
-GstBusSyncReply cb_create_window(GstBus *bus, GstMessage *message, gpointer user_data)
+GstBusSyncReply cb_create_window(GstBus *bus, GstMessage *message, RctGstUserData* user_data)
 {
     if(!gst_is_video_overlay_prepare_window_handle_message(message))
         return GST_BUS_PASS;
     
     g_print("cb_create_window\n");
-    if (video_overlay && rct_gst_get_configuration()->drawableSurface) {
+    if (user_data->video_overlay) {
         g_print("cb_create_window -> ok\n");
-        gst_video_overlay_set_window_handle(video_overlay, rct_gst_get_configuration()->drawableSurface);
+        gst_video_overlay_set_window_handle(user_data->video_overlay, user_data->configuration->drawableSurface);
     } else {
-        g_print("cb_create_window -> nok : overlay -> %p, surface -> %p\n", video_overlay, rct_gst_get_configuration()->drawableSurface);
+        g_print("cb_create_window -> nok : overlay -> %p, surface -> %p\n", user_data->video_overlay, user_data->configuration->drawableSurface);
     }
     
     gst_message_unref(message);
@@ -138,44 +111,44 @@ GstBusSyncReply cb_create_window(GstBus *bus, GstMessage *message, gpointer user
 /*********************
  APPLICATION CALLBACKS
  ********************/
-static void cb_error(GstBus *bus, GstMessage *msg, gpointer *user_data)
+static void cb_error(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
     GError *err;
     gchar *debug_info;
     
     gst_message_parse_error(msg, &err, &debug_info);
     g_printerr("Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
-    if (rct_gst_get_configuration()->onElementError) {
-        rct_gst_get_configuration()->onElementError(GST_OBJECT_NAME(msg->src), err->message, debug_info);
+    if (user_data->configuration->onElementError) {
+        user_data->configuration->onElementError(GST_OBJECT_NAME(msg->src), err->message, debug_info);
     }
     g_clear_error(&err);
     g_free(debug_info);
-    rct_gst_set_pipeline_state(GST_STATE_NULL);
+    rct_gst_set_pipeline_state(user_data, GST_STATE_NULL);
 }
 
-static void cb_eos(GstBus *bus, GstMessage *msg, gpointer *user_data)
+static void cb_eos(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
-    if (rct_gst_get_configuration()->onEOS) {
-        rct_gst_get_configuration()->onEOS();
+    if (user_data->configuration->onEOS) {
+        user_data->configuration->onEOS();
     }
 }
 
-static void cb_state_changed(GstBus *bus, GstMessage *msg, gpointer *user_data)
+static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
     GstState old_state, new_state, pending_state;
     gst_message_parse_state_changed(msg, &old_state, &new_state, &pending_state);
 
     // Only pay attention to messages coming from the pipeline, not its children
-    if(GST_MESSAGE_SRC(msg) == GST_OBJECT(pipeline))
+    if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->pipeline))
     {
-        if (rct_gst_get_configuration()->onStateChanged) {
-            rct_gst_get_configuration()->onStateChanged(old_state, new_state);
+        if (user_data->configuration->onStateChanged) {
+            user_data->configuration->onStateChanged(old_state, new_state);
         }
     }
     
 }
 
-static gboolean cb_message_element(GstBus *bus, GstMessage *msg, gpointer *user_data)
+static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
     if(msg->type == GST_MESSAGE_ELEMENT)
     {
@@ -205,20 +178,20 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, gpointer *user_
             // RMS
             value = g_value_array_get_nth(rms_arr, 0);
             rms_dB = g_value_get_double(value);
-            rct_gst_get_audio_level()->rms = pow(10, rms_dB / 20); // converting from dB to normal gives us a value between 0.0 and 1.0
+            user_data->audio_level->rms = pow(10, rms_dB / 20); // converting from dB to normal gives us a value between 0.0 and 1.0
             
             // PEAK
             value = g_value_array_get_nth(peak_arr, 0);
             peak_dB = g_value_get_double(value);
-            rct_gst_get_audio_level()->peak = pow(10, peak_dB / 20); // converting from dB to normal gives us a value between 0.0 and 1.0
+            user_data->audio_level->peak = pow(10, peak_dB / 20); // converting from dB to normal gives us a value between 0.0 and 1.0
             
             // DECAY
             value = g_value_array_get_nth(decay_arr, 0);
             decay_dB = g_value_get_double(value);
-            rct_gst_get_audio_level()->decay = pow(10, decay_dB / 20); // converting from dB to normal gives us a value between 0.0 and 1.0
+            user_data->audio_level->decay = pow(10, decay_dB / 20); // converting from dB to normal gives us a value between 0.0 and 1.0
             
-            if (rct_gst_get_configuration()->onVolumeChanged){
-                rct_gst_get_configuration()->onVolumeChanged(rct_gst_get_audio_level());
+            if (user_data->configuration->onVolumeChanged) {
+                user_data->configuration->onVolumeChanged(user_data->audio_level);
             }
         }
     }
@@ -226,16 +199,16 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, gpointer *user_
 }
 
 // Remove latency as much as possible
-static void cb_setup_source(GstElement *pipeline, GstElement *source, void *data) {
+static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUserData* user_data) {
     g_object_set (source, "latency", 0, NULL);
 }
 
-static gboolean cb_async_done(GstBus *bus, GstMessage *message, gpointer user_data)
+static gboolean cb_async_done(GstBus *bus, GstMessage *message, RctGstUserData* user_data)
 {
     return TRUE;
 }
 
-static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, gpointer user_data)
+static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* user_data)
 {
     switch (GST_MESSAGE_TYPE(message))
     {
@@ -269,99 +242,88 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, gpointer user_dat
 /*************
  OTHER METHODS
  ************/
-GstStateChangeReturn rct_gst_set_pipeline_state(GstState state)
+GstStateChangeReturn rct_gst_set_pipeline_state(RctGstUserData* user_data, GstState state)
 {
     g_print("Pipeline state requested : %s\n", gst_element_state_get_name(state));
-    GstStateChangeReturn validity = gst_element_set_state(pipeline, state);
+    GstStateChangeReturn validity = gst_element_set_state(user_data->pipeline, state);
     g_print("Validity : %s\n", gst_element_state_change_return_get_name(validity));
 
     return validity;
 }
 
-void rct_gst_init()
+void rct_gst_init(RctGstUserData* user_data)
 {
     gchar *launch_command;
+    
+    user_data->main_loop = g_main_loop_new(NULL, FALSE);
 
     // Prepare playbin pipeline. If playbin not working, will display an error video signal
-    launch_command = (!rct_gst_get_configuration()->isDebugging) ? "playbin" : "videotestsrc ! glimagesink name=video-sink";
-    pipeline = gst_parse_launch(launch_command, NULL);
+    launch_command = (!user_data->configuration->isDebugging) ? "playbin" : "videotestsrc ! glimagesink name=video-sink";
+    user_data->pipeline = gst_parse_launch(launch_command, NULL);
     
     // Remove latency as much as possible
-    g_signal_connect(G_OBJECT(pipeline), "source-setup", (GCallback) cb_setup_source, NULL);
+    if (!user_data->configuration->isDebugging) {
+        g_signal_connect(G_OBJECT(user_data->pipeline), "source-setup", (GCallback) cb_setup_source, user_data);
+    }
     
     // Preparing bus
-    bus = gst_element_get_bus(pipeline);
-    bus_watch_id = gst_bus_add_watch(bus, cb_bus_watch, NULL);
+    user_data->bus = gst_element_get_bus(user_data->pipeline);
+    user_data->bus_watch_id = gst_bus_add_watch(user_data->bus, cb_bus_watch, user_data);
     
     // First time, need a surface to draw on - then use rct_gst_set_drawable_surface
-    gst_bus_set_sync_handler(bus,(GstBusSyncHandler)cb_create_window, pipeline, NULL);
-    gst_object_unref(bus);
+    gst_bus_set_sync_handler(user_data->bus,(GstBusSyncHandler)cb_create_window, user_data, NULL);
+    gst_object_unref(user_data->bus);
     
     // Change audio sink with a custom one(Allow volume analysis)
-    if (!rct_gst_get_configuration()->isDebugging) {
-        audio_sink = create_audio_sink();
-        g_object_set(pipeline, "audio-sink", audio_sink, NULL);
+    if (!user_data->configuration->isDebugging) {
+        user_data->audio_sink = create_audio_sink(user_data);
+        g_object_set(user_data->pipeline, "audio-sink", user_data->audio_sink, NULL);
     }
     
     // Store video sink global items
-    if (rct_gst_get_configuration()->isDebugging)
-        video_sink = gst_bin_get_by_name(pipeline, "video-sink");
+    if (user_data->configuration->isDebugging)
+        user_data->video_sink = gst_bin_get_by_name(user_data->pipeline, "video-sink");
     else
-        video_sink = gst_element_factory_make("glimagesink", "video-sink");
+        user_data->video_sink = gst_element_factory_make("glimagesink", "video-sink");
 
-    if (!rct_gst_get_configuration()->isDebugging)
-        g_object_set(GST_OBJECT(pipeline), "video-sink", video_sink, NULL);
+    if (!user_data->configuration->isDebugging)
+        g_object_set(GST_OBJECT(user_data->pipeline), "video-sink", user_data->video_sink, NULL);
     
-    video_overlay = GST_VIDEO_OVERLAY(video_sink);
+    user_data->video_overlay = GST_VIDEO_OVERLAY(user_data->video_sink);
     
-    g_print("Video sink : %p\n", video_sink);
-    g_print("Video overlay : %p\n", video_overlay);
+    g_print("Video sink : %p\n", user_data->video_sink);
+    g_print("Video overlay : %p\n", user_data->video_overlay);
 
     // Apply URI
-    if (!rct_gst_get_configuration()->isDebugging && pipeline != NULL && rct_gst_get_configuration()->uri != NULL)
-        rct_gst_apply_uri();
+    if (!user_data->configuration->isDebugging && user_data->pipeline != NULL && user_data->configuration->uri != NULL)
+        rct_gst_apply_uri(user_data);
     
     // Apply Drawable surface
-    if (pipeline != NULL & rct_gst_get_configuration()->drawableSurface != NULL)
-        rct_gst_apply_drawable_surface();
-    
-    if (rct_gst_get_configuration()->onInit) {
-        rct_gst_get_configuration()->onInit();
+    if (user_data->pipeline != NULL & user_data->configuration->drawableSurface != NULL)
+        rct_gst_apply_drawable_surface(user_data);
+}
+
+void rct_gst_run_loop(RctGstUserData* user_data)
+{
+    if (user_data->configuration->onInit) {
+        user_data->configuration->onInit();
     }
+    
+    g_main_loop_run(user_data->main_loop);
+    g_main_loop_unref(user_data->main_loop);
+    
+    gst_element_set_state (user_data->pipeline, GST_STATE_NULL);
+    gst_object_unref(user_data->pipeline);
+
+    gst_object_unref(user_data->video_sink);
+    gst_object_unref(user_data->video_overlay);
+
+    g_source_remove(user_data->bus_watch_id);
 }
 
-void rct_gst_run_loop()
+void rct_gst_terminate(RctGstUserData* user_data)
 {
-    main_loop = g_main_loop_new(NULL, FALSE);
-    g_main_loop_run(main_loop);
-    
-    g_main_loop_unref (main_loop);
-    main_loop = NULL;
-    gst_element_set_state (pipeline, GST_STATE_NULL);
-
-    if(video_sink != NULL)
-        gst_object_unref(video_sink);
-    
-    if(video_overlay != NULL)
-        gst_object_unref(video_overlay);
-    
-    if(rct_gst_get_configuration()->drawableSurface != NULL)
-        rct_gst_get_configuration()->drawableSurface = NULL;
-    
-    g_source_remove(bus_watch_id);
-    
-    g_free(configuration);
-    g_free(audio_level);
-
-    pipeline = NULL;
-    configuration = NULL;
-    audio_level = NULL;
-}
-
-void rct_gst_terminate()
-{
-    /* Free resources */
-    g_main_loop_quit(main_loop);
+    g_main_loop_quit(user_data->main_loop);
 }
 
 gchar *rct_gst_get_info()
@@ -369,17 +331,17 @@ gchar *rct_gst_get_info()
     return gst_version_string();
 }
 
-void rct_gst_apply_drawable_surface()
+void rct_gst_apply_drawable_surface(RctGstUserData* user_data)
 {
     g_print("rct_gst_apply_drawable_surface\n");
-    gst_video_overlay_prepare_window_handle(video_overlay);
+    gst_video_overlay_prepare_window_handle(user_data->video_overlay);
 }
 
-void rct_gst_apply_uri()
+void rct_gst_apply_uri(RctGstUserData* user_data)
 {
-    rct_gst_set_pipeline_state(GST_STATE_READY);
-    g_object_set(pipeline, "uri", rct_gst_get_configuration()->uri, NULL);
-    if (rct_gst_get_configuration()->onUriChanged) {
-        rct_gst_get_configuration()->onUriChanged(rct_gst_get_configuration()->uri);
+    rct_gst_set_pipeline_state(user_data, GST_STATE_READY);
+    g_object_set(user_data->pipeline, "uri", user_data->configuration->uri, NULL);
+    if (user_data->configuration->onUriChanged) {
+        user_data->configuration->onUriChanged(user_data->configuration->uri);
     }
 }

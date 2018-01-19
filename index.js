@@ -54,8 +54,6 @@ export default class GstPlayer extends React.Component {
     onVolumeChanged(_message) {
         const { rms, peak, decay } = _message.nativeEvent
 
-        console.log("onVolumeChanged", rms, peak, decay)
-
         if (this.props.onVolumeChanged)
             this.props.onVolumeChanged(rms, peak, decay)
     }
@@ -82,10 +80,6 @@ export default class GstPlayer extends React.Component {
 
         if (this.props.onElementError)
             this.props.onElementError(source, message, debug_info)
-    }
-
-    shouldComponentUpdate() {
-        return true
     }
 
     // Methods

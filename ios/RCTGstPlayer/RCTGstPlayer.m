@@ -24,33 +24,40 @@ RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGstPlayerController)
     
     NSLog(@"URI RCT_CUSTOM_VIEW : %s", g_uri);
     if (uri.length > 0)
-        rct_gst_set_uri(g_uri);
+        [[self getController] setUri:g_uri];
 }
 RCT_CUSTOM_VIEW_PROPERTY(audioLevelRefreshRate, NSNumber, RCTGstPlayerController)
 {
     gint audioLevelRefreshRate = [[RCTConvert NSNumber:json] integerValue];
-    rct_gst_set_audio_level_refresh_rate(audioLevelRefreshRate);
+    [[self getController] setAudioLevelRefreshRate:audioLevelRefreshRate];
 }
 RCT_CUSTOM_VIEW_PROPERTY(isDebugging, BOOL, RCTGstPlayerController)
 {
     gboolean isDebugging = [RCTConvert BOOL:json];
-    rct_gst_set_debugging(isDebugging);
+    [[self getController] setDebugging:isDebugging];
 }
 
 // Shared events
+/*
 RCT_EXPORT_VIEW_PROPERTY(onPlayerInit, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onStateChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onVolumeChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onUriChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onEOS, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onElementError, RCTBubblingEventBlock)
+ */
 
 // Methods
 RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber *)state) {
     NSNumber *_state = [RCTConvert NSNumber:state];
-    rct_gst_set_pipeline_state([_state intValue]);
+    [[self getController] setPipelineState:[_state intValue]];
 }
 
+// Get controller or create if not existing
+- (RCTGstPlayerController *) getController
+{
+    return self->playerController;
+}
 
 // react-native init
 - (UIView *)view
@@ -58,11 +65,10 @@ RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber 
     // Init GStreamer
     gst_ios_init();
     
-    // Init controller
     self->playerController = [[RCTGstPlayerController alloc] init];
     
     // Return view
-    return [self->playerController view];
+    return [[EaglUIView alloc] init];
 }
 
 @end

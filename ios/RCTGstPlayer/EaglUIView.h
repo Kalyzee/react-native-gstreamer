@@ -13,6 +13,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <glib-object.h>
 #import <React/RCTViewManager.h>
+#import "DrawableSurfaceDelegate.h"
 
 @interface EaglUIView : UIView {
     guintptr handle;

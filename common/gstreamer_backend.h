@@ -38,24 +38,47 @@ typedef struct
                           gchar *debug_info);
 } RctGstConfiguration;
 
-// Getters
-RctGstConfiguration *rct_gst_get_configuration();
-RctGstAudioLevel *rct_gst_get_audio_level();
+// User data definition
+typedef struct {
+    
+    // Globals items
+    RctGstAudioLevel* audio_level;
+    RctGstConfiguration* configuration;
+    
+    GMainContext *context;
+    GstElement *pipeline;
+    GMainLoop *main_loop;
+    guint bus_watch_id;
+    GstBus *bus;
+    
+    // Video
+    GstVideoOverlay* video_overlay;
+    
+    // Audio
+    GstElement* audio_level_element;
+    
+    // Sinks
+    GstElement *video_sink;
+    GstElement *audio_sink;
+} RctGstUserData;
 
 // Setters
-void rct_gst_set_drawable_surface(guintptr _drawableSurface);
-void rct_gst_set_uri(gchar* _uri);
-void rct_gst_set_audio_level_refresh_rate(gint rct_gst_set_audio_level_refresh_rate);
-void rct_gst_set_debugging(gboolean is_debugging);
+void rct_gst_set_drawable_surface(RctGstUserData* user_data, guintptr _drawableSurface);
+void rct_gst_set_uri(RctGstUserData* user_data, gchar* _uri);
+void rct_gst_set_audio_level_refresh_rate(RctGstUserData* user_data, gint rct_gst_set_audio_level_refresh_rate);
+void rct_gst_set_debugging(RctGstUserData* user_data, gboolean is_debugging);
+
+RctGstUserData *rct_gst_init_user_data();
+void rct_gst_free_user_data(RctGstUserData* user_data);
 
 // Other
-GstStateChangeReturn rct_gst_set_pipeline_state(GstState state);
-void rct_gst_init();
-void rct_gst_run_loop();
-void rct_gst_terminate();
+GstStateChangeReturn rct_gst_set_pipeline_state(RctGstUserData* user_data, GstState state);
+void rct_gst_init(RctGstUserData* user_data);
+void rct_gst_run_loop(RctGstUserData* user_data);
+void rct_gst_terminate(RctGstUserData* user_data);
 
 gchar *rct_gst_get_info();
-void rct_gst_apply_drawable_surface();
-void rct_gst_apply_uri();
+void rct_gst_apply_drawable_surface(RctGstUserData* user_data);
+void rct_gst_apply_uri(RctGstUserData* user_data);
 
 #endif /* gstreamer_backend_h */

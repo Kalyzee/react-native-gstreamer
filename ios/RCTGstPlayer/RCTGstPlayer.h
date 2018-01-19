@@ -18,6 +18,9 @@
 {
     RCTGstPlayerController* playerController;
 }
+
+- (RCTGstPlayerController *)getController;
+
 @end
 
 #endif /* RCTGstPlayer_h */
