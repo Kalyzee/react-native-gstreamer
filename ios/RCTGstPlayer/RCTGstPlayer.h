@@ -11,16 +11,11 @@
 
 #import <React/RCTViewManager.h>
 #import <Foundation/Foundation.h>
-#import "RCTGstPlayerController.h"
 #import "gst_ios_init.h"
+#import "RCTGstPlayerView.h"
+#import "RCTGstPlayerDelegate.h"
 
 @interface RCTGstPlayer : RCTViewManager
-{
-    RCTGstPlayerController* playerController;
-}
-
-- (RCTGstPlayerController *)getController;
-
 @end
 
 #endif /* RCTGstPlayer_h */

@@ -27,6 +27,7 @@ typedef struct
     gint *audioLevelRefreshRate;                                    // Time in ms between each call of onVolumeChanged
     guintptr drawableSurface;                                       // Pointer to drawable surface
     gboolean isDebugging;                                           // Loads debugging pipeline
+    gdouble volume;                                                 // Volume of the resource
     
     // Callbacks
     void(*onInit)(void);                                            // Called when the player is ready
@@ -60,6 +61,10 @@ typedef struct {
     // Sinks
     GstElement *video_sink;
     GstElement *audio_sink;
+    
+    // Misc elements
+    GstElement *volume_element;         // Playbin and debugging pipelines have different components for volume level setters
+    GstElement *audiotestsrc;           // For debugging only
 } RctGstUserData;
 
 // Setters
@@ -67,6 +72,7 @@ void rct_gst_set_drawable_surface(RctGstUserData* user_data, guintptr _drawableS
 void rct_gst_set_uri(RctGstUserData* user_data, gchar* _uri);
 void rct_gst_set_audio_level_refresh_rate(RctGstUserData* user_data, gint rct_gst_set_audio_level_refresh_rate);
 void rct_gst_set_debugging(RctGstUserData* user_data, gboolean is_debugging);
+void rct_gst_set_volume(RctGstUserData* user_data, gdouble volume);
 
 RctGstUserData *rct_gst_init_user_data();
 void rct_gst_free_user_data(RctGstUserData* user_data);

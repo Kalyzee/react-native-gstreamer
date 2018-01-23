@@ -6,6 +6,7 @@
 //
 
 #include "gstreamer_backend.h"
+#include <stdlib.h>
 
 // Log info
 GST_DEBUG_CATEGORY_STATIC(rct_gst_player);
@@ -21,7 +22,7 @@ void rct_gst_set_uri(RctGstUserData* user_data, gchar* _uri)
 void rct_gst_set_audio_level_refresh_rate(RctGstUserData* user_data, gint audio_level_refresh_rate)
 {
     user_data->configuration->audioLevelRefreshRate = audio_level_refresh_rate;
-    // g_object_set(audio_level_element, "interval", audio_level_refresh_rate * 1000000, NULL);
+    g_object_set(user_data->audio_level_element, "interval", audio_level_refresh_rate * 1000000, NULL);
 }
 
 void rct_gst_set_debugging(RctGstUserData* user_data, gboolean is_debugging)
@@ -30,28 +31,38 @@ void rct_gst_set_debugging(RctGstUserData* user_data, gboolean is_debugging)
     // TODO : Recreate pipeline...
 }
 
+void rct_gst_set_volume(RctGstUserData* user_data, gdouble volume)
+{
+    user_data->configuration->volume = volume;
+    g_print("New volume : %f for %p", user_data->configuration->volume, user_data->audio_sink);
+    g_object_set(user_data->volume_element, "volume", user_data->configuration->volume, NULL);
+}
+
 // User data
 RctGstUserData *rct_gst_init_user_data()
 {
     // Create user data structure
-    RctGstUserData *user_data = g_malloc(sizeof(RctGstUserData));
-    
-    // Create audio level structure
-    user_data->audio_level = g_malloc(sizeof(RctGstAudioLevel));
+    RctGstUserData *user_data = calloc(1, sizeof(RctGstUserData));
     
     // Create configuration structure
-    user_data->configuration = g_malloc(sizeof(RctGstConfiguration));
+    user_data->configuration = calloc(1, sizeof(RctGstConfiguration));
+    user_data->configuration->uri = calloc(1, sizeof(gchar));
     user_data->configuration->audioLevelRefreshRate = 100;
     user_data->configuration->isDebugging = FALSE;
+    
+    // Create audio level structure
+    user_data->audio_level = calloc(1, sizeof(RctGstAudioLevel));
     
     return user_data;
 }
 
 void rct_gst_free_user_data(RctGstUserData *user_data)
 {
-    g_free(user_data->configuration);
-    g_free(user_data->audio_level);
-    g_free(user_data);
+    free(user_data->configuration->uri);
+    
+    free(user_data->configuration);
+    free(user_data->audio_level);
+    free(user_data);
 }
 
 /**********************
@@ -59,7 +70,6 @@ void rct_gst_free_user_data(RctGstUserData *user_data)
  *********************/
 void rct_gst_set_drawable_surface(RctGstUserData* user_data, guintptr _drawableSurface)
 {
-    g_print("rct_gst_set_drawable_surface\n");
     user_data->configuration->drawableSurface = _drawableSurface;
     rct_gst_apply_drawable_surface(user_data);
 }
@@ -76,7 +86,7 @@ GstElement* create_audio_sink(RctGstUserData* user_data)
     user_data->audio_level_element = gst_element_factory_make("level", NULL);
     
     // Creating audio sink
-    GstElement *audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");
+    user_data->audio_sink = gst_element_factory_make("autoaudiosink", "audio_sink");
     gst_bin_add_many(GST_BIN(leveledsink), user_data->audio_level_element, user_data->audio_sink, NULL);
     
     // Linking them
@@ -137,7 +147,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
 {
     GstState old_state, new_state, pending_state;
     gst_message_parse_state_changed(msg, &old_state, &new_state, &pending_state);
-
+    
     // Only pay attention to messages coming from the pipeline, not its children
     if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->pipeline))
     {
@@ -244,10 +254,14 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* u
  ************/
 GstStateChangeReturn rct_gst_set_pipeline_state(RctGstUserData* user_data, GstState state)
 {
-    g_print("Pipeline state requested : %s\n", gst_element_state_get_name(state));
-    GstStateChangeReturn validity = gst_element_set_state(user_data->pipeline, state);
-    g_print("Validity : %s\n", gst_element_state_change_return_get_name(validity));
-
+    GstState currentState;
+    GstStateChangeReturn validity;
+    
+    gst_element_get_state(user_data->pipeline, &currentState, NULL, 0);
+    if (state != currentState) {
+        g_print("Pipeline state requested : %s\n", gst_element_state_get_name(state));
+        validity = gst_element_set_state(user_data->pipeline, state);
+    }
     return validity;
 }
 
@@ -256,7 +270,7 @@ void rct_gst_init(RctGstUserData* user_data)
     gchar *launch_command;
     
     user_data->main_loop = g_main_loop_new(NULL, FALSE);
-
+    
     // Prepare playbin pipeline. If playbin not working, will display an error video signal
     launch_command = (!user_data->configuration->isDebugging) ? "playbin" : "videotestsrc ! glimagesink name=video-sink";
     user_data->pipeline = gst_parse_launch(launch_command, NULL);
@@ -274,28 +288,34 @@ void rct_gst_init(RctGstUserData* user_data)
     gst_bus_set_sync_handler(user_data->bus,(GstBusSyncHandler)cb_create_window, user_data, NULL);
     gst_object_unref(user_data->bus);
     
-    // Change audio sink with a custom one(Allow volume analysis)
-    if (!user_data->configuration->isDebugging) {
-        user_data->audio_sink = create_audio_sink(user_data);
+    // Change audio sink with a custom one (Allow volume analysis)
+    user_data->audio_sink = create_audio_sink(user_data);
+
+    // Create necessary elements to have volume analysis and sound test while debugging
+    if (user_data->configuration->isDebugging) {
+        user_data->audiotestsrc = gst_element_factory_make("audiotestsrc", "audiotestsrc");
+        user_data->volume_element = user_data->audiotestsrc;
+        gst_bin_add_many(GST_BIN(user_data->pipeline), user_data->audiotestsrc, user_data->audio_sink, NULL);
+        gst_element_link(user_data->audiotestsrc, user_data->audio_sink);
+    
+    // Create necessary elements to have volume analysis on playbin
+    } else {
         g_object_set(user_data->pipeline, "audio-sink", user_data->audio_sink, NULL);
+        user_data->volume_element = user_data->pipeline;
     }
     
     // Store video sink global items
-    if (user_data->configuration->isDebugging)
+    if (user_data->configuration->isDebugging) {
         user_data->video_sink = gst_bin_get_by_name(user_data->pipeline, "video-sink");
-    else
+    } else {
         user_data->video_sink = gst_element_factory_make("glimagesink", "video-sink");
-
-    if (!user_data->configuration->isDebugging)
         g_object_set(GST_OBJECT(user_data->pipeline), "video-sink", user_data->video_sink, NULL);
+    }
     
     user_data->video_overlay = GST_VIDEO_OVERLAY(user_data->video_sink);
     
-    g_print("Video sink : %p\n", user_data->video_sink);
-    g_print("Video overlay : %p\n", user_data->video_overlay);
-
     // Apply URI
-    if (!user_data->configuration->isDebugging && user_data->pipeline != NULL && user_data->configuration->uri != NULL)
+    if (!user_data->configuration->isDebugging && user_data->configuration->uri && g_strcmp0("", user_data->configuration->uri) != 0)
         rct_gst_apply_uri(user_data);
     
     // Apply Drawable surface
@@ -314,11 +334,13 @@ void rct_gst_run_loop(RctGstUserData* user_data)
     
     gst_element_set_state (user_data->pipeline, GST_STATE_NULL);
     gst_object_unref(user_data->pipeline);
-
+    
     gst_object_unref(user_data->video_sink);
     gst_object_unref(user_data->video_overlay);
-
+    
     g_source_remove(user_data->bus_watch_id);
+    
+    rct_gst_free_user_data(user_data);
 }
 
 void rct_gst_terminate(RctGstUserData* user_data)
@@ -333,7 +355,6 @@ gchar *rct_gst_get_info()
 
 void rct_gst_apply_drawable_surface(RctGstUserData* user_data)
 {
-    g_print("rct_gst_apply_drawable_surface\n");
     gst_video_overlay_prepare_window_handle(user_data->video_overlay);
 }
 
@@ -341,6 +362,7 @@ void rct_gst_apply_uri(RctGstUserData* user_data)
 {
     rct_gst_set_pipeline_state(user_data, GST_STATE_READY);
     g_object_set(user_data->pipeline, "uri", user_data->configuration->uri, NULL);
+    g_print("URI : %s\n", user_data->configuration->uri);
     if (user_data->configuration->onUriChanged) {
         user_data->configuration->onUriChanged(user_data->configuration->uri);
     }

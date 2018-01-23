@@ -1,5 +1,13 @@
 import React from 'react'
-import { requireNativeComponent, Text, View, UIManager, findNodeHandle, AppState, Platform } from 'react-native'
+import {
+    requireNativeComponent,
+    View,
+    UIManager,
+    findNodeHandle,
+    AppState,
+    Platform,
+    StyleSheet
+} from 'react-native'
 
 const PropTypes = require('prop-types')
 
@@ -26,6 +34,13 @@ export default class GstPlayer extends React.Component {
         AppState.removeEventListener('change', this.appStateChanged)
     }
 
+    /*
+    shouldComponentUpdate(nextProps, nextState) {
+        const { width, height } = this.props
+        return width !== nextProps.width || height !== nextProps.height;
+    }
+    */
+
     appStateChanged = (nextAppState) => {
         if (this.appState.match(/inactive|background/) && nextAppState === 'active') {
             this.play()
@@ -41,6 +56,9 @@ export default class GstPlayer extends React.Component {
 
         if (this.props.onPlayerInit)
             this.props.onPlayerInit()
+
+        if (this.props.autoPlay)
+            this.play();
     }
 
     onStateChanged(_message) {
@@ -106,23 +124,30 @@ export default class GstPlayer extends React.Component {
 
     render() {
         return (
-            <RCTGstPlayer
-                autoPlay={this.props.autoPlay}
-                uri={this.props.uri || undefined}
-                audioLevelRefreshRate={this.props.audioLevelRefreshRate !== undefined ? this.props.audioLevelRefreshRate : 100}
-                isDebugging={this.props.isDebugging !== undefined ? this.props.isDebugging : false}
+            <View style={
+                [styles.playerContainer, this.props.style]
+            }>
+                <RCTGstPlayer
+                    onLayout={this.onLayout}
+                    autoPlay={this.props.autoPlay}
+                    uri={this.props.uri || undefined}
+                    shareInstance={this.props.shareInstance !== undefined ? this.props.shareInstance : false}
+                    audioLevelRefreshRate={this.props.audioLevelRefreshRate !== undefined ? this.props.audioLevelRefreshRate : 100}
+                    isDebugging={this.props.isDebugging !== undefined ? this.props.isDebugging : false}
+                    volume={this.props.volume !== undefined ? this.props.volume : 1.0}
 
-                onPlayerInit={this.onPlayerInit.bind(this)}
-                onStateChanged={this.onStateChanged.bind(this)}
-                onVolumeChanged={this.onVolumeChanged.bind(this)}
-                onUriChanged={this.onUriChanged.bind(this)}
-                onEOS={this.onEOS.bind(this)}
-                onElementError={this.onElementError.bind(this)}
+                    onPlayerInit={this.onPlayerInit.bind(this)}
+                    onStateChanged={this.onStateChanged.bind(this)}
+                    onVolumeChanged={this.onVolumeChanged.bind(this)}
+                    onUriChanged={this.onUriChanged.bind(this)}
+                    onEOS={this.onEOS.bind(this)}
+                    onElementError={this.onElementError.bind(this)}
 
-                ref={(playerView) => this.playerViewRef = playerView}
+                    ref={(playerView) => this.playerViewRef = playerView}
 
-                {...this.props}
-            />
+                    style={{ flex: 1 }}
+                />
+            </View>
         )
     }
 }
@@ -134,6 +159,8 @@ GstPlayer.propTypes = {
     autoPlay: PropTypes.bool,
     audioLevelRefreshRate: PropTypes.number,
     isDebugging: PropTypes.bool,
+    shareInstance: PropTypes.bool,
+    volume: PropTypes.number,
 
     // Events callbacks
     onPlayerInit: PropTypes.func,
@@ -155,6 +182,13 @@ GstPlayer.propTypes = {
 
     ...View.propTypes
 }
+
+const styles = StyleSheet.create({
+    playerContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0)'
+    }
+})
 
 const RCTGstPlayer = requireNativeComponent('RCTGstPlayer', GstPlayer, {
     nativeOnly: { onChange: true }

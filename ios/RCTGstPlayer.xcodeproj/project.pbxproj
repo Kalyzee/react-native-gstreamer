@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3EEA8ED21FEAB16400F41BAA /* RCTGstPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8ED11FEAB16400F41BAA /* RCTGstPlayerController.m */; };
-		3EEA8ED51FEAB68800F41BAA /* EaglUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8ED41FEAB68800F41BAA /* EaglUIView.m */; };
+		3EEA8ED51FEAB68800F41BAA /* RCTGstPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8ED41FEAB68800F41BAA /* RCTGstPlayerView.m */; };
 		3EEA8EEB1FEABC7300F41BAA /* gst_ios_init.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8EE91FEABC7300F41BAA /* gst_ios_init.m */; };
 		3EEA8EEF1FEABCB300F41BAA /* gstreamer_backend.c in Sources */ = {isa = PBXBuildFile; fileRef = 3EEA8EED1FEABCB200F41BAA /* gstreamer_backend.c */; };
 		3EF2E8851FEA700E00BCC58E /* RCTGstPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EF2E8841FEA700E00BCC58E /* RCTGstPlayer.m */; };
@@ -30,11 +29,8 @@
 
 /* Begin PBXFileReference section */
 		3E0593272003D50600B03733 /* GStreamer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GStreamer.framework; path = ../../../../../Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework; sourceTree = "<group>"; };
-		3E6C671F201246FE0009B1E6 /* DrawableSurfaceDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawableSurfaceDelegate.h; sourceTree = "<group>"; };
-		3EEA8ED01FEAB16400F41BAA /* RCTGstPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTGstPlayerController.h; sourceTree = "<group>"; };
-		3EEA8ED11FEAB16400F41BAA /* RCTGstPlayerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTGstPlayerController.m; sourceTree = "<group>"; };
-		3EEA8ED31FEAB68800F41BAA /* EaglUIView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EaglUIView.h; sourceTree = "<group>"; };
-		3EEA8ED41FEAB68800F41BAA /* EaglUIView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EaglUIView.m; sourceTree = "<group>"; };
+		3EEA8ED31FEAB68800F41BAA /* RCTGstPlayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTGstPlayerView.h; sourceTree = "<group>"; };
+		3EEA8ED41FEAB68800F41BAA /* RCTGstPlayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTGstPlayerView.m; sourceTree = "<group>"; };
 		3EEA8EE91FEABC7300F41BAA /* gst_ios_init.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gst_ios_init.m; sourceTree = "<group>"; };
 		3EEA8EEA1FEABC7300F41BAA /* gst_ios_init.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gst_ios_init.h; sourceTree = "<group>"; };
 		3EEA8EED1FEABCB200F41BAA /* gstreamer_backend.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gstreamer_backend.c; path = ../../common/gstreamer_backend.c; sourceTree = "<group>"; };
@@ -63,14 +59,11 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		3EEA8EE81FEABC2D00F41BAA /* utils */ = {
+		3E78A88120177A4F00DE9F4A /* utils */ = {
 			isa = PBXGroup;
 			children = (
 				3EEA8EEA1FEABC7300F41BAA /* gst_ios_init.h */,
 				3EEA8EE91FEABC7300F41BAA /* gst_ios_init.m */,
-				3EEA8ED31FEAB68800F41BAA /* EaglUIView.h */,
-				3EEA8ED41FEAB68800F41BAA /* EaglUIView.m */,
-				3E6C671F201246FE0009B1E6 /* DrawableSurfaceDelegate.h */,
 			);
 			name = utils;
 			sourceTree = "<group>";
@@ -104,10 +97,10 @@
 		3EF2E8821FEA700E00BCC58E /* RCTGstPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				3E78A88120177A4F00DE9F4A /* utils */,
 				3EEA8EEC1FEABCAA00F41BAA /* common */,
-				3EEA8EE81FEABC2D00F41BAA /* utils */,
-				3EEA8ED01FEAB16400F41BAA /* RCTGstPlayerController.h */,
-				3EEA8ED11FEAB16400F41BAA /* RCTGstPlayerController.m */,
+				3EEA8ED31FEAB68800F41BAA /* RCTGstPlayerView.h */,
+				3EEA8ED41FEAB68800F41BAA /* RCTGstPlayerView.m */,
 				3EF2E8831FEA700E00BCC58E /* RCTGstPlayer.h */,
 				3EF2E8841FEA700E00BCC58E /* RCTGstPlayer.m */,
 			);
@@ -171,10 +164,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3EEA8ED51FEAB68800F41BAA /* EaglUIView.m in Sources */,
+				3EEA8ED51FEAB68800F41BAA /* RCTGstPlayerView.m in Sources */,
 				3EF2E8851FEA700E00BCC58E /* RCTGstPlayer.m in Sources */,
 				3EEA8EEF1FEABCB300F41BAA /* gstreamer_backend.c in Sources */,
-				3EEA8ED21FEAB16400F41BAA /* RCTGstPlayerController.m in Sources */,
 				3EEA8EEB1FEABC7300F41BAA /* gst_ios_init.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

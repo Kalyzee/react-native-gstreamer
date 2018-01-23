@@ -5,21 +5,24 @@
 //  Copyright © 2017 Kalyzee. All rights reserved.
 //
 
-#ifndef EaglUIView_h
-#define EaglUIView_h
+#ifndef RCTGstPlayerView_h
+#define RCTGstPlayerView_h
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <glib-object.h>
 #import <React/RCTViewManager.h>
-#import "DrawableSurfaceDelegate.h"
+#import "gstreamer_backend.h"
+#import "RCTGstPlayerDelegate.h"
 
-@interface EaglUIView : UIView {
-    guintptr handle;
+@interface RCTGstPlayerView : UIView {
+    RctGstUserData *userData;
+    gboolean isReady;
+    GstState pipelineState;
 }
 
-//react-native properties
+// react-native events
 @property (nonatomic, copy) RCTBubblingEventBlock onPlayerInit;
 @property (nonatomic, copy) RCTBubblingEventBlock onStateChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onVolumeChanged;
@@ -27,11 +30,17 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onEOS;
 @property (nonatomic, copy) RCTBubblingEventBlock onElementError;
 
-
 // Getters
-- (guintptr) getHandle;
++ (RCTGstPlayerView *)getView;
 
+- (guintptr)getHandle;
+- (RctGstUserData *)getUserData;
+- (gboolean)isReady;
+
+// Setters
+- (void)setPipelineState:(int)pipelineState;
+- (void)setShareInstance:(BOOL)_shareInstance;
 
 @end
 
-#endif /* EaglUIView_h */
+#endif /* RCTGstPlayerView_h */
