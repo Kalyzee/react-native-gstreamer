@@ -12,9 +12,10 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <glib-object.h>
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 #import <React/RCTViewManager.h>
 #import "gstreamer_backend.h"
-#import "RCTGstPlayerDelegate.h"
 
 @interface RCTGstPlayerView : UIView {
     RctGstUserData *userData;

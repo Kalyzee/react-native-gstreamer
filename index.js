@@ -6,7 +6,8 @@ import {
     findNodeHandle,
     AppState,
     Platform,
-    StyleSheet
+    StyleSheet,
+    Text
 } from 'react-native'
 
 const PropTypes = require('prop-types')
@@ -22,43 +23,22 @@ export const GstState = {
 export default class GstPlayer extends React.Component {
 
     currentGstState = undefined
-    appState = "active"
-    isInitialized = false
+    isPlayerReady = false
+
+    state = {
+        playerFlex: 1
+    }
 
     componentDidMount() {
         this.playerHandle = findNodeHandle(this.playerViewRef)
-        AppState.addEventListener('change', this.appStateChanged)
-    }
-
-    componentWillUnmount() {
-        AppState.removeEventListener('change', this.appStateChanged)
-    }
-
-    /*
-    shouldComponentUpdate(nextProps, nextState) {
-        const { width, height } = this.props
-        return width !== nextProps.width || height !== nextProps.height;
-    }
-    */
-
-    appStateChanged = (nextAppState) => {
-        if (this.appState.match(/inactive|background/) && nextAppState === 'active') {
-            this.play()
-        } else {
-            this.stop()
-        }
-        this.appState = nextAppState
     }
 
     // Callbacks
     onPlayerInit() {
-        this.isInitialized = true
+        this.isPlayerReady = true
 
         if (this.props.onPlayerInit)
             this.props.onPlayerInit()
-
-        if (this.props.autoPlay)
-            this.play();
     }
 
     onStateChanged(_message) {
@@ -79,12 +59,12 @@ export default class GstPlayer extends React.Component {
     onUriChanged(_message) {
         const { new_uri } = _message.nativeEvent
 
-        if (this.props.onUriChanged) {
-            this.props.onUriChanged(new_uri)
-        }
-
         if (this.props.autoPlay) {
             this.play()
+        }
+
+        if (this.props.onUriChanged) {
+            this.props.onUriChanged(new_uri)
         }
     }
 
@@ -122,15 +102,18 @@ export default class GstPlayer extends React.Component {
         this.setGstState(GstState.READY)
     }
 
+    isReady() {
+        return this.isPlayerReady
+    }
+
     render() {
         return (
-            <View style={
-                [styles.playerContainer, this.props.style]
-            }>
+            <View
+                style={[styles.playerContainer, this.props.style]}
+            >
                 <RCTGstPlayer
-                    onLayout={this.onLayout}
-                    autoPlay={this.props.autoPlay}
-                    uri={this.props.uri || undefined}
+                    autoPlay={this.props.autoPlay !== undefined ? this.props.autoPlay : true}
+                    uri={this.props.uri !== undefined ? this.props.uri : ""}
                     shareInstance={this.props.shareInstance !== undefined ? this.props.shareInstance : false}
                     audioLevelRefreshRate={this.props.audioLevelRefreshRate !== undefined ? this.props.audioLevelRefreshRate : 100}
                     isDebugging={this.props.isDebugging !== undefined ? this.props.isDebugging : false}
@@ -145,7 +128,7 @@ export default class GstPlayer extends React.Component {
 
                     ref={(playerView) => this.playerViewRef = playerView}
 
-                    style={{ flex: 1 }}
+                    style={{ flex: this.state.playerFlex }}
                 />
             </View>
         )
@@ -178,15 +161,13 @@ GstPlayer.propTypes = {
 
     // Helper methods
     createDrawableSurface: PropTypes.func,
-    destroyDrawableSurface: PropTypes.func,
-
-    ...View.propTypes
+    destroyDrawableSurface: PropTypes.func
 }
 
 const styles = StyleSheet.create({
     playerContainer: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0)'
+        backgroundColor: 'rgba(0, 100, 100, 0)',
+        flex: 1
     }
 })
 

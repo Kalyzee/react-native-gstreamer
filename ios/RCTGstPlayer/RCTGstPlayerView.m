@@ -40,6 +40,7 @@ RCTGstPlayerView *c_view;
     self->pipelineState = NULL;
     
     c_view = (id)self;
+
     return [super init];
 }
 
@@ -57,8 +58,7 @@ void onEOS()
 void onUriChanged(gchar* newUri) {
     NSString *uri = [NSString stringWithUTF8String:newUri];
     NSLog(@"RCTGstPlayer : URI : %@ - LENGTH : %d", uri, uri.length);
-    if (c_view.onUriChanged)
-        c_view.onUriChanged(@{ @"new_uri": uri });
+    c_view.onUriChanged(@{ @"new_uri": uri });
 }
 
 void onElementError(gchar *source, gchar *message, gchar *debug_info) {
@@ -84,6 +84,9 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel) {
                              @"peak": @(audioLevel->peak),
                              });
 }
+void onStateReadyToPause() {
+    // TODO : Find a way to clear buffer...
+}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -98,24 +101,26 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel) {
         [self getUserData]->configuration->onElementError = onElementError;
         [self getUserData]->configuration->onStateChanged = onStateChanged;
         [self getUserData]->configuration->onVolumeChanged = onVolumeChanged;
+        [self getUserData]->configuration->onStateReadyToPause = onStateReadyToPause;
     }
     return self;
 }
 
--(void)willMoveToSuperview:(UIView *)newSuperview {
-    [super willMoveToSuperview:newSuperview];
-    
+-(void)didMoveToSuperview
+{
+    [super didMoveToSuperview];
+}
+-(void)layoutSubviews
+{
     if (!self->isReady) {
-        NSLog(@"willMoveToSuperview");
-        
         self->isReady = TRUE;
         [self getUserData]->configuration->drawableSurface = [self getHandle];
         
         // Preparing pipeline
         rct_gst_init([self getUserData]);
         
-        // Apply once ready what has been stored in instance
-        rct_gst_apply_uri([self getUserData]);
+        // Apply what has been stored in instance
+        rct_gst_set_uri([self getUserData], [self getUserData]->configuration->uri);
         rct_gst_set_audio_level_refresh_rate([self getUserData], [self getUserData]->configuration->audioLevelRefreshRate);
         rct_gst_set_debugging([self getUserData], [self getUserData]->configuration->isDebugging);
         rct_gst_set_volume([self getUserData], [self getUserData]->configuration->volume);
@@ -127,6 +132,8 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel) {
             rct_gst_run_loop([self getUserData]);
         });
     }
+    
+    [super layoutSubviews];
 }
 
 -(void)removeFromSuperview {
