@@ -19,7 +19,6 @@
 
 @interface RCTGstPlayerView : UIView {
     RctGstUserData *userData;
-    gboolean isReady;
     GstState pipelineState;
 }
 

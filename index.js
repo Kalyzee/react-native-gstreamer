@@ -33,6 +33,12 @@ export default class GstPlayer extends React.Component {
         this.playerHandle = findNodeHandle(this.playerViewRef)
     }
 
+    componentDidUpdate(prevProps, prevStates) {
+        if (!this.props.isDebugging && this.props.autoPlay && prevProps.isDebugging !== this.props.isDebugging) {
+            this.play();
+        }
+    }
+
     // Callbacks
     onPlayerInit() {
         this.isPlayerReady = true
@@ -50,10 +56,15 @@ export default class GstPlayer extends React.Component {
     }
 
     onVolumeChanged(_message) {
-        const { rms, peak, decay } = _message.nativeEvent
+        const audioLevelObject = Object.keys(_message.nativeEvent).filter(key => key !== "target").reduce( (obj, key) => {
+            obj[key] = _message.nativeEvent[key];
+            return obj;
+        }, {})
+
+        let audioLevelArray = Object.values(audioLevelObject)
 
         if (this.props.onVolumeChanged)
-            this.props.onVolumeChanged(rms, peak, decay)
+            this.props.onVolumeChanged(audioLevelArray)
     }
 
     onUriChanged(_message) {
@@ -112,7 +123,6 @@ export default class GstPlayer extends React.Component {
                 style={[styles.playerContainer, this.props.style]}
             >
                 <RCTGstPlayer
-                    autoPlay={this.props.autoPlay !== undefined ? this.props.autoPlay : true}
                     uri={this.props.uri !== undefined ? this.props.uri : ""}
                     shareInstance={this.props.shareInstance !== undefined ? this.props.shareInstance : false}
                     audioLevelRefreshRate={this.props.audioLevelRefreshRate !== undefined ? this.props.audioLevelRefreshRate : 100}

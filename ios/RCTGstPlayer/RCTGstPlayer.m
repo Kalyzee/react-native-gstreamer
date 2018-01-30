@@ -38,29 +38,20 @@ RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGstPlayerView)
 {
     NSString* uri = [RCTConvert NSString:json];
     if (uri.length > 0) {
-        [view getUserData]->configuration->uri = g_strdup([uri UTF8String]);
-        if ([view isReady])
-            rct_gst_set_uri([view getUserData], [view getUserData]->configuration->uri);
+        rct_gst_set_uri([view getUserData], g_strdup([uri UTF8String]));
     }
 }
 RCT_CUSTOM_VIEW_PROPERTY(audioLevelRefreshRate, NSNumber, RCTGstPlayerView)
 {
-    [view getUserData]->configuration->audioLevelRefreshRate = [[RCTConvert NSNumber:json] integerValue];
-    if ([view isReady])
-        rct_gst_set_audio_level_refresh_rate([view getUserData], [view getUserData]->configuration->audioLevelRefreshRate);
+    rct_gst_set_audio_level_refresh_rate([view getUserData], [[RCTConvert NSNumber:json] integerValue]);
 }
 RCT_CUSTOM_VIEW_PROPERTY(isDebugging, BOOL, RCTGstPlayerView)
 {
-    [view getUserData]->configuration->isDebugging = [RCTConvert BOOL:json];
-
-    if ([view isReady])
-        rct_gst_set_debugging([view getUserData], [view getUserData]->configuration->isDebugging);
+    rct_gst_set_debugging([view getUserData], [RCTConvert BOOL:json]);
 }
 RCT_CUSTOM_VIEW_PROPERTY(volume, NSNumber, RCTGstPlayerView)
 {
-    [view getUserData]->configuration->volume = [[RCTConvert NSNumber:json] doubleValue];
-    if ([view isReady])
-        rct_gst_set_volume([view getUserData], [view getUserData]->configuration->volume);
+    rct_gst_set_volume([view getUserData], [[RCTConvert NSNumber:json] doubleValue]);
 }
 RCT_CUSTOM_VIEW_PROPERTY(shareInstance, BOOL, RCTGstPlayerView)
 {

@@ -10,9 +10,7 @@
 @implementation RCTGstPlayerView
 
 static gboolean shareInstance;
-static RCTGstPlayerView *latestView;
-
-RCTGstPlayerView *c_view;
+static RCTGstPlayerView *instance;
 
 // GL surface
 + (Class) layerClass
@@ -23,46 +21,54 @@ RCTGstPlayerView *c_view;
 + (RCTGstPlayerView *)getView
 {
     if (shareInstance) {
-        if (!latestView)
-            latestView = [[RCTGstPlayerView alloc] init];
+        if (!instance)
+            instance = [[RCTGstPlayerView alloc] init];
     } else {
-        latestView = [[RCTGstPlayerView alloc] init];
+        instance = [[RCTGstPlayerView alloc] init];
     }
     
-    NSLog(@"Returning View : %@", latestView);
-    return latestView;
+    NSLog(@"Returning View : %@", instance);
+    return instance;
 }
 
 // Constructor
 - (instancetype)init
 {
-    self->isReady = FALSE;
     self->pipelineState = NULL;
-    
-    c_view = (id)self;
-
     return [super init];
 }
 
 // Callables
 void onInit()
 {
-    c_view.onPlayerInit(@{});
+    // Apply what has been stored in instance
+    rct_gst_set_uri([instance getUserData], [instance getUserData]->configuration->uri);
+    rct_gst_set_audio_level_refresh_rate([instance getUserData], [instance getUserData]->configuration->audioLevelRefreshRate);
+    rct_gst_set_debugging([instance getUserData], [instance getUserData]->configuration->isDebugging);
+    rct_gst_set_volume([instance getUserData], [instance getUserData]->configuration->volume);
+    
+    if (instance->pipelineState != NULL)
+        [instance setPipelineState:instance->pipelineState];
+    
+    
+    rct_gst_set_drawable_surface([instance getUserData], [instance getHandle]);
+    
+    instance.onPlayerInit(@{});
 }
 
 void onEOS()
 {
-    c_view.onEOS(@{});
+    instance.onEOS(@{});
 }
 
 void onUriChanged(gchar* newUri) {
     NSString *uri = [NSString stringWithUTF8String:newUri];
     NSLog(@"RCTGstPlayer : URI : %@ - LENGTH : %d", uri, uri.length);
-    c_view.onUriChanged(@{ @"new_uri": uri });
+    instance.onUriChanged(@{ @"new_uri": uri });
 }
 
 void onElementError(gchar *source, gchar *message, gchar *debug_info) {
-    c_view.onElementError(@{
+    instance.onElementError(@{
                             @"source": [NSString stringWithUTF8String:source],
                             @"message": [NSString stringWithUTF8String:message],
                             @"debug_info": [NSString stringWithUTF8String:debug_info]
@@ -74,26 +80,28 @@ void onStateChanged(GstState old_state, GstState new_state) {
     NSNumber* oldState = [NSNumber numberWithInt:old_state];
     NSNumber* newState = [NSNumber numberWithInt:new_state];
     
-    c_view.onStateChanged(@{ @"old_state": oldState, @"new_state": newState });
+    instance.onStateChanged(@{ @"old_state": oldState, @"new_state": newState });
 }
 
-void onVolumeChanged(RctGstAudioLevel* audioLevel) {
-    c_view.onVolumeChanged(@{
-                             @"decay": @(audioLevel->decay),
-                             @"rms": @(audioLevel->rms),
-                             @"peak": @(audioLevel->peak),
-                             });
-}
-void onStateReadyToPause() {
-    // TODO : Find a way to clear buffer...
+void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
+    NSMutableDictionary *js_dictionary = [[NSMutableDictionary alloc] init];
+    
+    for (int i = 0; i < nb_channels; i++) {
+        RctGstAudioLevel *audioChannelLevel = &audioLevel[i];
+        [js_dictionary setObject:@{
+                                   @"decay": @(audioChannelLevel->decay),
+                                   @"rms": @(audioChannelLevel->rms),
+                                   @"peak": @(audioChannelLevel->peak),
+                                   } forKey: [NSString stringWithFormat:@"%d", i]
+         ];
+    }
+    instance.onVolumeChanged(js_dictionary);
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self->isReady = FALSE;
-        
         // Preparing configuration
         [self getUserData]->configuration->onInit = onInit;
         [self getUserData]->configuration->onEOS = onEOS;
@@ -101,33 +109,18 @@ void onStateReadyToPause() {
         [self getUserData]->configuration->onElementError = onElementError;
         [self getUserData]->configuration->onStateChanged = onStateChanged;
         [self getUserData]->configuration->onVolumeChanged = onVolumeChanged;
-        [self getUserData]->configuration->onStateReadyToPause = onStateReadyToPause;
     }
     return self;
 }
 
--(void)didMoveToSuperview
-{
-    [super didMoveToSuperview];
-}
 -(void)layoutSubviews
 {
-    if (!self->isReady) {
-        self->isReady = TRUE;
-        [self getUserData]->configuration->drawableSurface = [self getHandle];
+    if (![self isReady]) {
         
         // Preparing pipeline
         rct_gst_init([self getUserData]);
-        
-        // Apply what has been stored in instance
-        rct_gst_set_uri([self getUserData], [self getUserData]->configuration->uri);
-        rct_gst_set_audio_level_refresh_rate([self getUserData], [self getUserData]->configuration->audioLevelRefreshRate);
-        rct_gst_set_debugging([self getUserData], [self getUserData]->configuration->isDebugging);
-        rct_gst_set_volume([self getUserData], [self getUserData]->configuration->volume);
-        
-        if (self->pipelineState != NULL)
-            [self setPipelineState:self->pipelineState];
-        
+
+        // Run it
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             rct_gst_run_loop([self getUserData]);
         });
@@ -162,7 +155,7 @@ void onStateReadyToPause() {
 
 - (gboolean)isReady
 {
-    return self->isReady;
+    return [self getUserData]->is_ready;
 }
 
 //Setters
