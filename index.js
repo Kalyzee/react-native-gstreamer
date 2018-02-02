@@ -33,6 +33,7 @@ export default class GstPlayer extends React.Component {
         this.playerHandle = findNodeHandle(this.playerViewRef)
     }
 
+    // From Debugging to video with autoplay
     componentDidUpdate(prevProps, prevStates) {
         if (!this.props.isDebugging && this.props.autoPlay && prevProps.isDebugging !== this.props.isDebugging) {
             this.play();

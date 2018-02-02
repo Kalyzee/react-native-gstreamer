@@ -19,13 +19,13 @@ void rct_gst_set_uri(RctGstUserData* user_data, gchar* _uri)
     if (g_strcmp0(user_data->configuration->uri, _uri) != 0) {
         user_data->configuration->uri = _uri;
         rct_gst_set_pipeline_state(user_data, GST_STATE_READY);
-    }
-    
-    gst_element_get_state(user_data->pipeline, &current_state, NULL, 0);
-    if (current_state == GST_STATE_READY) {
-        rct_gst_apply_uri(user_data);
-    } else {
-        user_data->mustApplyUri = TRUE;
+        
+        gst_element_get_state(user_data->pipeline, &current_state, NULL, 0);
+        if (current_state == GST_STATE_READY) {
+            rct_gst_apply_uri(user_data);
+        } else {
+            user_data->mustApplyUri = TRUE;
+        }
     }
 }
 
@@ -136,7 +136,7 @@ void create_video_sink_bin(RctGstUserData *user_data)
     if(!gst_element_link(user_data->video_convertor, user_data->video_sink))
         g_printerr("RCTGstPlayer : Failed to link video-convertor and video-sink\n");
     
-    // Creating ghostpad for playbin (needs a pad on sink named "sink")
+    // Creating ghostpad for uri-decode-bin
     gst_element_add_pad(GST_BIN(user_data->video_sink_bin), gst_ghost_pad_new("sink", user_data->video_selector_sink_pad));
 }
 
@@ -194,7 +194,7 @@ void create_audio_sink_bin(RctGstUserData *user_data)
     if(!gst_element_link(user_data->audio_level_analyser, audio_sink))
         g_printerr("RCTGstPlayer : Failed to link audio-level-analyser and audio-sink\n");
     
-    // Creating ghostpad for playbin (needs a pad on sink named "sink")
+    // Creating ghostpad for uri-decode-bin
     gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", user_data->audio_selector_sink_pad));
 }
 
