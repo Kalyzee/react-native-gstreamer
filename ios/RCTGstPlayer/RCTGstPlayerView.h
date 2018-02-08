@@ -19,7 +19,7 @@
 
 @interface RCTGstPlayerView : UIView {
     RctGstUserData *userData;
-    GstState pipelineState;
+    BOOL isReady;
 }
 
 // react-native events
@@ -35,10 +35,8 @@
 
 - (guintptr)getHandle;
 - (RctGstUserData *)getUserData;
-- (gboolean)isReady;
 
 // Setters
-- (void)setPipelineState:(int)pipelineState;
 - (void)setShareInstance:(BOOL)_shareInstance;
 
 @end

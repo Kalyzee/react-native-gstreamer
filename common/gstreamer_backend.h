@@ -52,10 +52,13 @@ typedef struct {
     GMainLoop *main_loop;
     guint bus_watch_id;
     GstBus *bus;
-    gboolean is_ready;
+    gboolean is_pipeline_ready;
+    gboolean is_uri_decode_bin_ready;
     gboolean mustApplyUri;
+    gboolean is_content_visible;
     gboolean mediaHasAudio;
     gboolean mediaHasVideo;
+    GstState nextState;
     
     // Video specifics
     GstVideoOverlay *video_overlay;
@@ -107,6 +110,7 @@ void rct_gst_free_user_data(RctGstUserData* user_data);
 
 // Other
 GstStateChangeReturn rct_gst_set_pipeline_state(RctGstUserData *user_data, GstState state);
+GstStateChangeReturn rct_gst_set_decodebin_state(RctGstUserData *user_data, GstState state);
 void rct_gst_init(RctGstUserData *user_data);
 void rct_gst_run_loop(RctGstUserData *user_data);
 void rct_gst_terminate(RctGstUserData *user_data);

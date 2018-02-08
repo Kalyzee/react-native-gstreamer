@@ -36,10 +36,7 @@ RCT_EXPORT_MODULE();
 // Shared properties
 RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGstPlayerView)
 {
-    NSString* uri = [RCTConvert NSString:json];
-    if (uri.length > 0) {
-        rct_gst_set_uri([view getUserData], g_strdup([uri UTF8String]));
-    }
+    rct_gst_set_uri([view getUserData], g_strdup([json UTF8String]));
 }
 RCT_CUSTOM_VIEW_PROPERTY(audioLevelRefreshRate, NSNumber, RCTGstPlayerView)
 {
@@ -74,7 +71,7 @@ RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber 
     [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
         RCTGstPlayerView *view = (RCTGstPlayerView *)viewRegistry[reactTag];
         if ([view isKindOfClass:[RCTGstPlayerView class]]) {
-            [view setPipelineState:gst_state];
+            rct_gst_set_decodebin_state([view getUserData], gst_state);
         }
     }];
 }

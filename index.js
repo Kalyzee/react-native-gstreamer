@@ -44,6 +44,10 @@ export default class GstPlayer extends React.Component {
     onPlayerInit() {
         this.isPlayerReady = true
 
+        if (this.props.autoPlay) {
+            this.play()
+        }
+
         if (this.props.onPlayerInit)
             this.props.onPlayerInit()
     }
@@ -66,18 +70,6 @@ export default class GstPlayer extends React.Component {
 
         if (this.props.onVolumeChanged)
             this.props.onVolumeChanged(audioLevelArray)
-    }
-
-    onUriChanged(_message) {
-        const { new_uri } = _message.nativeEvent
-
-        if (this.props.autoPlay) {
-            this.play()
-        }
-
-        if (this.props.onUriChanged) {
-            this.props.onUriChanged(new_uri)
-        }
     }
 
     onEOS() {
@@ -133,7 +125,7 @@ export default class GstPlayer extends React.Component {
                     onPlayerInit={this.onPlayerInit.bind(this)}
                     onStateChanged={this.onStateChanged.bind(this)}
                     onVolumeChanged={this.onVolumeChanged.bind(this)}
-                    onUriChanged={this.onUriChanged.bind(this)}
+                    onUriChanged={() => {}}
                     onEOS={this.onEOS.bind(this)}
                     onElementError={this.onElementError.bind(this)}
 

@@ -12,20 +12,44 @@
 void rct_gst_set_uri(RctGstUserData* user_data, gchar* _uri)
 {
     GstState current_state;
+    GstState pending_state;
     
-    g_print("RCTGstPlayer : rct_gst_set_uri : %s\n", user_data->configuration->uri);
+    g_print("RCTGstPlayer : rct_gst_set_uri : %s\n", _uri);
     
-    // Update URI if it changed (avoid READY STATE step when reusing instance)
-    if (g_strcmp0(user_data->configuration->uri, _uri) != 0) {
+    // Update URI if it changed
+    if (g_strcmp0("", _uri) != 0 && g_strcmp0(user_data->configuration->uri, _uri) != 0) {
         user_data->configuration->uri = _uri;
-        rct_gst_set_pipeline_state(user_data, GST_STATE_READY);
+        user_data->mustApplyUri = TRUE;
         
-        gst_element_get_state(user_data->pipeline, &current_state, NULL, 0);
-        if (current_state == GST_STATE_READY) {
-            rct_gst_apply_uri(user_data);
-        } else {
-            user_data->mustApplyUri = TRUE;
+        if (user_data->uri_decode_bin) {
+            gst_element_get_state(user_data->uri_decode_bin, &current_state, &pending_state, 0);
+            
+            // Change pad ASAP
+            user_data->is_content_visible = FALSE;
+            rct_gst_refresh_active_pads(user_data);
+        
+            // Send EOS
+            if (current_state > GST_STATE_READY && pending_state != GST_STATE_READY) {
+                GstEvent *eos = gst_event_new_eos();
+                gst_element_send_event(user_data->uri_decode_bin, eos);
+            } else {
+                rct_gst_apply_uri(user_data);
+            }
         }
+        
+        /*
+
+        if (user_data->uri_decode_bin) {
+         
+            
+            if (current_state == GST_STATE_READY) {
+         
+            } else  if (current_state > GST_STATE_READY && pending_state != GST_STATE_READY) {
+                rct_gst_set_decodebin_state(user_data, GST_STATE_READY);
+            }
+        }
+         
+         */
     }
 }
 
@@ -78,8 +102,13 @@ RctGstUserData *rct_gst_init_user_data()
     user_data->audio_level = calloc(1, sizeof(RctGstAudioLevel));
     
     // Other init flags
-    user_data->is_ready = FALSE;
+    user_data->is_pipeline_ready = FALSE;
+    user_data->is_uri_decode_bin_ready = FALSE;
+    
     user_data->mustApplyUri = FALSE;
+    user_data->is_content_visible = FALSE;
+    
+    user_data->nextState = NULL;
     
     return user_data;
 }
@@ -198,6 +227,26 @@ void create_audio_sink_bin(RctGstUserData *user_data)
     gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", user_data->audio_selector_sink_pad));
 }
 
+static void rct_gst_check_if_ready(RctGstUserData *user_data)
+{
+    if (user_data->is_pipeline_ready && user_data->is_uri_decode_bin_ready) {
+        
+        g_print("uri-decode-bin and pipeline states are both ready !\n");
+        
+        // Call ready func
+        if (user_data->configuration->onInit) {
+            user_data->configuration->onInit();
+        }
+        
+        if (user_data->nextState != NULL) {
+            rct_gst_set_decodebin_state(user_data, user_data->nextState);
+            user_data->nextState = NULL;
+        }
+    } else {
+        g_print("uri-decode-bin and pipeline states are NOT ready yet !\n");
+    }
+}
+
 /*********************
  APPLICATION CALLBACKS
  ********************/
@@ -208,13 +257,36 @@ static gboolean cb_set_decode_bin_to_ready(RctGstUserData *user_data)
     return FALSE;
 }
 
-static GstPadProbeReturn cb_decode_bin_pad_probe(GstPad *pad, GstPadProbeInfo *info, RctGstUserData *user_data)
+static gboolean cb_set_pipeline_to_ready(RctGstUserData *user_data)
+{
+    gst_element_set_state(user_data->pipeline, GST_STATE_READY);
+    return FALSE;
+}
+
+static GstPadProbeReturn cb_decode_bin_pad_probe_event(GstPad *pad, GstPadProbeInfo *info, RctGstUserData *user_data)
 {
     if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_DATA(info)) == GST_EVENT_EOS) {
-        gst_pad_remove_probe(pad, GST_PAD_PROBE_INFO_ID(info));
+        
+        g_print("EOS recievied, capturing...\n");
+        
+        // gst_element_set_locked_state(user_data->uri_decode_bin, FALSE);
+        g_idle_add(cb_set_pipeline_to_ready, user_data);
         g_idle_add(cb_set_decode_bin_to_ready, user_data);
+        
+        gst_pad_remove_probe(pad, GST_PAD_PROBE_INFO_ID(info));
         return GST_PAD_PROBE_DROP;
     }
+    return GST_PAD_PROBE_PASS;
+}
+
+static GstPadProbeReturn cb_decode_bin_pad_probe_buffer(GstPad *pad, GstPadProbeInfo *info, RctGstUserData *user_data)
+{
+    g_print("cb_decode_bin_pad_probe_content ");
+    if (!user_data->configuration->isDebugging && !user_data->is_content_visible) {
+        user_data->is_content_visible = TRUE;
+        rct_gst_refresh_active_pads(user_data);
+    }
+    
     return GST_PAD_PROBE_PASS;
 }
 
@@ -230,7 +302,10 @@ static void cb_decode_bin_pad_added(GstElement *decodebin, GstPad *pad, RctGstUs
     g_print("RCTGstPlayer : cb_decode_bin_pad_added : %s\n", gst_structure_get_name(str));
     
     // Add probe to cancel EOS
-    gst_pad_add_probe(pad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, cb_decode_bin_pad_probe, user_data, NULL);
+    gst_pad_add_probe(pad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, cb_decode_bin_pad_probe_event, user_data, NULL);
+    
+    // Add probe to know if data is flowing (and display data if it is)
+    gst_pad_add_probe(pad, GST_PAD_PROBE_TYPE_BUFFER, cb_decode_bin_pad_probe_buffer, user_data, NULL);
     
     if (g_strrstr(gst_structure_get_name(str), "audio")) {
         user_data->mediaHasAudio = TRUE;
@@ -263,7 +338,7 @@ GstBusSyncReply cb_create_window(GstBus *bus, GstMessage *message, RctGstUserDat
     if (user_data->video_overlay) {
         gst_video_overlay_set_window_handle(user_data->video_overlay, user_data->configuration->drawableSurface);
     }
-
+    
     gst_message_unref(message);
     return GST_BUS_DROP;
 }
@@ -274,23 +349,21 @@ static void cb_error(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
     gchar *debug_info;
     
     gst_message_parse_error(msg, &err, &debug_info);
-    g_printerr("RCTGstPlayer : Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
-    
-    rct_gst_set_pipeline_state(user_data, GST_STATE_NULL);
-    
     if (user_data->configuration->onElementError) {
         user_data->configuration->onElementError(GST_OBJECT_NAME(msg->src), err->message, debug_info);
     }
+    
+    
+    g_printerr("RCTGstPlayer : Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
+    
+    // rct_gst_set_decodebin_state(user_data, GST_STATE_NULL);
+    
     g_clear_error(&err);
     g_free(debug_info);
 }
 
 static void cb_eos(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
-    g_print("RCTGstPlayer : EOS recieved\n");
-    
-    gst_element_set_state(user_data->uri_decode_bin, GST_STATE_READY);
-    
     if (user_data->configuration->onEOS) {
         user_data->configuration->onEOS();
     }
@@ -304,44 +377,60 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
     // Message comming from the uri-decode-bin
     if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->uri_decode_bin))
     {
+        g_print(
+                "RCTGstPlayer : cb_state_changed - uri-decode-bin is %s from %s (going to %s)\n",
+                gst_element_state_get_name(new_state),
+                gst_element_state_get_name(old_state),
+                gst_element_state_get_name(pending_state)
+                );
+        
         if (new_state == GST_STATE_READY) {
+            user_data->mediaHasAudio = FALSE;
+            user_data->mediaHasVideo = FALSE;
+            user_data->is_content_visible = user_data->configuration->isDebugging;
             
-            g_print("RCTGstPlayer : New decode-bin state %s\n", gst_element_state_get_name(new_state));
-            
-            if (!user_data->configuration->isDebugging) {
-                g_object_set(user_data->audio_selector, "active-pad", user_data->audio_selector_fake_sink_pad, NULL);
-                g_object_set(user_data->video_selector, "active-pad", user_data->video_selector_fake_sink_pad, NULL);
+            if (!user_data->is_uri_decode_bin_ready) {
+                user_data->is_uri_decode_bin_ready = TRUE;
+                rct_gst_check_if_ready(user_data);
             }
-            
-            // We apply the uri when the uri-decode-bin is in ready state and an uri is set if needed (async step to ready)
-            if (g_strcmp0("", user_data->configuration->uri) != 0) {
-                if (user_data->mustApplyUri) {
-                    rct_gst_apply_uri(user_data);
-                    user_data->mustApplyUri = FALSE;
-                }
-            }
+
+            if (user_data->mustApplyUri)
+                rct_gst_apply_uri(user_data);
+        }
+
+        if (user_data->configuration->onStateChanged) {
+            user_data->configuration->onStateChanged(old_state, new_state);
+        }
+
+    // Message comming from pipeline
+    } else if (GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->pipeline)) {
+        g_print(
+                "RCTGstPlayer : cb_state_changed - Pipeline is %s from %s (going to %s)\n",
+                gst_element_state_get_name(new_state),
+                gst_element_state_get_name(old_state),
+                gst_element_state_get_name(pending_state)
+                );
+        
+        if (new_state <= GST_STATE_READY && old_state >= GST_STATE_PAUSED) {
+            user_data->is_pipeline_ready = FALSE;
         }
         
-        // Message comming from pipeline
-    } else if (GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->pipeline)) {
-        g_print("RCTGstPlayer : New pipeline state %s\n", gst_element_state_get_name(new_state));
+        if (new_state == GST_STATE_READY && pending_state != GST_STATE_NULL) {
+            gst_element_set_locked_state(user_data->uri_decode_bin, TRUE);
+            rct_gst_set_pipeline_state(user_data, GST_STATE_PLAYING);
+        }
         
-        if (new_state == GST_STATE_READY) {
-            if (!user_data->is_ready) {
-                user_data->is_ready = TRUE;
+        if (new_state == GST_STATE_PLAYING) {
+            if (!user_data->is_pipeline_ready) {
+                user_data->is_pipeline_ready = TRUE;
+                rct_gst_check_if_ready(user_data);
                 
-                if (user_data->configuration->onInit) {
-                    user_data->configuration->onInit();
-                }
+                rct_gst_set_decodebin_state(user_data, GST_STATE_READY);
             }
         }
         
         if (new_state >= GST_STATE_READY) {
             rct_gst_set_volume(user_data, user_data->configuration->volume);
-        }
-        
-        if (user_data->configuration->onStateChanged) {
-            user_data->configuration->onStateChanged(old_state, new_state);
         }
     }
 }
@@ -412,6 +501,7 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
 
 // Remove latency as much as possible
 static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUserData* user_data) {
+    g_print("RCTGstPlayer : cb_setup_source\n");
     g_object_set(source, "latency", 0, NULL);
 }
 
@@ -431,7 +521,7 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* u
         case GST_MESSAGE_EOS:
             cb_eos(bus, message, user_data);
             break;
-            
+
         case GST_MESSAGE_STATE_CHANGED:
             cb_state_changed(bus, message, user_data);
             break;
@@ -460,22 +550,47 @@ GstStateChangeReturn rct_gst_set_pipeline_state(RctGstUserData* user_data, GstSt
     GstState current_state;
     GstState pending_state;
     
-    gst_element_get_state(user_data->pipeline, &current_state, &pending_state, 0);
-    
-    g_print(
-            "Actual state : %s - Pipeline state requested : %s - Pending state : %s\n",
-            gst_element_state_get_name(current_state),
-            gst_element_state_get_name(state),
-            gst_element_state_get_name(pending_state)
-            );
-    
-    if (user_data->pipeline != NULL && current_state != state) {
-        if (pending_state != state) {
-            validity = gst_element_set_state(user_data->pipeline, state);
-        } else {
-            g_print("RCTGstPlayer : Ignoring state change (Already changing to requested state)\n");
-        }
+    gst_element_get_state(user_data->pipeline, &current_state, &pending_state, 10);
+
+    if (current_state != state && pending_state != state) {
+        g_print(
+                "RCTGstPlayer : Pipeline state - Requested : %s -  Actual : %s - Pending : %s\n",
+                gst_element_state_get_name(state),
+                gst_element_state_get_name(current_state),
+                gst_element_state_get_name(pending_state)
+                );
+        validity = gst_element_set_state(user_data->pipeline, state);
+    } else {
+        g_print("RCTGstPlayer : Pipeline state - Ignoring  state change\n");
     }
+
+    return validity;
+}
+
+GstStateChangeReturn rct_gst_set_decodebin_state(RctGstUserData* user_data, GstState state)
+{
+    GstStateChangeReturn validity = GST_STATE_CHANGE_ASYNC;
+    GstState current_state;
+    GstState pending_state;
+    
+    gst_element_get_state(user_data->uri_decode_bin, &current_state, &pending_state, 10);
+    
+    if (user_data->is_uri_decode_bin_ready && user_data->is_pipeline_ready || state == GST_STATE_READY) {
+        if (current_state != state && pending_state != state) {
+            g_print(
+                    "RCTGstPlayer : uri-decode-bin state - Requested : %s -  Actual : %s - Pending : %s\n",
+                    gst_element_state_get_name(state),
+                    gst_element_state_get_name(current_state),
+                    gst_element_state_get_name(pending_state)
+                    );
+            validity = gst_element_set_state(user_data->uri_decode_bin, state);
+        } else {
+            g_print("RCTGstPlayer : uri-decode-bin state - Ignoring state change\n");
+        }
+    } else {
+        user_data->nextState = state;
+    }
+    
     
     return validity;
 }
@@ -508,14 +623,16 @@ void rct_gst_init(RctGstUserData* user_data)
     
     // Add all elements to the pipeline
     gst_bin_add_many(user_data->pipeline, user_data->audio_sink_bin, user_data->video_sink_bin, user_data->uri_decode_bin, NULL);
-    gst_element_set_state(user_data->pipeline, GST_STATE_READY);
 }
 
 void rct_gst_run_loop(RctGstUserData* user_data)
 {
+    rct_gst_set_pipeline_state(user_data, GST_STATE_READY);
+    
     g_main_loop_run(user_data->main_loop);
     g_main_loop_unref(user_data->main_loop);
     
+    gst_element_set_locked_state(user_data->uri_decode_bin, FALSE);
     gst_element_set_state (user_data->pipeline, GST_STATE_NULL);
     
     gst_object_unref(user_data->pipeline);
@@ -538,13 +655,10 @@ gchar *rct_gst_get_info()
 
 void rct_gst_apply_uri(RctGstUserData* user_data)
 {
-    g_print("RCTGstPlayer : rct_gst_apply_uri\n");
+    g_print("RCTGstPlayer : rct_gst_apply_uri : %s\n", user_data->configuration->uri);
     g_object_set(user_data->uri_decode_bin, "uri", user_data->configuration->uri, NULL);
     
-    user_data->mediaHasAudio = FALSE;
-    user_data->mediaHasVideo = FALSE;
-    
-    rct_gst_refresh_active_pads(user_data);
+    user_data->mustApplyUri = FALSE;
     
     if (user_data->configuration->onUriChanged) {
         user_data->configuration->onUriChanged(user_data->configuration->uri);
@@ -557,12 +671,12 @@ void rct_gst_refresh_active_pads(RctGstUserData *user_data)
         g_object_set(user_data->audio_selector, "active-pad", user_data->audio_selector_debug_sink_pad, NULL);
         g_object_set(user_data->video_selector, "active-pad", user_data->video_selector_debug_sink_pad, NULL);
     } else {
-        if (user_data->mediaHasAudio)
+        if (user_data->mediaHasAudio && user_data->is_content_visible)
             g_object_set(user_data->audio_selector, "active-pad", user_data->audio_selector_sink_pad, NULL);
         else
             g_object_set(user_data->audio_selector, "active-pad", user_data->audio_selector_fake_sink_pad, NULL);
         
-        if (user_data->mediaHasVideo)
+        if (user_data->mediaHasVideo && user_data->is_content_visible)
             g_object_set(user_data->video_selector, "active-pad", user_data->video_selector_sink_pad, NULL);
         else
             g_object_set(user_data->video_selector, "active-pad", user_data->video_selector_fake_sink_pad, NULL);

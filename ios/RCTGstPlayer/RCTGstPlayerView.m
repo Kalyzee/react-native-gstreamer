@@ -32,27 +32,26 @@ static RCTGstPlayerView *instance;
 }
 
 // Constructor
+// Constructor
 - (instancetype)init
 {
-    self->pipelineState = NULL;
+    self->isReady = NO;
     return [super init];
 }
 
 // Callables
 void onInit()
 {
+    /*
     // Apply what has been stored in instance
     rct_gst_set_uri([instance getUserData], [instance getUserData]->configuration->uri);
     rct_gst_set_audio_level_refresh_rate([instance getUserData], [instance getUserData]->configuration->audioLevelRefreshRate);
     rct_gst_set_debugging([instance getUserData], [instance getUserData]->configuration->isDebugging);
     rct_gst_set_volume([instance getUserData], [instance getUserData]->configuration->volume);
     
-    if (instance->pipelineState != NULL)
-        [instance setPipelineState:instance->pipelineState];
-    
+     */
     
     rct_gst_set_drawable_surface([instance getUserData], [instance getHandle]);
-    
     instance.onPlayerInit(@{});
 }
 
@@ -115,7 +114,9 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
 
 -(void)layoutSubviews
 {
-    if (![self isReady]) {
+    [super layoutSubviews];
+    
+    if (!self->isReady) {
         
         // Preparing pipeline
         rct_gst_init([self getUserData]);
@@ -124,9 +125,9 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             rct_gst_run_loop([self getUserData]);
         });
+        
+        self->isReady = YES;
     }
-    
-    [super layoutSubviews];
 }
 
 -(void)removeFromSuperview {
@@ -153,20 +154,9 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
     return self->userData;
 }
 
-- (gboolean)isReady
-{
-    return [self getUserData]->is_ready;
-}
-
 //Setters
-- (void)setPipelineState:(int)pipelineState {
-    self->pipelineState = pipelineState;
-    rct_gst_set_pipeline_state([self getUserData], self->pipelineState);
-}
-
 - (void)setShareInstance:(BOOL)_shareInstance {
     shareInstance = _shareInstance;
 }
 
 @end
-
