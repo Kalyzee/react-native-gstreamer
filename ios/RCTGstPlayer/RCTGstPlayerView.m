@@ -72,7 +72,7 @@ void onPlayingProgress(gint64 progress, gint64 duration) {
                                });
 }
 
-void onBufferingProgress(gint64 progress) {
+void onBufferingProgress(gint progress) {
     instance.onBufferingProgress(@{
                                  @"progress": [NSNumber numberWithInteger:progress]
                                  });
@@ -178,7 +178,8 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
 }
 
 - (void)seek:(int)position {
-    gst_element_seek_simple([self getUserData]->playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT, position);
+    rct_gst_seek([self getUserData], position);
+    // gst_element_seek_simple([self getUserData]->playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT, position);
 }
 
 // Setters

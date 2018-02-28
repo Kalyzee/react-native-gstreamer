@@ -255,6 +255,11 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
     }
 }
 
+static gboolean cb_delayed_seek(RctGstUserData* user_data) {
+    execute_seek(user_data, user_data->desired_position);
+    return FALSE;
+}
+
 static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* user_data)
 {
     switch (GST_MESSAGE_TYPE(message))
@@ -363,13 +368,52 @@ gchar *rct_gst_get_info()
     return gst_version_string();
 }
 
-void rct_gst_apply_uri(RctGstUserData* user_data)
+static void rct_gst_apply_uri(RctGstUserData* user_data)
 {
     g_print("RCTGstPlayer : rct_gst_apply_uri\n");
     g_object_set(user_data->playbin, "uri", user_data->configuration->uri, NULL);
     
     if (user_data->configuration->onUriChanged) {
         user_data->configuration->onUriChanged(user_data->configuration->uri);
+    }
+}
+
+static void execute_seek(RctGstUserData* user_data, gint64 position) {
+    gint64 diff;
+    
+    if (position == GST_CLOCK_TIME_NONE)
+        return;
+    
+    diff = gst_util_get_timestamp () - user_data->last_seek_time;
+    
+    if (GST_CLOCK_TIME_IS_VALID (user_data->last_seek_time) && diff < SEEK_MIN_DELAY) {
+        /* The previous seek was too close, delay this one */
+        GSource *timeout_source;
+        
+        if (user_data->desired_position == GST_CLOCK_TIME_NONE) {
+            /* There was no previous seek scheduled. Setup a timer for some time in the future */
+            timeout_source = g_timeout_source_new((SEEK_MIN_DELAY - diff) / GST_MSECOND);
+            g_source_set_callback(timeout_source, (GSourceFunc)cb_delayed_seek, user_data, NULL);
+            g_source_attach(timeout_source, NULL);
+            g_source_unref(timeout_source);
+        }
+        /* Update the desired seek position. If multiple requests are received before it is time
+         * to perform a seek, only the last one is remembered. */
+        user_data->desired_position = position;
+    } else {
+        /* Perform the seek now */
+        user_data->last_seek_time = gst_util_get_timestamp ();
+        gst_element_seek_simple (user_data->playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT, position);
+        user_data->desired_position = GST_CLOCK_TIME_NONE;
+    }
+}
+
+void rct_gst_seek(RctGstUserData *user_data, gint msTime) {
+    gint64 position = (gint64)(msTime * GST_MSECOND);
+    if (user_data->current_state >= GST_STATE_PAUSED) {
+        execute_seek(user_data, position);
+    } else {
+        user_data->desired_position = position;
     }
 }
 
