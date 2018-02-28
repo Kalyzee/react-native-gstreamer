@@ -34,6 +34,7 @@ typedef struct
     void(*onVolumeChanged)(RctGstAudioLevel *audioLevel, gint nb_channels); // Called method when current media volume changes
     void(*onUriChanged)(gchar *new_uri);                            // Called when changing uri is over
     void(*onPlayingProgress)(gint64 progress, gint64 duration);     // Called when playing progression changed / duration is defined
+    void(*onBufferingProgress)(gint64 progress);                    // Called when buffering progression changed
     void(*onEOS)(void);                                             // Called when EOS occurs
     void(*onElementError)(gchar *source, gchar *message,            // Called when an error occurs
                           gchar *debug_info);
@@ -50,6 +51,7 @@ typedef struct {
     guint bus_watch_id;
     GSource *timeout_source;
     GstBus *bus;
+    GstState current_state;
     
     // Video
     guintptr video_overlay;

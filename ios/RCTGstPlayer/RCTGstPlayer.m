@@ -61,6 +61,7 @@ RCT_EXPORT_VIEW_PROPERTY(onStateChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onVolumeChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onUriChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPlayingProgress, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onBufferingProgress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onEOS, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onElementError, RCTBubblingEventBlock)
 

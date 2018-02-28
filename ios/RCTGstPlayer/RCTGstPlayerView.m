@@ -72,6 +72,12 @@ void onPlayingProgress(gint64 progress, gint64 duration) {
                                });
 }
 
+void onBufferingProgress(gint64 progress) {
+    instance.onBufferingProgress(@{
+                                 @"progress": [NSNumber numberWithInteger:progress]
+                                 });
+}
+
 void onElementError(gchar *source, gchar *message, gchar *debug_info) {
     instance.onElementError(@{
                             @"source": [NSString stringWithUTF8String:source],
@@ -112,6 +118,7 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
         [self getUserData]->configuration->onEOS = onEOS;
         [self getUserData]->configuration->onUriChanged = onUriChanged;
         [self getUserData]->configuration->onPlayingProgress = onPlayingProgress;
+        [self getUserData]->configuration->onBufferingProgress = onBufferingProgress;
         [self getUserData]->configuration->onElementError = onElementError;
         [self getUserData]->configuration->onStateChanged = onStateChanged;
         [self getUserData]->configuration->onVolumeChanged = onVolumeChanged;

@@ -28,6 +28,7 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onVolumeChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onUriChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onPlayingProgress;
+@property (nonatomic, copy) RCTBubblingEventBlock onBufferingProgress;
 @property (nonatomic, copy) RCTBubblingEventBlock onEOS;
 @property (nonatomic, copy) RCTBubblingEventBlock onElementError;
 

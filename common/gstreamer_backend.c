@@ -22,7 +22,7 @@ RctGstUserData *rct_gst_init_user_data()
     // Other init flags
     user_data->must_apply_uri = FALSE;
     user_data->is_ready = FALSE;
-    
+    user_data->current_state = GST_STATE_VOID_PENDING;
     user_data->duration = GST_CLOCK_TIME_NONE;
     
     return user_data;
@@ -112,7 +112,7 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
         GValueArray *rms_arr, *peak_arr, *decay_arr;
         gdouble rms_dB, peak_dB, decay_dB;
         const GValue *value;
-        
+
         if(g_strcmp0(name, "level") == 0)
         {
             /* the values are packed into GValueArrays with the value per channel */
@@ -164,6 +164,17 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
     return TRUE;
 }
 
+static gboolean cb_message_buffering(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
+{
+    gint percent;
+    gst_message_parse_buffering (msg, &percent);
+
+    if (user_data->configuration->onBufferingProgress)
+        user_data->configuration->onBufferingProgress(percent);
+
+    return TRUE;
+}
+
 // Remove latency as much as possible
 static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUserData* user_data) {
     user_data->duration = GST_CLOCK_TIME_NONE;
@@ -194,6 +205,8 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
     
     // Message coming from the playbin
     if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state) {
+        
+        user_data->current_state = new_state;
         
         g_print("RCTGstPlayer : New playbin state %s\n", gst_element_state_get_name(new_state));
         
@@ -230,8 +243,6 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
             if (!GST_CLOCK_TIME_IS_VALID (user_data->duration)) {
                 gst_element_query_duration (user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
                 
-                g_print("New duration : %d\n", user_data->duration);
-                
                 if (user_data->configuration->onPlayingProgress) {
                     user_data->configuration->onPlayingProgress(0, user_data->duration / GST_MSECOND);
                 }
@@ -263,8 +274,9 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* u
         case GST_MESSAGE_ELEMENT:
             cb_message_element(bus, message, user_data);
             break;
-            
-        case GST_MESSAGE_ASYNC_DONE:
+
+        case GST_MESSAGE_BUFFERING:
+            cb_message_buffering(bus, message, user_data);
             break;
             
         default:

@@ -74,6 +74,13 @@ export default class GstPlayer extends React.Component {
             this.props.onUriChanged(new_uri)
     }
 
+    onBufferingProgress(_message) {
+        const { progress } = _message.nativeEvent
+
+        if (this.props.onBufferingProgress)
+            this.props.onBufferingProgress(progress)
+    }
+
     onPlayingProgress(_message) {
         const { progress, duration } = _message.nativeEvent
 
@@ -147,6 +154,7 @@ export default class GstPlayer extends React.Component {
                     onStateChanged={this.onStateChanged.bind(this)}
                     onVolumeChanged={this.onVolumeChanged.bind(this)}
                     onUriChanged={this.onUriChanged.bind(this)}
+                    onBufferingProgress={this.onBufferingProgress.bind(this)}
                     onPlayingProgress={this.onPlayingProgress.bind(this)}
                     onEOS={this.onEOS.bind(this)}
                     onElementError={this.onElementError.bind(this)}
@@ -175,6 +183,7 @@ GstPlayer.propTypes = {
     onStateChanged: PropTypes.func,
     onVolumeChanged: PropTypes.func,
     onUriChanged: PropTypes.func,
+    onBufferingProgress: PropTypes.func,
     onPlayingProgress: PropTypes.func,
     onEOS: PropTypes.func,
     onElementError: PropTypes.func,
