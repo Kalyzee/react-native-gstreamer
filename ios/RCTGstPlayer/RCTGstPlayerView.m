@@ -39,17 +39,15 @@ static RCTGstPlayerView *instance;
 }
 
 // Callables
-void onInit()
+void onPlayerInit()
 {
     // Apply what has been stored in instance
     rct_gst_set_uri([instance getUserData], [instance getUserData]->configuration->uri);
-    rct_gst_set_audio_level_refresh_rate([instance getUserData], [instance getUserData]->configuration->audioLevelRefreshRate);
-    rct_gst_set_debugging([instance getUserData], [instance getUserData]->configuration->isDebugging);
+    rct_gst_set_ui_refresh_rate([instance getUserData], [instance getUserData]->configuration->uiRefreshRate);
     rct_gst_set_volume([instance getUserData], [instance getUserData]->configuration->volume);
     
     if (instance->pipelineState != NULL)
         [instance setPipelineState:instance->pipelineState];
-    
     
     rct_gst_set_drawable_surface([instance getUserData], [instance getHandle]);
     
@@ -65,6 +63,13 @@ void onUriChanged(gchar* newUri) {
     NSString *uri = [NSString stringWithUTF8String:newUri];
     NSLog(@"RCTGstPlayer : URI : %@ - LENGTH : %d", uri, uri.length);
     instance.onUriChanged(@{ @"new_uri": uri });
+}
+
+void onPlayingProgress(gint64 progress, gint64 duration) {
+    instance.onPlayingProgress(@{
+                               @"progress": [NSNumber numberWithInteger:progress],
+                               @"duration": [NSNumber numberWithInteger:duration]
+                               });
 }
 
 void onElementError(gchar *source, gchar *message, gchar *debug_info) {
@@ -103,9 +108,10 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
     self = [super initWithFrame:frame];
     if (self) {
         // Preparing configuration
-        [self getUserData]->configuration->onInit = onInit;
+        [self getUserData]->configuration->onPlayerInit = onPlayerInit;
         [self getUserData]->configuration->onEOS = onEOS;
         [self getUserData]->configuration->onUriChanged = onUriChanged;
+        [self getUserData]->configuration->onPlayingProgress = onPlayingProgress;
         [self getUserData]->configuration->onElementError = onElementError;
         [self getUserData]->configuration->onStateChanged = onStateChanged;
         [self getUserData]->configuration->onVolumeChanged = onVolumeChanged;
@@ -158,12 +164,17 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
     return [self getUserData]->is_ready;
 }
 
-//Setters
+// Methods
 - (void)setPipelineState:(int)pipelineState {
     self->pipelineState = pipelineState;
-    rct_gst_set_pipeline_state([self getUserData], self->pipelineState);
+    rct_gst_set_playbin_state([self getUserData], self->pipelineState);
 }
 
+- (void)seek:(int)position {
+    gst_element_seek_simple([self getUserData]->playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT, position);
+}
+
+// Setters
 - (void)setShareInstance:(BOOL)_shareInstance {
     shareInstance = _shareInstance;
 }

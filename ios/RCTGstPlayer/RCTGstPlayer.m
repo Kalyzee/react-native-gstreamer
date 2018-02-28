@@ -41,13 +41,10 @@ RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGstPlayerView)
         rct_gst_set_uri([view getUserData], g_strdup([uri UTF8String]));
     }
 }
-RCT_CUSTOM_VIEW_PROPERTY(audioLevelRefreshRate, NSNumber, RCTGstPlayerView)
+RCT_CUSTOM_VIEW_PROPERTY(uiRefreshRate, NSNumber, RCTGstPlayerView)
 {
-    rct_gst_set_audio_level_refresh_rate([view getUserData], [[RCTConvert NSNumber:json] integerValue]);
-}
-RCT_CUSTOM_VIEW_PROPERTY(isDebugging, BOOL, RCTGstPlayerView)
-{
-    rct_gst_set_debugging([view getUserData], [RCTConvert BOOL:json]);
+    guint64 refreshRate = [[RCTConvert NSNumber:json] unsignedLongLongValue];
+    rct_gst_set_ui_refresh_rate([view getUserData], refreshRate);
 }
 RCT_CUSTOM_VIEW_PROPERTY(volume, NSNumber, RCTGstPlayerView)
 {
@@ -63,6 +60,7 @@ RCT_EXPORT_VIEW_PROPERTY(onPlayerInit, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onStateChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onVolumeChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onUriChanged, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPlayingProgress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onEOS, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onElementError, RCTBubblingEventBlock)
 
@@ -79,4 +77,15 @@ RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber 
     }];
 }
 
+RCT_EXPORT_METHOD(seek:(nonnull NSNumber *)reactTag position:(nonnull NSNumber *)position) {
+    NSNumber *_position = [RCTConvert NSNumber:position];
+    gint gst_position = [_position intValue];
+    
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+        RCTGstPlayerView *view = (RCTGstPlayerView *)viewRegistry[reactTag];
+        if ([view isKindOfClass:[RCTGstPlayerView class]]) {
+            [view seek:gst_position];
+        }
+    }];
+}
 @end

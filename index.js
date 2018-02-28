@@ -25,18 +25,14 @@ export default class GstPlayer extends React.Component {
     currentGstState = undefined
     isPlayerReady = false
 
-    state = {
-        playerFlex: 1
-    }
-
     componentDidMount() {
         this.playerHandle = findNodeHandle(this.playerViewRef)
     }
 
     // From Debugging to video with autoplay
     componentDidUpdate(prevProps, prevStates) {
-        if (!this.props.isDebugging && this.props.autoPlay && prevProps.isDebugging !== this.props.isDebugging) {
-            this.play();
+        if (this.props.autoPlay) {
+            this.play()
         }
     }
 
@@ -71,16 +67,26 @@ export default class GstPlayer extends React.Component {
     onUriChanged(_message) {
         const { new_uri } = _message.nativeEvent
 
-        if (this.props.autoPlay) {
+        if (this.props.autoPlay)
             this.play()
-        }
 
-        if (this.props.onUriChanged) {
+        if (this.props.onUriChanged)
             this.props.onUriChanged(new_uri)
-        }
+    }
+
+    onPlayingProgress(_message) {
+        const { progress, duration } = _message.nativeEvent
+
+        if (this.props.onPlayingProgress)
+            this.props.onPlayingProgress(progress, duration)
     }
 
     onEOS() {
+        if (!this.props.loop)
+            this.pause()
+        else
+            this.seek(0)
+
         if (this.props.onEOS)
             this.props.onEOS()
     }
@@ -98,6 +104,14 @@ export default class GstPlayer extends React.Component {
             this.playerHandle,
             UIManager.RCTGstPlayer.Commands.setState,
             [state]
+        )
+    }
+
+    seek(position) {
+        UIManager.dispatchViewManagerCommand(
+            this.playerHandle,
+            UIManager.RCTGstPlayer.Commands.seek,
+            [position]
         )
     }
 
@@ -121,25 +135,25 @@ export default class GstPlayer extends React.Component {
     render() {
         return (
             <View
-                style={[styles.playerContainer, this.props.style]}
+                style={[styles.playerContainer, this.props.containerStyle]}
             >
                 <RCTGstPlayer
                     uri={this.props.uri !== undefined ? this.props.uri : ""}
                     shareInstance={this.props.shareInstance !== undefined ? this.props.shareInstance : false}
-                    audioLevelRefreshRate={this.props.audioLevelRefreshRate !== undefined ? this.props.audioLevelRefreshRate : 100}
-                    isDebugging={this.props.isDebugging !== undefined ? this.props.isDebugging : false}
+                    uiRefreshRate={this.props.uiRefreshRate !== undefined ? this.props.uiRefreshRate : 100}
                     volume={this.props.volume !== undefined ? this.props.volume : 1.0}
 
                     onPlayerInit={this.onPlayerInit.bind(this)}
                     onStateChanged={this.onStateChanged.bind(this)}
                     onVolumeChanged={this.onVolumeChanged.bind(this)}
                     onUriChanged={this.onUriChanged.bind(this)}
+                    onPlayingProgress={this.onPlayingProgress.bind(this)}
                     onEOS={this.onEOS.bind(this)}
                     onElementError={this.onElementError.bind(this)}
 
                     ref={(playerView) => this.playerViewRef = playerView}
 
-                    style={{ flex: this.state.playerFlex }}
+                    style={[styles.player, this.props.playerStyle]}
                 />
             </View>
         )
@@ -151,8 +165,8 @@ GstPlayer.propTypes = {
     // Props
     uri: PropTypes.string,
     autoPlay: PropTypes.bool,
-    audioLevelRefreshRate: PropTypes.number,
-    isDebugging: PropTypes.bool,
+    loop: PropTypes.bool,
+    uiRefreshRate: PropTypes.number,
     shareInstance: PropTypes.bool,
     volume: PropTypes.number,
 
@@ -161,6 +175,7 @@ GstPlayer.propTypes = {
     onStateChanged: PropTypes.func,
     onVolumeChanged: PropTypes.func,
     onUriChanged: PropTypes.func,
+    onPlayingProgress: PropTypes.func,
     onEOS: PropTypes.func,
     onElementError: PropTypes.func,
 
@@ -177,7 +192,9 @@ GstPlayer.propTypes = {
 
 const styles = StyleSheet.create({
     playerContainer: {
-        backgroundColor: 'rgba(0, 100, 100, 0)',
+        flex: 1
+    },
+    player: {
         flex: 1
     }
 })

@@ -27,6 +27,7 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onStateChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onVolumeChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onUriChanged;
+@property (nonatomic, copy) RCTBubblingEventBlock onPlayingProgress;
 @property (nonatomic, copy) RCTBubblingEventBlock onEOS;
 @property (nonatomic, copy) RCTBubblingEventBlock onElementError;
 
@@ -37,8 +38,11 @@
 - (RctGstUserData *)getUserData;
 - (gboolean)isReady;
 
-// Setters
+// Methods
 - (void)setPipelineState:(int)pipelineState;
+- (void)seek:(int)position;
+
+// Setters
 - (void)setShareInstance:(BOOL)_shareInstance;
 
 @end
