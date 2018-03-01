@@ -41,7 +41,7 @@
 
 // Methods
 - (void)setPipelineState:(int)pipelineState;
-- (void)seek:(int)position;
+- (void)seek:(gint64)position;
 
 // Setters
 - (void)setShareInstance:(BOOL)_shareInstance;

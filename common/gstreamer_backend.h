@@ -92,7 +92,7 @@ void rct_gst_terminate(RctGstUserData *user_data);
 gchar *rct_gst_get_info();
 static void rct_gst_apply_uri(RctGstUserData *user_data);
 static void execute_seek(RctGstUserData* user_data, gint64 position);
-void rct_gst_seek(RctGstUserData *user_data, gint msTime);
+void rct_gst_seek(RctGstUserData *user_data, gint64 position);
 
 // Setters
 void rct_gst_set_uri(RctGstUserData *user_data, gchar* _uri);

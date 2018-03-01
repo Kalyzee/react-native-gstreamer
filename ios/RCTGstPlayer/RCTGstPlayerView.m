@@ -177,9 +177,8 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
     rct_gst_set_playbin_state([self getUserData], self->pipelineState);
 }
 
-- (void)seek:(int)position {
+- (void)seek:(gint64)position {
     rct_gst_seek([self getUserData], position);
-    // gst_element_seek_simple([self getUserData]->playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT, position);
 }
 
 // Setters

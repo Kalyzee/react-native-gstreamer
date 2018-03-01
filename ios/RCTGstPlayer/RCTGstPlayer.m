@@ -80,8 +80,8 @@ RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber 
 
 RCT_EXPORT_METHOD(seek:(nonnull NSNumber *)reactTag position:(nonnull NSNumber *)position) {
     NSNumber *_position = [RCTConvert NSNumber:position];
-    gint gst_position = [_position intValue];
-    
+    gint64 gst_position = [_position longLongValue];
+
     [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
         RCTGstPlayerView *view = (RCTGstPlayerView *)viewRegistry[reactTag];
         if ([view isKindOfClass:[RCTGstPlayerView class]]) {

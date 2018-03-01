@@ -23,7 +23,11 @@ RctGstUserData *rct_gst_init_user_data()
     user_data->must_apply_uri = FALSE;
     user_data->is_ready = FALSE;
     user_data->current_state = GST_STATE_VOID_PENDING;
+    
     user_data->duration = GST_CLOCK_TIME_NONE;
+    user_data->position = GST_CLOCK_TIME_NONE;
+    user_data->desired_position = GST_CLOCK_TIME_NONE;
+    user_data->last_seek_time = gst_util_get_timestamp();
     
     return user_data;
 }
@@ -112,7 +116,7 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
         GValueArray *rms_arr, *peak_arr, *decay_arr;
         gdouble rms_dB, peak_dB, decay_dB;
         const GValue *value;
-
+        
         if(g_strcmp0(name, "level") == 0)
         {
             /* the values are packed into GValueArrays with the value per channel */
@@ -168,10 +172,10 @@ static gboolean cb_message_buffering(GstBus *bus, GstMessage *msg, RctGstUserDat
 {
     gint percent;
     gst_message_parse_buffering (msg, &percent);
-
+    
     if (user_data->configuration->onBufferingProgress)
         user_data->configuration->onBufferingProgress(percent);
-
+    
     return TRUE;
 }
 
@@ -181,16 +185,16 @@ static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUser
     g_object_set(source, "latency", 0, NULL);
 }
 
-static gboolean cb_cycle_watch(RctGstUserData* user_data) {
+static gboolean cb_duration_and_progress(RctGstUserData* user_data) {
     
-    /* If we didn't know it yet, query the stream duration */
-    if (!GST_CLOCK_TIME_IS_VALID (user_data->duration)) {
-        gst_element_query_duration(user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
-    }
-    
-    if (gst_element_query_position(user_data->playbin, GST_FORMAT_TIME, &user_data->position)) {
-        if (user_data->configuration->onPlayingProgress) {
-            user_data->configuration->onPlayingProgress(user_data->position / GST_MSECOND, user_data->duration / GST_MSECOND);
+    if (user_data->current_state == GST_STATE_PLAYING) {
+        // If we didn't know it yet, query the stream duration
+        if (!GST_CLOCK_TIME_IS_VALID (user_data->duration))
+            gst_element_query_duration(user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
+        
+        if (gst_element_query_position(user_data->playbin, GST_FORMAT_TIME, &user_data->position)) {
+            if (user_data->configuration->onPlayingProgress)
+                user_data->configuration->onPlayingProgress(user_data->position / GST_MSECOND, user_data->duration / GST_MSECOND);
         }
     }
     
@@ -219,7 +223,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                 GstElement *video_sink = gst_bin_get_by_interface(GST_BIN(user_data->playbin), GST_TYPE_VIDEO_OVERLAY);
                 user_data->video_overlay = GST_VIDEO_OVERLAY(video_sink);
                 g_object_unref(video_sink);
-
+                
                 if (user_data->configuration->onPlayerInit) {
                     user_data->configuration->onPlayerInit();
                 }
@@ -246,6 +250,18 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                 if (user_data->configuration->onPlayingProgress) {
                     user_data->configuration->onPlayingProgress(0, user_data->duration / GST_MSECOND);
                 }
+            }
+        }
+        
+        // Seek if requested
+        if (new_state == GST_STATE_PLAYING && user_data->desired_position != GST_CLOCK_TIME_NONE) {
+            if (GST_CLOCK_TIME_IS_VALID(user_data->desired_position)) {
+                
+                // Restore good base time as we never stored the right one
+                GstClockTime base_time = gst_element_get_base_time(user_data->playbin);
+                gst_element_set_base_time(user_data->playbin, base_time - user_data->desired_position);
+                
+                execute_seek(user_data, user_data->desired_position);
             }
         }
         
@@ -279,9 +295,14 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* u
         case GST_MESSAGE_ELEMENT:
             cb_message_element(bus, message, user_data);
             break;
-
+            
         case GST_MESSAGE_BUFFERING:
             cb_message_buffering(bus, message, user_data);
+            break;
+            
+        case GST_MESSAGE_DURATION_CHANGED:
+            user_data->duration = GST_CLOCK_TIME_NONE;
+            cb_duration_and_progress(user_data);
             break;
             
         default:
@@ -384,7 +405,7 @@ static void execute_seek(RctGstUserData* user_data, gint64 position) {
     if (position == GST_CLOCK_TIME_NONE)
         return;
     
-    diff = gst_util_get_timestamp () - user_data->last_seek_time;
+    diff = gst_util_get_timestamp() - user_data->last_seek_time;
     
     if (GST_CLOCK_TIME_IS_VALID (user_data->last_seek_time) && diff < SEEK_MIN_DELAY) {
         /* The previous seek was too close, delay this one */
@@ -401,15 +422,23 @@ static void execute_seek(RctGstUserData* user_data, gint64 position) {
          * to perform a seek, only the last one is remembered. */
         user_data->desired_position = position;
     } else {
+        
         /* Perform the seek now */
-        user_data->last_seek_time = gst_util_get_timestamp ();
-        gst_element_seek_simple (user_data->playbin, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT, position);
+        user_data->last_seek_time = gst_util_get_timestamp();
+        gst_element_seek_simple(
+                                user_data->playbin,
+                                GST_FORMAT_TIME,
+                                GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
+                                position
+                                );
         user_data->desired_position = GST_CLOCK_TIME_NONE;
     }
 }
 
-void rct_gst_seek(RctGstUserData *user_data, gint msTime) {
-    gint64 position = (gint64)(msTime * GST_MSECOND);
+void rct_gst_seek(RctGstUserData *user_data, gint64 position) {
+    
+    position = position * GST_MSECOND;
+    
     if (user_data->current_state >= GST_STATE_PAUSED) {
         execute_seek(user_data, position);
     } else {
@@ -452,7 +481,7 @@ void rct_gst_set_ui_refresh_rate(RctGstUserData* user_data, guint64 uiRefreshRat
         // Progression callback
         if (user_data->configuration->onPlayingProgress) {
             user_data->timeout_source = g_timeout_source_new(user_data->configuration->uiRefreshRate);
-            g_source_set_callback(user_data->timeout_source, (GSourceFunc)cb_cycle_watch, user_data, NULL);
+            g_source_set_callback(user_data->timeout_source, (GSourceFunc)cb_duration_and_progress, user_data, NULL);
             g_source_attach(user_data->timeout_source, NULL);
             g_source_unref(user_data->timeout_source);
         }

@@ -53,7 +53,7 @@ export default class GstPlayer extends React.Component {
     }
 
     onVolumeChanged(_message) {
-        const audioLevelObject = Object.keys(_message.nativeEvent).filter(key => key !== "target").reduce( (obj, key) => {
+        const audioLevelObject = Object.keys(_message.nativeEvent).filter(key => key !== "target").reduce((obj, key) => {
             obj[key] = _message.nativeEvent[key];
             return obj;
         }, {})
