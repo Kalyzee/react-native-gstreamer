@@ -20,7 +20,7 @@ export const GstState = {
     PLAYING: 4
 }
 
-export default class GstPlayer extends React.Component {
+export class GstPlayer extends React.Component {
 
     currentGstState = undefined
     isPlayerReady = false

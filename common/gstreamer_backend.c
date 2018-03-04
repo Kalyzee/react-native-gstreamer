@@ -22,6 +22,8 @@ RctGstUserData *rct_gst_init_user_data()
     // Other init flags
     user_data->must_apply_uri = FALSE;
     user_data->is_ready = FALSE;
+    user_data->image_visible = FALSE;
+    user_data->is_stopping = FALSE;
     user_data->current_state = GST_STATE_VOID_PENDING;
     
     user_data->duration = GST_CLOCK_TIME_NONE;
@@ -64,6 +66,60 @@ void create_audio_sink_bin(RctGstUserData *user_data)
     gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->audio_level_analyser, "sink")));
 }
 
+/**********************
+ VIDEO HANDLING METHODS
+ *********************/
+GstPadProbeReturn onEOSOnVideoSink(GstPad *pad, GstPadProbeInfo *info, RctGstUserData *user_data)
+{
+    if (GST_EVENT_TYPE(GST_PAD_PROBE_INFO_DATA(info)) == GST_EVENT_EOS) {
+        g_print("Probe EOS on video sink ! \n");
+        g_object_set(user_data->input_selector, "active-pad", user_data->blackscreen_generator_sink_pad, NULL);
+        user_data->image_visible = FALSE;
+        
+        cb_eos(user_data->bus, NULL, user_data);
+    }
+    
+    return GST_PAD_PROBE_OK;
+}
+
+void create_video_sink_bin(RctGstUserData *user_data)
+{
+    GstElement *blackscreen_generator = gst_element_factory_make("videotestsrc", "video-test-src");
+    user_data->input_selector = gst_element_factory_make("input-selector", "input-selector");
+
+    g_object_set(blackscreen_generator, "pattern", 2, NULL);
+
+    // Create elements
+    user_data->video_sink_bin = gst_bin_new("video-sink-bin");
+    user_data->video_sink = gst_element_factory_make("glimagesink", "video-sink");
+    
+    // Add them
+    gst_bin_add_many(GST_BIN(user_data->video_sink_bin),
+                     blackscreen_generator,
+                     user_data->input_selector,
+                     user_data->video_sink,
+                     NULL);
+    
+    // Link funnel to video_sink
+    if(!gst_element_link(user_data->input_selector, user_data->video_sink))
+        g_printerr("RCTGstPlayer : Failed to link funnel and video_sink\n");
+    
+    // Get request sink pads
+    user_data->playbin_sink_pad = gst_element_get_request_pad(user_data->input_selector, "sink_%u");
+    user_data->blackscreen_generator_sink_pad = gst_element_get_request_pad(user_data->input_selector, "sink_%u");
+
+    // Link blackscreen generator to input-selector
+    gst_pad_link(gst_element_get_static_pad(blackscreen_generator, "src"), user_data->blackscreen_generator_sink_pad);
+
+    // Creating ghostpad for uri-decode-bin
+    gst_element_add_pad(GST_BIN(user_data->video_sink_bin), gst_ghost_pad_new("sink", user_data->playbin_sink_pad));
+    
+    // Add probe to cancel EOS
+    gst_pad_add_probe(
+                      gst_element_get_static_pad(user_data->video_sink_bin, "sink"),
+                      GST_PAD_PROBE_TYPE_DATA_BOTH, onEOSOnVideoSink, user_data, NULL);
+}
+
 /*********************
  APPLICATION CALLBACKS
  ********************/
@@ -99,6 +155,11 @@ static void cb_error(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 
 static void cb_eos(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
+    
+    g_print("EOS\n");
+
+    rct_gst_clear_screen(user_data);
+    
     if (user_data->configuration->onEOS) {
         user_data->configuration->onEOS();
     }
@@ -192,7 +253,7 @@ static gboolean cb_duration_and_progress(RctGstUserData* user_data) {
         if (!GST_CLOCK_TIME_IS_VALID (user_data->duration))
             gst_element_query_duration(user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
         
-        if (gst_element_query_position(user_data->playbin, GST_FORMAT_TIME, &user_data->position)) {
+        if (user_data->image_visible && gst_element_query_position(user_data->playbin, GST_FORMAT_TIME, &user_data->position)) {
             if (user_data->configuration->onPlayingProgress)
                 user_data->configuration->onPlayingProgress(user_data->position / GST_MSECOND, user_data->duration / GST_MSECOND);
         }
@@ -236,6 +297,18 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                     user_data->must_apply_uri = FALSE;
                 }
             }
+            
+            // If stopping, show black screen (switch source to black screen -> play then stop again)
+            if (old_state == GST_STATE_PAUSED) {
+                if (!user_data->is_stopping) {
+                    user_data->is_stopping = TRUE;
+                    user_data->image_visible = FALSE;
+                    g_object_set(user_data->input_selector, "active-pad", user_data->blackscreen_generator_sink_pad, NULL);
+                    rct_gst_set_playbin_state(user_data, GST_STATE_PLAYING);
+                } else {
+                    user_data->is_stopping = FALSE;
+                }
+            }
         }
         
         if (new_state >= GST_STATE_READY) {
@@ -244,12 +317,20 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
         
         // Get element duration if not known yet
         if (new_state >= GST_STATE_PAUSED) {
+            
+            user_data->image_visible = TRUE;
+            g_object_set(user_data->input_selector, "active-pad", user_data->playbin_sink_pad, NULL);
+            
             if (!GST_CLOCK_TIME_IS_VALID (user_data->duration)) {
                 gst_element_query_duration (user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
                 
                 if (user_data->configuration->onPlayingProgress) {
                     user_data->configuration->onPlayingProgress(0, user_data->duration / GST_MSECOND);
                 }
+            }
+            
+            if (new_state == GST_STATE_PLAYING && user_data->is_stopping) {
+                rct_gst_set_playbin_state(user_data, GST_STATE_READY);
             }
         }
         
@@ -265,7 +346,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
             }
         }
         
-        if (user_data->configuration->onStateChanged) {
+        if (user_data->configuration->onStateChanged && !user_data->is_stopping) {
             user_data->configuration->onStateChanged(old_state, new_state);
         }
     }
@@ -285,7 +366,7 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* u
             break;
             
         case GST_MESSAGE_EOS:
-            cb_eos(bus, message, user_data);
+            // Never triggered, as we switch source to an inifinite source when EOS goes in video sink
             break;
             
         case GST_MESSAGE_STATE_CHANGED:
@@ -341,6 +422,13 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
     return validity;
 }
 
+// We want to draw a black frame to clear the screen
+void rct_gst_clear_screen(RctGstUserData *user_data)
+{
+    g_print("Clearing screen... \n");
+    g_object_set(user_data->input_selector, "drop", FALSE, NULL);
+}
+
 void rct_gst_init(RctGstUserData* user_data)
 {
     // Create a playbin pipeline
@@ -349,6 +437,10 @@ void rct_gst_init(RctGstUserData* user_data)
     // Create audio with level analyser
     create_audio_sink_bin(user_data);
     g_object_set(user_data->playbin, "audio-sink", user_data->audio_sink_bin, NULL);
+    
+    // Create video with black screen generator
+    create_video_sink_bin(user_data);
+    g_object_set(user_data->playbin, "video-sink", user_data->video_sink_bin, NULL);
     
     // Preparing bus
     user_data->bus = gst_element_get_bus(user_data->playbin);
