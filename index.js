@@ -7,7 +7,8 @@ import {
     AppState,
     Platform,
     StyleSheet,
-    Text
+    Text,
+    Animated
 } from 'react-native'
 
 const PropTypes = require('prop-types')
@@ -25,15 +26,24 @@ export class GstPlayer extends React.Component {
     currentGstState = undefined
     isPlayerReady = false
 
+    constructor(props, context) {
+        super(props, context)
+
+        this.state = {
+            overlayOpacity: new Animated.Value(props.overlayOpacity !== undefined ? props.overlayOpacity : 1)
+        }
+    }
+
     componentDidMount() {
         this.playerHandle = findNodeHandle(this.playerViewRef)
     }
 
-    // From Debugging to video with autoplay
-    componentDidUpdate(prevProps, prevStates) {
-        if (this.props.autoPlay) {
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.autoPlay !== this.props.autoPlay && this.props.autoPlay)
             this.play()
-        }
+
+        if (prevProps.overlayOpacity !== this.props.overlayOpacity)
+            this.applyOpacity()
     }
 
     // Callbacks
@@ -47,6 +57,8 @@ export class GstPlayer extends React.Component {
     onStateChanged(_message) {
         const { old_state, new_state } = _message.nativeEvent
         this.currentGstState = new_state
+
+        this.applyOpacity()
 
         if (this.props.onStateChanged)
             this.props.onStateChanged(old_state, new_state)
@@ -90,7 +102,7 @@ export class GstPlayer extends React.Component {
 
     onEOS() {
         if (!this.props.loop)
-            this.pause()
+            this.stop()
         else
             this.seek(0)
 
@@ -120,6 +132,40 @@ export class GstPlayer extends React.Component {
             UIManager.RCTGstPlayer.Commands.seek,
             [position]
         )
+    }
+
+    applyOpacity() {
+        let overlayOpacity = 0
+        if (this.currentGstState <= GstState.READY) {
+            overlayOpacity = this.props.overlayOpacity !== undefined ? this.props.overlayOpacity : 1
+        }
+
+        this.setOverlayOpacity(overlayOpacity);
+    }
+
+    setOverlayOpacity(overlayOpacity) {
+        if (this.state.overlayOpacity._value !== overlayOpacity) {
+
+            const isFadingIn = (overlayOpacity > 0)
+            const { overlayFadeInSpeed, overlayFadeOutSpeed } = this.props
+            let duration = 0
+
+            console.log(overlayOpacity, this.state.overlayOpacity._value, isFadingIn, overlayFadeInSpeed, overlayFadeOutSpeed)
+
+            if (isFadingIn && overlayFadeInSpeed !== undefined)
+                duration = overlayFadeInSpeed
+
+            if (!isFadingIn && overlayFadeOutSpeed !== undefined)
+                duration = overlayFadeOutSpeed
+
+            Animated.timing(
+                this.state.overlayOpacity, {
+                    toValue: overlayOpacity,
+                    duration,
+                    useNativeDriver: true
+                }
+            ).start();
+        }
     }
 
     // Player state shortcuts
@@ -163,6 +209,10 @@ export class GstPlayer extends React.Component {
 
                     style={[styles.player, this.props.playerStyle]}
                 />
+                <Animated.View
+                    style={[styles.overlay, { opacity: this.state.overlayOpacity }, this.props.overlayStyle]}
+                    pointerEvents='box-none'
+                />
             </View>
         )
     }
@@ -177,6 +227,9 @@ GstPlayer.propTypes = {
     uiRefreshRate: PropTypes.number,
     shareInstance: PropTypes.bool,
     volume: PropTypes.number,
+    overlayOpacity: PropTypes.number,
+    overlayFadeInSpeed: PropTypes.number,
+    overlayFadeOutSpeed: PropTypes.number,
 
     // Events callbacks
     onPlayerInit: PropTypes.func,
@@ -201,10 +254,17 @@ GstPlayer.propTypes = {
 
 const styles = StyleSheet.create({
     playerContainer: {
-        flex: 1
+        flex: 1,
+        backgroundColor: '#000000'
     },
     player: {
-        flex: 1
+        flex: 1,
+        backgroundColor: '#000000'
+    },
+    overlay: {
+        backgroundColor: '#000000',
+        position: 'absolute',
+        top: 0, left: 0, right: 0, bottom: 0
     }
 })
 

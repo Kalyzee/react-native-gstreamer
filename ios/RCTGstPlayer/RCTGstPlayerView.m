@@ -34,8 +34,12 @@ static RCTGstPlayerView *instance;
 // Constructor
 - (instancetype)init
 {
-    self->pipelineState = NULL;
-    return [super init];
+    self = [super init];
+    if (self) {
+        self->pipelineState = NULL;
+    }
+    
+    return self;
 }
 
 // Callables
@@ -44,7 +48,9 @@ void onPlayerInit()
     // Apply what has been stored in instance
     rct_gst_set_uri([instance getUserData], [instance getUserData]->configuration->uri);
     rct_gst_set_ui_refresh_rate([instance getUserData], [instance getUserData]->configuration->uiRefreshRate);
+    rct_gst_set_connect_timeout([instance getUserData], [instance getUserData]->configuration->connectTimeout);
     rct_gst_set_volume([instance getUserData], [instance getUserData]->configuration->volume);
+    
     
     if (instance->pipelineState != NULL)
         [instance setPipelineState:instance->pipelineState];
@@ -90,7 +96,7 @@ void onStateChanged(GstState old_state, GstState new_state) {
     
     NSNumber* oldState = [NSNumber numberWithInt:old_state];
     NSNumber* newState = [NSNumber numberWithInt:new_state];
-    
+
     instance.onStateChanged(@{ @"old_state": oldState, @"new_state": newState });
 }
 
@@ -185,6 +191,5 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
 - (void)setShareInstance:(BOOL)_shareInstance {
     shareInstance = _shareInstance;
 }
-
 @end
 

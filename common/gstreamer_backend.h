@@ -59,11 +59,8 @@ typedef struct {
     
     // Video
     guintptr video_overlay;
-    GstElement *input_selector;
     GstElement *video_sink;
-    GstPad *playbin_sink_pad;
-    GstPad *blackscreen_generator_sink_pad;
-    
+
     // Audio
     GstBin *audio_sink_bin;
     GstBin *video_sink_bin;
@@ -71,10 +68,11 @@ typedef struct {
     GstElement *audio_sink;
     
     // Misc
+    GstElement *source;
     gboolean must_apply_uri;
     gboolean is_ready;
-    gboolean image_visible;
-    gboolean is_stopping;
+    gboolean must_clear_screen;
+    gint reconnect_retry_count;
     
     // Media informations and seeking
     gint64 duration;
@@ -93,7 +91,6 @@ static void cb_eos(GstBus *bus, GstMessage *msg, RctGstUserData* user_data);
 
 // Other
 GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstState state);
-void rct_gst_clear_screen(RctGstUserData *user_data);
 void rct_gst_init(RctGstUserData *user_data);
 void rct_gst_run_loop(RctGstUserData *user_data);
 void rct_gst_terminate(RctGstUserData *user_data);
@@ -108,5 +105,8 @@ void rct_gst_set_uri(RctGstUserData *user_data, gchar* _uri);
 void rct_gst_set_ui_refresh_rate(RctGstUserData *user_data, guint64 audio_level_refresh_rate);
 void rct_gst_set_volume(RctGstUserData *user_data, gdouble volume);
 void rct_gst_set_drawable_surface(RctGstUserData *user_data, guintptr drawable_surface);
+
+// Utils
+static gboolean rct_gst_element_has_attribute(GstElement *element, const gchar *attribute);
 
 #endif /* gstreamer_backend_h */
