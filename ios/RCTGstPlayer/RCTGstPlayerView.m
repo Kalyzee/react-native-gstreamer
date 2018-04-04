@@ -43,64 +43,68 @@ static RCTGstPlayerView *instance;
 }
 
 // Callables
-void onPlayerInit()
+void onPlayerInit(RCTGstPlayerView *self)
 {
     // Apply what has been stored in instance
-    rct_gst_set_uri([instance getUserData], [instance getUserData]->configuration->uri);
-    rct_gst_set_ui_refresh_rate([instance getUserData], [instance getUserData]->configuration->uiRefreshRate);
-    rct_gst_set_connect_timeout([instance getUserData], [instance getUserData]->configuration->connectTimeout);
-    rct_gst_set_volume([instance getUserData], [instance getUserData]->configuration->volume);
+    rct_gst_set_uri([self getUserData], [self getUserData]->configuration->uri);
+    rct_gst_set_ui_refresh_rate([self getUserData], [self getUserData]->configuration->uiRefreshRate);
+    rct_gst_set_volume([self getUserData], [self getUserData]->configuration->volume);
     
+    if (self->pipelineState != NULL)
+        [self setPipelineState:self->pipelineState];
     
-    if (instance->pipelineState != NULL)
-        [instance setPipelineState:instance->pipelineState];
+    rct_gst_set_drawable_surface([self getUserData], [self getHandle]);
     
-    rct_gst_set_drawable_surface([instance getUserData], [instance getHandle]);
-    
-    instance.onPlayerInit(@{});
+    self.onPlayerInit(@{});
 }
 
-void onEOS()
+void onPadAdded(RCTGstPlayerView *self, gchar *name)
 {
-    instance.onEOS(@{});
+    NSString *pad_name = [NSString stringWithUTF8String:name];
+    self.onPadAdded(@{ @"name": pad_name });
 }
 
-void onUriChanged(gchar* newUri) {
+void onEOS(RCTGstPlayerView *self)
+{
+    self.onEOS(@{});
+}
+
+void onUriChanged(RCTGstPlayerView *self, gchar* newUri) {
     NSString *uri = [NSString stringWithUTF8String:newUri];
     NSLog(@"RCTGstPlayer : URI : %@ - LENGTH : %d", uri, uri.length);
-    instance.onUriChanged(@{ @"new_uri": uri });
+    self.onUriChanged(@{ @"new_uri": uri });
 }
 
-void onPlayingProgress(gint64 progress, gint64 duration) {
-    instance.onPlayingProgress(@{
+void onPlayingProgress(RCTGstPlayerView *self, gint64 progress, gint64 duration) {
+    self.onPlayingProgress(@{
                                @"progress": [NSNumber numberWithInteger:progress],
                                @"duration": [NSNumber numberWithInteger:duration]
                                });
 }
 
-void onBufferingProgress(gint progress) {
-    instance.onBufferingProgress(@{
+void onBufferingProgress(RCTGstPlayerView *self, gint progress) {
+    self.onBufferingProgress(@{
                                  @"progress": [NSNumber numberWithInteger:progress]
                                  });
 }
 
-void onElementError(gchar *source, gchar *message, gchar *debug_info) {
-    instance.onElementError(@{
+void onElementError(RCTGstPlayerView *self, gchar *source, gchar *message, gchar *debug_info) {
+    self.onElementError(@{
                             @"source": [NSString stringWithUTF8String:source],
                             @"message": [NSString stringWithUTF8String:message],
                             @"debug_info": [NSString stringWithUTF8String:debug_info]
                             });
 }
 
-void onStateChanged(GstState old_state, GstState new_state) {
+void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_state) {
     
     NSNumber* oldState = [NSNumber numberWithInt:old_state];
     NSNumber* newState = [NSNumber numberWithInt:new_state];
 
-    instance.onStateChanged(@{ @"old_state": oldState, @"new_state": newState });
+    self.onStateChanged(@{ @"old_state": oldState, @"new_state": newState });
 }
 
-void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
+void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint nb_channels) {
     NSMutableDictionary *js_dictionary = [[NSMutableDictionary alloc] init];
     
     for (int i = 0; i < nb_channels; i++) {
@@ -112,7 +116,7 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
                                    } forKey: [NSString stringWithFormat:@"%d", i]
          ];
     }
-    instance.onVolumeChanged(js_dictionary);
+    self.onVolumeChanged(js_dictionary);
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -121,6 +125,7 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
     if (self) {
         // Preparing configuration
         [self getUserData]->configuration->onPlayerInit = onPlayerInit;
+        [self getUserData]->configuration->onPadAdded = onPadAdded;
         [self getUserData]->configuration->onEOS = onEOS;
         [self getUserData]->configuration->onUriChanged = onUriChanged;
         [self getUserData]->configuration->onPlayingProgress = onPlayingProgress;
@@ -168,6 +173,7 @@ void onVolumeChanged(RctGstAudioLevel* audioLevel, gint nb_channels) {
     if (!self->userData) {
         NSLog(@"Creating user data");
         self->userData = rct_gst_init_user_data();
+        self->userData->configuration->owner = (__bridge void *)(self);
     }
     return self->userData;
 }

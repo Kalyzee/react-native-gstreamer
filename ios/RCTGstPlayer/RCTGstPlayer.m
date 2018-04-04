@@ -46,11 +46,6 @@ RCT_CUSTOM_VIEW_PROPERTY(uiRefreshRate, NSNumber, RCTGstPlayerView)
     guint64 refreshRate = [[RCTConvert NSNumber:json] unsignedLongLongValue];
     rct_gst_set_ui_refresh_rate([view getUserData], refreshRate);
 }
-RCT_CUSTOM_VIEW_PROPERTY(connectTimeout, NSNumber, RCTGstPlayerView)
-{
-    guint _connectTimeout = [[RCTConvert NSNumber:json] unsignedIntegerValue];
-    rct_gst_set_connect_timeout([view getUserData], _connectTimeout);
-}
 RCT_CUSTOM_VIEW_PROPERTY(volume, NSNumber, RCTGstPlayerView)
 {
     rct_gst_set_volume([view getUserData], [[RCTConvert NSNumber:json] doubleValue]);
@@ -62,6 +57,7 @@ RCT_CUSTOM_VIEW_PROPERTY(shareInstance, BOOL, RCTGstPlayerView)
 
 // Shared events
 RCT_EXPORT_VIEW_PROPERTY(onPlayerInit, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPadAdded, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onStateChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onVolumeChanged, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onUriChanged, RCTBubblingEventBlock)

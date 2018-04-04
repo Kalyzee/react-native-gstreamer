@@ -21,6 +21,7 @@
 
 // react-native events
 @property (nonatomic, copy) RCTBubblingEventBlock onPlayerInit;
+@property (nonatomic, copy) RCTBubblingEventBlock onPadAdded;
 @property (nonatomic, copy) RCTBubblingEventBlock onStateChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onVolumeChanged;
 @property (nonatomic, copy) RCTBubblingEventBlock onUriChanged;

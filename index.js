@@ -54,6 +54,13 @@ export class GstPlayer extends React.Component {
             this.props.onPlayerInit()
     }
 
+    onPadAdded(_message) {
+        const { name } = _message.nativeEvent
+
+        if (this.props.onPadAdded)
+            this.props.onPadAdded(name)
+    }
+
     onStateChanged(_message) {
         const { old_state, new_state } = _message.nativeEvent
         this.currentGstState = new_state
@@ -70,7 +77,7 @@ export class GstPlayer extends React.Component {
             return obj;
         }, {})
 
-        let audioLevelArray = Object.values(audioLevelObject)
+        const audioLevelArray = Object.values(audioLevelObject)
 
         if (this.props.onVolumeChanged)
             this.props.onVolumeChanged(audioLevelArray)
@@ -150,8 +157,6 @@ export class GstPlayer extends React.Component {
             const { overlayFadeInSpeed, overlayFadeOutSpeed } = this.props
             let duration = 0
 
-            console.log(overlayOpacity, this.state.overlayOpacity._value, isFadingIn, overlayFadeInSpeed, overlayFadeOutSpeed)
-
             if (isFadingIn && overlayFadeInSpeed !== undefined)
                 duration = overlayFadeInSpeed
 
@@ -185,10 +190,23 @@ export class GstPlayer extends React.Component {
         return this.isPlayerReady
     }
 
+    getOverlay() {
+        if (this.props.showOverlay) {
+            return (
+                <Animated.View
+                    style={[styles.overlay, { opacity: this.state.overlayOpacity }, this.props.overlayStyle]}
+                    pointerEvents='box-none'
+                />
+            )
+        }
+    }
+
     render() {
         return (
             <View
                 style={[styles.playerContainer, this.props.containerStyle]}
+                pointerEvents='box-none'
+                onLayout={this.props.onLayout}
             >
                 <RCTGstPlayer
                     uri={this.props.uri !== undefined ? this.props.uri : ""}
@@ -197,6 +215,7 @@ export class GstPlayer extends React.Component {
                     volume={this.props.volume !== undefined ? this.props.volume : 1.0}
 
                     onPlayerInit={this.onPlayerInit.bind(this)}
+                    onPadAdded={this.onPadAdded.bind(this)}
                     onStateChanged={this.onStateChanged.bind(this)}
                     onVolumeChanged={this.onVolumeChanged.bind(this)}
                     onUriChanged={this.onUriChanged.bind(this)}
@@ -209,10 +228,7 @@ export class GstPlayer extends React.Component {
 
                     style={[styles.player, this.props.playerStyle]}
                 />
-                <Animated.View
-                    style={[styles.overlay, { opacity: this.state.overlayOpacity }, this.props.overlayStyle]}
-                    pointerEvents='box-none'
-                />
+                { this.getOverlay() }
             </View>
         )
     }
@@ -233,6 +249,7 @@ GstPlayer.propTypes = {
 
     // Events callbacks
     onPlayerInit: PropTypes.func,
+    onPadAdded: PropTypes.func,
     onStateChanged: PropTypes.func,
     onVolumeChanged: PropTypes.func,
     onUriChanged: PropTypes.func,

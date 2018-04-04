@@ -31,16 +31,18 @@ typedef struct
     guint64 uiRefreshRate;                                          // Time in ms between each call of onVolumeChanged
     guintptr drawableSurface;                                       // Pointer to drawable surface
     gdouble volume;                                                 // Volume of the resource
+    void *owner;                                                    // Reference to instance
     
     // Callbacks
-    void(*onPlayerInit)(void);                                      // Called when the player is ready
-    void(*onStateChanged)(GstState old_state, GstState new_state);  // Called method when GStreamer state changes
-    void(*onVolumeChanged)(RctGstAudioLevel *audioLevel, gint nb_channels); // Called method when current media volume changes
-    void(*onUriChanged)(gchar *new_uri);                            // Called when changing uri is over
-    void(*onPlayingProgress)(gint64 progress, gint64 duration);     // Called when playing progression changed / duration is defined
-    void(*onBufferingProgress)(gint progress);                      // Called when buffering progression changed
-    void(*onEOS)(void);                                             // Called when EOS occurs
-    void(*onElementError)(gchar *source, gchar *message,            // Called when an error occurs
+    void(*onPlayerInit)(void *owner);                                                       // Called when the player is ready
+    void(*onPadAdded)(void *owner, gchar *name);                                            // Called when pad is created
+    void(*onStateChanged)(void *owner, GstState old_state, GstState new_state);             // Called method when GStreamer state changes
+    void(*onVolumeChanged)(void *owner, RctGstAudioLevel *audioLevel, gint nb_channels);    // Called method when current media volume changes
+    void(*onUriChanged)(void *owner, gchar *new_uri);                                       // Called when changing uri is over
+    void(*onPlayingProgress)(void *owner, gint64 progress, gint64 duration);                // Called when playing progression changed / duration is defined
+    void(*onBufferingProgress)(void *owner, gint progress);                                 // Called when buffering progression changed
+    void(*onEOS)(void *owner);                                                              // Called when EOS occurs
+    void(*onElementError)(void *owner, gchar *source, gchar *message,                       // Called when an error occurs
                           gchar *debug_info);
 } RctGstConfiguration;
 

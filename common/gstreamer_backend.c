@@ -116,7 +116,7 @@ static void cb_error(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
     g_printerr("RCTGstPlayer : Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
     
     if (user_data->configuration->onElementError) {
-        user_data->configuration->onElementError(GST_OBJECT_NAME(msg->src), err->message, debug_info);
+        user_data->configuration->onElementError(user_data->configuration->owner, GST_OBJECT_NAME(msg->src), err->message, debug_info);
     }
     
     g_clear_error(&err);
@@ -128,7 +128,7 @@ static void cb_eos(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
     g_print("EOS\n");
     
     if (user_data->configuration->onEOS) {
-        user_data->configuration->onEOS();
+        user_data->configuration->onEOS(user_data->configuration->owner);
     }
 }
 
@@ -186,7 +186,7 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
                 }
                 
                 if (user_data->configuration->onVolumeChanged) {
-                    user_data->configuration->onVolumeChanged(audio_channels_level, nb_channels);
+                    user_data->configuration->onVolumeChanged(user_data->configuration->owner, audio_channels_level, nb_channels);
                 }
             }
             
@@ -198,23 +198,36 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
 
 static gboolean cb_message_buffering(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
-    gint percent;
-    gst_message_parse_buffering (msg, &percent);
-    
-    if (user_data->configuration->onBufferingProgress)
-        user_data->configuration->onBufferingProgress(percent);
-    
+    if (user_data->configuration->onBufferingProgress) {
+        gint percent;
+        gst_message_parse_buffering (msg, &percent);
+        
+        user_data->configuration->onBufferingProgress(user_data->configuration->owner, percent);
+    }
+
     return TRUE;
+}
+
+static void cb_new_pad(GstElement *element, GstPad *pad, RctGstUserData* user_data)
+{
+    if (user_data->configuration->onPadAdded) {
+        gchar *name;
+
+        name = gst_pad_get_name(pad);
+        user_data->configuration->onPadAdded(user_data->configuration->owner, name);
+        g_free(name);
+    }
 }
 
 // Remove latency as much as possible
 static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUserData* user_data) {
-    user_data->duration = GST_CLOCK_TIME_NONE;
     user_data->source = source;
-    
+
     if (rct_gst_element_has_attribute(user_data->source, "latency")) {
         g_object_set(user_data->source, "latency", 0, NULL);
     }
+
+    g_signal_connect(source, "pad-added", (GCallback)cb_new_pad, user_data);
 }
 
 static gboolean cb_duration_and_progress(RctGstUserData* user_data) {
@@ -226,7 +239,7 @@ static gboolean cb_duration_and_progress(RctGstUserData* user_data) {
         
         if (gst_element_query_position(user_data->playbin, GST_FORMAT_TIME, &user_data->position)) {
             if (user_data->configuration->onPlayingProgress)
-                user_data->configuration->onPlayingProgress(user_data->position / GST_MSECOND, user_data->duration / GST_MSECOND);
+                user_data->configuration->onPlayingProgress(user_data->configuration->owner, user_data->position / GST_MSECOND, user_data->duration / GST_MSECOND);
         }
     }
     
@@ -257,7 +270,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                 g_object_unref(video_sink);
                 
                 if (user_data->configuration->onPlayerInit) {
-                    user_data->configuration->onPlayerInit();
+                    user_data->configuration->onPlayerInit(user_data->configuration->owner);
                 }
             }
             
@@ -280,7 +293,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                 gst_element_query_duration (user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
                 
                 if (user_data->configuration->onPlayingProgress) {
-                    user_data->configuration->onPlayingProgress(0, user_data->duration / GST_MSECOND);
+                    user_data->configuration->onPlayingProgress(user_data->configuration->owner, 0, user_data->duration / GST_MSECOND);
                 }
             }
         }
@@ -298,7 +311,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
         }
         
         if (user_data->configuration->onStateChanged) {
-            user_data->configuration->onStateChanged(old_state, new_state);
+            user_data->configuration->onStateChanged(user_data->configuration->owner, old_state, new_state);
         }
     }
 }
@@ -430,7 +443,7 @@ static void rct_gst_apply_uri(RctGstUserData* user_data)
     g_object_set(user_data->playbin, "uri", user_data->configuration->uri, NULL);
     
     if (user_data->configuration->onUriChanged) {
-        user_data->configuration->onUriChanged(user_data->configuration->uri);
+        user_data->configuration->onUriChanged(user_data->configuration->owner ,user_data->configuration->uri);
     }
 }
 
