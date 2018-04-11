@@ -420,10 +420,8 @@ void rct_gst_run_loop(RctGstUserData* user_data)
     gst_element_set_state (user_data->playbin, GST_STATE_NULL);
     
     gst_object_unref(user_data->playbin);
-    gst_object_unref(user_data->video_overlay);
-    
     g_source_remove(user_data->bus_watch_id);
-    
+
     rct_gst_free_user_data(user_data);
 }
 

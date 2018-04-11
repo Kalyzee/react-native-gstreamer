@@ -228,7 +228,7 @@ export class GstPlayer extends React.Component {
 
                     style={[styles.player, this.props.playerStyle]}
                 />
-                { this.getOverlay() }
+                {this.getOverlay()}
             </View>
         )
     }
