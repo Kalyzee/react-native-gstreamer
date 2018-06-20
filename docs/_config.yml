@@ -1,9 +1,9 @@
 title: React Native Gstreamer Plugin
 email: contact@kalyzee.com
 
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "react-native-gstreamer/" # the subpath of your site, e.g. /blog
 
-url: "https://kalyzee.github.io/react-native-gstreamer/"
+url: "https://kalyzee.github.io/"
 
 twitter_username: kalyzee
 github_username:  kalyzee
