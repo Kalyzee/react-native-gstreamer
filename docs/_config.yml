@@ -1,2 +1,27 @@
+title: React Native Gstreamer Plugin
+email: contact@kalyzee.com
+description: >
+	Build a gstreamer based video player with React Native
+
+baseurl: "" # the subpath of your site, e.g. /blog
+
+url: "https://kalyzee.github.io/react-native-gstreamer/"
+
+twitter_username: kalyzee
+github_username:  kalyzee
+
+# Build settings
+markdown: kramdown
 remote_theme: kalyzee/jekyll-theme
 
+doc:
+  categories:
+    presentation:
+      url: #presentation
+      title: Presentation
+    installation:
+      url: #installation
+      title: Installation
+    usage:
+      url: #usage
+      title: Usage
