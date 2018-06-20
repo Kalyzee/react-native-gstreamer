@@ -1,3 +1,7 @@
+---
+layout: doc
+---
+
 ## Linking with Android
 
 * Run the usual: <b>react-native link react-native-gstreamer</b> from your project folder
