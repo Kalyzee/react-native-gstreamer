@@ -124,6 +124,13 @@ export class GstPlayer extends React.Component {
             this.props.onElementError(source, message, debug_info)
     }
 
+    onElementLog(_message) {
+        const { message } = _message.nativeEvent
+
+        if (this.props.onElementLog)
+            this.props.onElementLog(message)
+    }
+
     // Methods
     setGstState(state) {
         UIManager.dispatchViewManagerCommand(
@@ -223,6 +230,7 @@ export class GstPlayer extends React.Component {
                     onPlayingProgress={this.onPlayingProgress.bind(this)}
                     onEOS={this.onEOS.bind(this)}
                     onElementError={this.onElementError.bind(this)}
+                    onElementLog={this.onElementLog.bind(this)}
 
                     ref={(playerView) => this.playerViewRef = playerView}
 
@@ -257,6 +265,7 @@ GstPlayer.propTypes = {
     onPlayingProgress: PropTypes.func,
     onEOS: PropTypes.func,
     onElementError: PropTypes.func,
+    onElementLog: PropTypes.func,
 
     // Methods
     setGstState: PropTypes.func,

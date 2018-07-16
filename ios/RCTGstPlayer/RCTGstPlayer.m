@@ -65,6 +65,7 @@ RCT_EXPORT_VIEW_PROPERTY(onPlayingProgress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onBufferingProgress, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onEOS, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onElementError, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onElementLog, RCTBubblingEventBlock)
 
 // Methods
 RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber *)state) {

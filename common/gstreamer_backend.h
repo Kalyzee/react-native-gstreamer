@@ -44,6 +44,7 @@ typedef struct
     void(*onEOS)(void *owner);                                                              // Called when EOS occurs
     void(*onElementError)(void *owner, gchar *source, gchar *message,                       // Called when an error occurs
                           gchar *debug_info);
+    void(*onElementLog)(void *owner, gchar *message);                                       // Called when an log occurs
 } RctGstConfiguration;
 
 // User data definition
@@ -110,5 +111,6 @@ void rct_gst_set_drawable_surface(RctGstUserData *user_data, guintptr drawable_s
 
 // Utils
 static gboolean rct_gst_element_has_attribute(GstElement *element, const gchar *attribute);
+void rct_gst_log(RctGstUserData *user_data, gchar* message);
 
 #endif /* gstreamer_backend_h */

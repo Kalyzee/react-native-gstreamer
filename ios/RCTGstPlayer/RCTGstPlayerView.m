@@ -96,6 +96,13 @@ void onElementError(RCTGstPlayerView *self, gchar *source, gchar *message, gchar
                             });
 }
 
+void onElementLog(RCTGstPlayerView *self, gchar *newMessage) {
+    NSString *message = [NSString stringWithUTF8String:newMessage];
+    g_print("%s", newMessage);
+    if (self.onElementLog)
+        self.onElementLog(@{ @"message": message });
+}
+ 
 void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_state) {
     
     NSNumber* oldState = [NSNumber numberWithInt:old_state];
@@ -131,6 +138,7 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
         [self getUserData]->configuration->onPlayingProgress = onPlayingProgress;
         [self getUserData]->configuration->onBufferingProgress = onBufferingProgress;
         [self getUserData]->configuration->onElementError = onElementError;
+        [self getUserData]->configuration->onElementLog = onElementLog;
         [self getUserData]->configuration->onStateChanged = onStateChanged;
         [self getUserData]->configuration->onVolumeChanged = onVolumeChanged;
     }
@@ -171,7 +179,7 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
 - (RctGstUserData *)getUserData
 {
     if (!self->userData) {
-        NSLog(@"Creating user data");
+        g_print("Creating user data");
         self->userData = rct_gst_init_user_data();
         self->userData->configuration->owner = (__bridge void *)(self);
     }

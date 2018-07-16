@@ -29,6 +29,7 @@
 @property (nonatomic, copy) RCTBubblingEventBlock onBufferingProgress;
 @property (nonatomic, copy) RCTBubblingEventBlock onEOS;
 @property (nonatomic, copy) RCTBubblingEventBlock onElementError;
+@property (nonatomic, copy) RCTBubblingEventBlock onElementLog;
 
 // Getters
 + (RCTGstPlayerView *)getView;

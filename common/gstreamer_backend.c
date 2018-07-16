@@ -59,7 +59,7 @@ void create_audio_sink_bin(RctGstUserData *user_data)
     
     // Link them
     if(!gst_element_link(user_data->audio_level_analyser, user_data->audio_sink))
-        g_printerr("RCTGstPlayer : Failed to link audio-level-analyser and audio-sink\n");
+        rct_gst_log(user_data, "RCTGstPlayer : Failed to link audio-level-analyser and audio-sink\n");
     
     // Creating ghostpad for uri-decode-bin
     gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->audio_level_analyser, "sink")));
@@ -113,7 +113,13 @@ static void cb_error(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
     gchar *debug_info;
     
     gst_message_parse_error(msg, &err, &debug_info);
-    g_printerr("RCTGstPlayer : Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
+    rct_gst_log(user_data,
+        g_strdup_printf("RCTGstPlayer : Error received from element %s: %s\n",
+            GST_OBJECT_NAME(msg->src),
+            err->message,
+            NULL
+        )
+    );
     
     if (user_data->configuration->onElementError) {
         user_data->configuration->onElementError(user_data->configuration->owner, GST_OBJECT_NAME(msg->src), err->message, debug_info);
@@ -125,7 +131,7 @@ static void cb_error(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 
 static void cb_eos(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
-    g_print("EOS\n");
+    rct_gst_log(user_data, "EOS\n");
     
     if (user_data->configuration->onEOS) {
         user_data->configuration->onEOS(user_data->configuration->owner);
@@ -257,7 +263,13 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
         
         user_data->current_state = new_state;
         
-        g_print("RCTGstPlayer : New playbin state %s\n", gst_element_state_get_name(new_state));
+        rct_gst_log(user_data,
+                    g_strdup_printf(
+                                    "RCTGstPlayer : New playbin state %s\n",
+                                    gst_element_state_get_name(new_state),
+                                    NULL
+                    )
+        );
         
         if (new_state == GST_STATE_READY) {
             
@@ -368,18 +380,21 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
     
     gst_element_get_state(user_data->playbin, &current_state, &pending_state, 0);
     
-    g_print(
-            "Actual state : %s - Pipeline state requested : %s - Pending state : %s\n",
-            gst_element_state_get_name(current_state),
-            gst_element_state_get_name(state),
-            gst_element_state_get_name(pending_state)
-            );
+    rct_gst_log(user_data,
+            g_strdup_printf(
+                "Actual state : %s - Pipeline state requested : %s - Pending state : %s\n",
+                gst_element_state_get_name(current_state),
+                gst_element_state_get_name(state),
+                gst_element_state_get_name(pending_state),
+                NULL
+            )
+        );
     
     if (user_data->playbin != NULL && current_state != state) {
         if (pending_state != state) {
             validity = gst_element_set_state(user_data->playbin, state);
         } else {
-            g_print("RCTGstPlayer : Ignoring state change (Already changing to requested state)\n");
+            rct_gst_log(user_data, "RCTGstPlayer : Ignoring state change (Already changing to requested state)\n");
         }
     }
     
@@ -437,7 +452,7 @@ gchar *rct_gst_get_info()
 
 static void rct_gst_apply_uri(RctGstUserData* user_data)
 {
-    g_print("RCTGstPlayer : rct_gst_apply_uri\n");
+    rct_gst_log(user_data, "RCTGstPlayer : rct_gst_apply_uri\n");
     g_object_set(user_data->playbin, "uri", user_data->configuration->uri, NULL);
     
     if (user_data->configuration->onUriChanged) {
@@ -501,7 +516,12 @@ void rct_gst_set_uri(RctGstUserData* user_data, gchar *_uri)
     if (g_strcmp0(user_data->configuration->uri, _uri) != 0) {
         user_data->configuration->uri = _uri;
         
-        g_print("RCTGstPlayer : rct_gst_set_uri : %s\n", user_data->configuration->uri);
+        rct_gst_log(user_data,
+                    g_strdup_printf("RCTGstPlayer : rct_gst_set_uri : %s\n",
+                                    user_data->configuration->uri,
+                                    NULL
+                    )
+        );
         
         rct_gst_set_playbin_state(user_data, GST_STATE_READY);
         
@@ -565,14 +585,20 @@ void rct_gst_set_drawable_surface(RctGstUserData *user_data, guintptr drawable_s
 // Utils
 static gboolean rct_gst_element_has_attribute(GstElement *element, const gchar *attribute)
 {
-    
     GParamSpec* attribute_obj = NULL;
-    g_print("Looking for attribute %s...\n", attribute);
-    
+   
     if (GST_IS_OBJECT(element)) {
         GObjectClass *klass = G_OBJECT_GET_CLASS(element);
         attribute_obj = g_object_class_find_property(klass, attribute);
     }
     
     return (attribute_obj != NULL);
+}
+
+void rct_gst_log(RctGstUserData *user_data, gchar *message)
+{
+    g_print(message);
+    if (user_data->configuration->onElementLog) {
+        user_data->configuration->onElementLog(user_data->configuration->owner, message);
+    }
 }
