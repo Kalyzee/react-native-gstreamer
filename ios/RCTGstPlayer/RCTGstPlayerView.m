@@ -193,12 +193,16 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
 
 // Methods
 - (void)setPipelineState:(int)pipelineState {
-    self->pipelineState = pipelineState;
-    rct_gst_set_playbin_state([self getUserData], self->pipelineState);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        self->pipelineState = pipelineState;
+        rct_gst_set_playbin_state([self getUserData], self->pipelineState);
+    });
 }
 
 - (void)seek:(gint64)position {
-    rct_gst_seek([self getUserData], position);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        rct_gst_seek([self getUserData], position);
+    });
 }
 
 // Setters
