@@ -423,7 +423,7 @@ void rct_gst_init(RctGstUserData* user_data)
     GstElement *audio_test_src = gst_element_factory_make("audiotestsrc", "audio-test-src");
     gst_bin_add_many (GST_BIN (user_data->playbin), audio_test_src, user_data->audio_sink_bin, NULL);
     gst_element_link(audio_test_src, user_data->audio_sink_bin);
-     */
+    */
 
     // Preparing bus
     user_data->bus = gst_element_get_bus(user_data->playbin);

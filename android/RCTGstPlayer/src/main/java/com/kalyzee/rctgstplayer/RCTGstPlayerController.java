@@ -33,6 +33,7 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
     private native void nativeRCTGstInit();
     private native void nativeRCTGstSetDrawableSurface(Surface drawableSurface);
     private native void nativeRCTGstSetUri(String uri);
+    private native void nativeRCTGstSetVolume(double volume);
     private native void nativeRCTGstSetUiRefreshRate(int uiRefreshRate);
     private native void nativeRCTGstSetPipelineState(int state);
     private native void nativeRCTGstSeek(long progress);
@@ -220,6 +221,10 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
         } else {
             Log.e(LOG_TAG, "Uri undefined");
         }
+    }
+
+    void setRctGstVolume(double volume) {
+        nativeRCTGstSetVolume(volume);
     }
 
     void setRctGstUiRefreshRate(int uiRefreshRate) {

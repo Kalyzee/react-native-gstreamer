@@ -235,6 +235,14 @@ static void native_rct_gst_set_uri(JNIEnv* env, jobject thiz, jstring uri_j)
     rct_gst_set_uri(get_user_data(), uri);
 }
 
+static void native_rct_gst_set_volume(JNIEnv *env, jobject thiz, gdouble volume)
+{
+    (void)env;
+    (void)thiz;
+
+    rct_gst_set_volume(get_user_data(), (gdouble)volume);
+}
+
 static void native_rct_gst_set_ui_refresh_rate(JNIEnv* env, jobject thiz, jint audio_level_refresh_rate)
 {
     (void)env;
@@ -262,6 +270,7 @@ static JNINativeMethod native_methods[] = {
     { "nativeRCTGstSetPipelineState", "(I)V", (void *) native_rct_gst_set_pipeline_state },
     { "nativeRCTGstSetDrawableSurface", "(Landroid/view/Surface;)V", (void *) native_rct_gst_set_drawable_surface },
     { "nativeRCTGstSetUri", "(Ljava/lang/String;)V", (void *) native_rct_gst_set_uri },
+    { "nativeRCTGstSetVolume", "(D)V", (void *) native_rct_gst_set_volume },
     { "nativeRCTGstSetUiRefreshRate", "(I)V", (void *) native_rct_gst_set_ui_refresh_rate },
     { "nativeRCTGstSeek", "(J)V", (void *) native_rct_gst_seek },
     { "nativeRCTOnPlayerInit", "()V", (void *) native_rct_on_player_init }

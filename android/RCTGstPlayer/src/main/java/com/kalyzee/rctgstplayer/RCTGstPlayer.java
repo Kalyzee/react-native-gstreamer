@@ -42,6 +42,11 @@ public class RCTGstPlayer extends SimpleViewManager {
         this.playerController.setRctGstUri(uri);
     }
 
+    @ReactProp(name = "volume")
+    public void setVolume(View controllerView, double volume) {
+        this.playerController.setRctGstVolume(volume);
+    }
+
     @ReactProp(name = "uiRefreshRate")
     public void setUiRefreshRate(View controllerView, int uiRefreshRate) {
         Log.e(RCTGstPlayerController.LOG_TAG, "setUiRefreshRate" + Integer.toString(uiRefreshRate));
