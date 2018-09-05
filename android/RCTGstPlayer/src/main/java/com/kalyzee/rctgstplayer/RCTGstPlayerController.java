@@ -4,16 +4,15 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.widget.Toast;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.kalyzee.rctgstplayer.utils.EaglUIView;
 import com.kalyzee.rctgstplayer.utils.RCTGstConfigurationCallable;
-import com.kalyzee.rctgstplayer.utils.RCTGstConfiguration;
-
+import com.kalyzee.rctgstplayer.utils.RCTGstAudioLevel;
 import org.freedesktop.gstreamer.GStreamer;
 
 /**
@@ -22,30 +21,48 @@ import org.freedesktop.gstreamer.GStreamer;
 
 public class RCTGstPlayerController implements RCTGstConfigurationCallable, SurfaceHolder.Callback {
 
-    private static final String LOG_TAG = "RCTGstPlayer";
+    public static final String LOG_TAG = "RCTGstPlayer";
 
-    private boolean isInited = false;
+    private boolean isReady = false;
 
-    private RCTGstConfiguration configuration;
     private EaglUIView view;
     private ReactContext context;
 
     // Native methods
     private native String nativeRCTGstGetGStreamerInfo();
+    private native void nativeRCTGstInit();
     private native void nativeRCTGstSetDrawableSurface(Surface drawableSurface);
     private native void nativeRCTGstSetUri(String uri);
-    private native void nativeRCTGstSetAudioLevelRefreshRate(int audioLevelRefreshRate);
-    private native void nativeRCTGstSetDebugging(boolean isDebugging);
-
+    private native void nativeRCTGstSetUiRefreshRate(int uiRefreshRate);
     private native void nativeRCTGstSetPipelineState(int state);
-
-    private native void nativeRCTGstInitAndRun(RCTGstConfiguration configuration);
+    private native void nativeRCTGstSeek(long progress);
+    private native void nativeRCTOnPlayerInit();
 
     // Configuration callbacks
     @Override
-    public void onInit() {
+    public void onPlayerInit() {
+        if (!this.isReady) {
+            nativeRCTOnPlayerInit();
+
+            Log.d(LOG_TAG, Integer.toString(view.getId()));
+            context.getJSModule(RCTEventEmitter.class).receiveEvent(
+                    view.getId(), "onPlayerInit", null
+            );
+            
+            nativeRCTGstSetDrawableSurface(this.view.getHolder().getSurface());
+
+            this.isReady = true;
+        }
+    }
+
+    @Override
+    public void onPadAdded(String name){
+        WritableMap event = Arguments.createMap();
+
+        event.putString("name", name);
+
         context.getJSModule(RCTEventEmitter.class).receiveEvent(
-                view.getId(), "onPlayerInit", null
+                view.getId(), "onPadAdded", event
         );
     }
 
@@ -62,12 +79,22 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
     }
 
     @Override
-    public void onVolumeChanged(double rms, double peak, double decay) {
+    public void onVolumeChanged(RCTGstAudioLevel[] audioLevels, int nbChannels) {
         WritableMap event = Arguments.createMap();
+        WritableArray audioLevelArray = Arguments.createArray();
 
-        event.putDouble("rms", rms);
-        event.putDouble("peak", peak);
-        event.putDouble("decay", decay);
+        for (RCTGstAudioLevel audioLevel : audioLevels) {
+            WritableMap audioLevelMap = Arguments.createMap();
+
+            audioLevelMap.putDouble("rms", audioLevel.getRms());
+            audioLevelMap.putDouble("peak", audioLevel.getPeak());
+            audioLevelMap.putDouble("decay", audioLevel.getDecay());
+
+            audioLevelArray.pushMap(audioLevelMap);
+        }
+
+        event.putInt("nbChannels", nbChannels);
+        event.putArray("volume", audioLevelArray);
 
         context.getJSModule(RCTEventEmitter.class).receiveEvent(
                 view.getId(), "onVolumeChanged", event
@@ -82,6 +109,29 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
 
         context.getJSModule(RCTEventEmitter.class).receiveEvent(
                 view.getId(), "onUriChanged", event
+        );
+    }
+
+    @Override
+    public void onPlayingProgress(long progress, long duration) {
+        WritableMap event = Arguments.createMap();
+
+        event.putString("progress", Long.toString(progress));
+        event.putString("duration", Long.toString(duration));
+
+        context.getJSModule(RCTEventEmitter.class).receiveEvent(
+            view.getId(), "onPlayingProgress", event
+        );
+    }
+
+    @Override
+    public void onBufferingProgress(double progress) {
+        WritableMap event = Arguments.createMap();
+
+        event.putDouble("progress", progress);
+
+        context.getJSModule(RCTEventEmitter.class).receiveEvent(
+                view.getId(), "onBufferingProgress", event
         );
     }
 
@@ -105,25 +155,32 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
         );
     }
 
+    @Override
+    public void onElementLog(String message) {
+        WritableMap event = Arguments.createMap();
+
+        event.putString("message", message);
+
+        context.getJSModule(RCTEventEmitter.class).receiveEvent(
+                view.getId(), "onElementLog", event
+        );
+    }
+
     // Surface callbacks
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        if (!isInited) {
-
-            // Preparing configuration
-            this.configuration.setInitialDrawableSurface(holder.getSurface());
-
-            // Init and run our pipeline
-            nativeRCTGstInitAndRun(this.configuration);
-
-            // Init done
-            this.isInited = true;
+        Log.i(LOG_TAG, "Surface Created");
+        if (!this.isReady) {
+            nativeRCTGstInit();
         }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        nativeRCTGstSetDrawableSurface(holder.getSurface());
+        Log.i(LOG_TAG, "Surface Changed");
+        if (this.isReady) {
+            nativeRCTGstSetDrawableSurface(holder.getSurface());
+        }
     }
 
     @Override
@@ -131,41 +188,42 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
 
     // Constructor
     public RCTGstPlayerController(ReactContext context) {
+
         this.context = context;
 
         // Init GStreamer
         try {
             GStreamer.init(context);
         } catch (Exception e) {
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+            // Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(LOG_TAG, e.toString());
         }
 
         // Display version - For simple debugging purpose
         String version = nativeRCTGstGetGStreamerInfo();
         Log.d(LOG_TAG, version);
-
-        // Create view - surface manager interface is this class
-        this.view = new EaglUIView(this.context, this);
-
-        // Create configuration - Callbacks manager interface is this class
-        this.configuration = new RCTGstConfiguration(this);
     }
 
     View getView() {
+        if (!this.isReady) {
+            // Create view - surface manager interface is this class
+            this.view = new EaglUIView(this.context, this);
+        }
         return this.view;
     }
 
     // Manager Shared properties
     void setRctGstUri(String uri) {
-        nativeRCTGstSetUri(uri);
+        Log.d(LOG_TAG, "setRctGstUri" + uri);
+        if (uri.length() > 0) {
+            nativeRCTGstSetUri(uri);
+        } else {
+            Log.e(LOG_TAG, "Uri undefined");
+        }
     }
 
-    void setRctGstAudioLevelRefreshRate(int audioLevelRefreshRate) {
-        nativeRCTGstSetAudioLevelRefreshRate(audioLevelRefreshRate);
-    }
-
-    void setRctGstDebugging(boolean isDebugging) {
-        nativeRCTGstSetDebugging(isDebugging);
+    void setRctGstUiRefreshRate(int uiRefreshRate) {
+        nativeRCTGstSetUiRefreshRate(uiRefreshRate);
     }
 
     // Manager methods
@@ -173,9 +231,13 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
         nativeRCTGstSetPipelineState(state);
     }
 
+    void seek(long progress) {
+        nativeRCTGstSeek(progress);
+    }
+
     // External C Libraries
     static {
         System.loadLibrary("gstreamer_android");
-        System.loadLibrary("rctgstplayer");
+        System.loadLibrary("kalyzee-rctgstplayer");
     }
 }

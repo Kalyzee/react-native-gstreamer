@@ -4,10 +4,7 @@ import {
     View,
     UIManager,
     findNodeHandle,
-    AppState,
-    Platform,
     StyleSheet,
-    Text,
     Animated
 } from 'react-native'
 
@@ -48,6 +45,7 @@ export class GstPlayer extends React.Component {
 
     // Callbacks
     onPlayerInit() {
+        console.log('Player inited')
         this.isPlayerReady = true
 
         if (this.props.onPlayerInit)
@@ -72,6 +70,7 @@ export class GstPlayer extends React.Component {
     }
 
     onVolumeChanged(_message) {
+        console.log(_message.nativeEvent)
         const audioLevelObject = Object.keys(_message.nativeEvent).filter(key => key !== "target").reduce((obj, key) => {
             obj[key] = _message.nativeEvent[key];
             return obj;
@@ -275,7 +274,9 @@ GstPlayer.propTypes = {
 
     // Helper methods
     createDrawableSurface: PropTypes.func,
-    destroyDrawableSurface: PropTypes.func
+    destroyDrawableSurface: PropTypes.func,
+
+    ...View.propTypes
 }
 
 const styles = StyleSheet.create({

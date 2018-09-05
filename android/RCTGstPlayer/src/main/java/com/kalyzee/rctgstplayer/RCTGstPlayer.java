@@ -1,14 +1,17 @@
 package com.kalyzee.rctgstplayer;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 
+import android.view.View;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
+import com.kalyzee.rctgstplayer.RCTGstPlayerController;
 import com.kalyzee.rctgstplayer.utils.manager.Command;
 
 import java.util.Map;
@@ -28,6 +31,7 @@ public class RCTGstPlayer extends SimpleViewManager {
 
     @Override
     protected View createViewInstance(ThemedReactContext reactContext) {
+
         this.playerController = new RCTGstPlayerController(reactContext);
         return this.playerController.getView();
     }
@@ -38,14 +42,10 @@ public class RCTGstPlayer extends SimpleViewManager {
         this.playerController.setRctGstUri(uri);
     }
 
-    @ReactProp(name = "audioLevelRefreshRate")
-    public void setAudioLevelRefreshRate(View controllerView, int audioLevelRefreshRate) {
-        this.playerController.setRctGstAudioLevelRefreshRate(audioLevelRefreshRate);
-    }
-
-    @ReactProp(name = "isDebugging")
-    public void setAudioLevelRefreshRate(View controllerView, boolean isDebugging) {
-        this.playerController.setRctGstDebugging(isDebugging);
+    @ReactProp(name = "uiRefreshRate")
+    public void setUiRefreshRate(View controllerView, int uiRefreshRate) {
+        Log.e(RCTGstPlayerController.LOG_TAG, "setUiRefreshRate" + Integer.toString(uiRefreshRate));
+        this.playerController.setRctGstUiRefreshRate(uiRefreshRate);
     }
 
     // Methods
@@ -53,10 +53,14 @@ public class RCTGstPlayer extends SimpleViewManager {
     public void receiveCommand(View view, int commandType, @Nullable ReadableArray args) {
 
         // setState
-        if (Command.is(commandType, Command.setState))
+        if (Command.is(commandType, Command.setState)) {
             this.playerController.setRctGstState(args.getInt(0));
+        }
 
-        // recreateView is ignored on purpose : Not needed on android (wrong impl of vtdec on ios)
+        // seek
+        if (Command.is(commandType, Command.seek)) {
+            this.playerController.seek(args.getInt(0));
+        }
     }
 
     // Commands (JS callable methods listing map)
@@ -78,6 +82,8 @@ public class RCTGstPlayer extends SimpleViewManager {
                 ).put(
                         "onStateChanged", MapBuilder.of("registrationName", "onStateChanged")
                 ).put(
+                        "onPlayingProgress", MapBuilder.of("registrationName", "onPlayingProgress")
+                ).put(
                         "onVolumeChanged", MapBuilder.of("registrationName", "onVolumeChanged")
                 ).put(
                         "onUriChanged", MapBuilder.of("registrationName", "onUriChanged")
@@ -87,6 +93,4 @@ public class RCTGstPlayer extends SimpleViewManager {
                         "onElementError", MapBuilder.of("registrationName", "onElementError")
                 ).build();
     }
-
-
 }

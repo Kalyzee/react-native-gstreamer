@@ -1,18 +1,31 @@
+# Copyright (C) 2009 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := rctgstplayer
+LOCAL_MODULE    := kalyzee-rctgstplayer
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../common
 
 LOCAL_SRC_FILES := rctgstplayer.c $(LOCAL_PATH)/../../../../../common/gstreamer_backend.c
+LOCAL_LDLIBS := -llog -landroid
 
 LOCAL_SHARED_LIBRARIES := gstreamer_android
-LOCAL_LDLIBS := -llog -landroid
+
 include $(BUILD_SHARED_LIBRARY)
 
-# For better OSX tools finding
-SHELL := PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin /bin/bash
 
 ifeq ($(TARGET_ARCH_ABI),armeabi)
 GSTREAMER_ROOT        := $(GSTREAMER_ROOT_ANDROID)/arm
@@ -28,8 +41,14 @@ else
 $(error Target arch ABI not supported: $(TARGET_ARCH_ABI))
 endif
 
-GSTREAMER_NDK_BUILD_PATH  := $(GSTREAMER_ROOT)/share/gst-android/ndk-build/
+ifndef GSTREAMER_ROOT
+    ifndef GSTREAMER_ROOT_ANDROID
+        $(error GSTREAMER_ROOT_ANDROID is not defined!)
+    endif
+    GSTREAMER_ROOT            := $(GSTREAMER_ROOT_ANDROID)
+endif
 
+GSTREAMER_NDK_BUILD_PATH  := $(GSTREAMER_ROOT)/share/gst-android/ndk-build
 include $(GSTREAMER_NDK_BUILD_PATH)/plugins.mk
 GSTREAMER_PLUGINS         := $(GSTREAMER_PLUGINS_CORE)      \
                              $(GSTREAMER_PLUGINS_PLAYBACK)  \
@@ -43,6 +62,7 @@ GSTREAMER_PLUGINS         := $(GSTREAMER_PLUGINS_CORE)      \
                              $(GSTREAMER_PLUGINS_EFFECTS)   \
                              $(GSTREAMER_PLUGINS_NET_RESTRICTED)
 
-GSTREAMER_EXTRA_DEPS      := gstreamer-player-1.0 gstreamer-video-1.0 glib-2.0
+G_IO_MODULES              := gnutls
+GSTREAMER_EXTRA_DEPS      := gstreamer-video-1.0
 
 include $(GSTREAMER_NDK_BUILD_PATH)/gstreamer-1.0.mk

@@ -56,11 +56,12 @@ void create_audio_sink_bin(RctGstUserData *user_data)
                      user_data->audio_level_analyser,
                      user_data->audio_sink,
                      NULL);
-    
+
+
     // Link them
     if(!gst_element_link(user_data->audio_level_analyser, user_data->audio_sink))
         rct_gst_log(user_data, "RCTGstPlayer : Failed to link audio-level-analyser and audio-sink\n");
-    
+
     // Creating ghostpad for uri-decode-bin
     gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->audio_level_analyser, "sink")));
 }
@@ -150,7 +151,7 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
         GValueArray *rms_arr, *peak_arr, *decay_arr;
         gdouble rms_dB, peak_dB, decay_dB;
         const GValue *value;
-        
+
         if(g_strcmp0(name, "level") == 0)
         {
             /* the values are packed into GValueArrays with the value per channel */
@@ -170,8 +171,9 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
             
             if (nb_channels > 0) {
                 audio_channels_level = calloc(nb_channels, sizeof(RctGstAudioLevel));
-                
-                for (int i = 0; i < nb_channels; i++) {
+
+                int i = 0;
+                for (i = 0; i < nb_channels; i++) {
                     // Create audio level structure
                     RctGstAudioLevel *audio_level_structure = &audio_channels_level[i];
                     
@@ -256,8 +258,8 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
 {
     GstState old_state, new_state, pending_state;
     gst_message_parse_state_changed(msg, &old_state, &new_state, &pending_state);
-    
-    
+
+
     // Message coming from the playbin
     if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state) {
         
@@ -280,7 +282,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                 GstElement *video_sink = gst_bin_get_by_interface(GST_BIN(user_data->playbin), GST_TYPE_VIDEO_OVERLAY);
                 user_data->video_overlay = GST_VIDEO_OVERLAY(video_sink);
                 g_object_unref(video_sink);
-                
+
                 if (user_data->configuration->onPlayerInit) {
                     user_data->configuration->onPlayerInit(user_data->configuration->owner);
                 }
@@ -397,7 +399,6 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
             rct_gst_log(user_data, "RCTGstPlayer : Ignoring state change (Already changing to requested state)\n");
         }
     }
-    
     return validity;
 }
 
@@ -539,22 +540,19 @@ void rct_gst_set_ui_refresh_rate(RctGstUserData* user_data, guint64 uiRefreshRat
     user_data->configuration->uiRefreshRate = uiRefreshRate;
 
     if (user_data->is_ready) {
-        guint64 currentUiRefreshRate;
-        g_object_get(user_data->audio_level_analyser, "interval", &currentUiRefreshRate, NULL);
-        if (user_data->configuration->uiRefreshRate != currentUiRefreshRate / GST_MSECOND) {
-            g_object_set(user_data->audio_level_analyser, "interval", user_data->configuration->uiRefreshRate * GST_MSECOND, NULL);
-            
-            if (user_data->timeout_source) {
-                g_source_destroy(user_data->timeout_source);
-            }
-            
-            // Progression callback
-            if (user_data->configuration->onPlayingProgress) {
-                user_data->timeout_source = g_timeout_source_new(user_data->configuration->uiRefreshRate);
-                g_source_set_callback(user_data->timeout_source, (GSourceFunc)cb_duration_and_progress, user_data, NULL);
-                g_source_attach(user_data->timeout_source, NULL);
-                g_source_unref(user_data->timeout_source);
-            }
+
+        g_object_set(user_data->audio_level_analyser, "interval", user_data->configuration->uiRefreshRate * GST_MSECOND, NULL);
+
+        if (user_data->timeout_source) {
+            g_source_destroy(user_data->timeout_source);
+        }
+
+        // Progression callback
+        if (user_data->configuration->onPlayingProgress) {
+            user_data->timeout_source = g_timeout_source_new(user_data->configuration->uiRefreshRate);
+            g_source_set_callback(user_data->timeout_source, (GSourceFunc)cb_duration_and_progress, user_data, NULL);
+            g_source_attach(user_data->timeout_source, NULL);
+            g_source_unref(user_data->timeout_source);
         }
     }
 }
@@ -564,12 +562,7 @@ void rct_gst_set_volume(RctGstUserData* user_data, gdouble volume)
     user_data->configuration->volume = volume;
     
     if (user_data->is_ready) {
-        
-        gdouble current_volume;
-        g_object_get(user_data->playbin, "volume", &current_volume, NULL);
-        if (user_data->configuration->volume != current_volume) {
-            g_object_set(user_data->playbin, "volume", user_data->configuration->volume, NULL);
-        }
+        g_object_set(user_data->playbin, "volume", user_data->configuration->volume, NULL);
     }
 }
 
@@ -577,8 +570,8 @@ void rct_gst_set_drawable_surface(RctGstUserData *user_data, guintptr drawable_s
 {
     if (user_data->configuration->drawableSurface != drawable_surface) {
         user_data->configuration->drawableSurface = drawable_surface;
-        gst_video_overlay_prepare_window_handle(user_data->video_overlay);
     }
+    gst_video_overlay_prepare_window_handle(user_data->video_overlay);
 }
 
 
@@ -597,7 +590,6 @@ static gboolean rct_gst_element_has_attribute(GstElement *element, const gchar *
 
 void rct_gst_log(RctGstUserData *user_data, gchar *message)
 {
-    g_print(message);
     if (user_data->configuration->onElementLog) {
         user_data->configuration->onElementLog(user_data->configuration->owner, message);
     }
