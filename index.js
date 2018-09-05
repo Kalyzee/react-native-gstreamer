@@ -285,8 +285,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#000000'
     },
     player: {
-        flex: 1,
-        backgroundColor: '#000000'
+        flex: 1
     },
     overlay: {
         backgroundColor: '#000000',

@@ -74,8 +74,7 @@ void create_video_sink_bin(RctGstUserData *user_data)
     // Create elements
     user_data->video_sink_bin = gst_bin_new("video-sink-bin");
     user_data->video_sink = gst_element_factory_make("glimagesink", "video-sink");
-    
-    
+
     // Add them
     gst_bin_add_many(
                      user_data->video_sink_bin,
@@ -88,7 +87,6 @@ void create_video_sink_bin(RctGstUserData *user_data)
                         GST_BIN(user_data->video_sink_bin),
                         gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->video_sink, "sink"))
                         );
-    
 }
 
 /*********************
@@ -97,6 +95,7 @@ void create_video_sink_bin(RctGstUserData *user_data)
 
 static GstBusSyncReply cb_create_window(GstBus *bus, GstMessage *message, RctGstUserData* user_data)
 {
+
     if(!gst_is_video_overlay_prepare_window_handle_message(message))
         return GST_BUS_PASS;
     
@@ -238,8 +237,8 @@ static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUser
     g_signal_connect(source, "pad-added", (GCallback)cb_new_pad, user_data);
 }
 
-static gboolean cb_duration_and_progress(RctGstUserData* user_data) {
-    
+static gboolean cb_duration_and_progress(RctGstUserData* user_data)
+{
     if (user_data->current_state == GST_STATE_PLAYING) {
         // If we didn't know it yet, query the stream duration
         if (!GST_CLOCK_TIME_IS_VALID (user_data->duration))
@@ -413,7 +412,19 @@ void rct_gst_init(RctGstUserData* user_data)
     
     create_video_sink_bin(user_data);
     g_object_set(user_data->playbin, "video-sink", user_data->video_sink_bin, NULL);
-    
+
+    /*
+    // Test purposes
+    user_data->playbin = gst_pipeline_new("pipeline");
+    GstElement *video_test_src = gst_element_factory_make("videotestsrc", "video-test-src");
+    gst_bin_add_many (GST_BIN (user_data->playbin), video_test_src, user_data->video_sink_bin, NULL);
+    gst_element_link(video_test_src, user_data->video_sink_bin);
+
+    GstElement *audio_test_src = gst_element_factory_make("audiotestsrc", "audio-test-src");
+    gst_bin_add_many (GST_BIN (user_data->playbin), audio_test_src, user_data->audio_sink_bin, NULL);
+    gst_element_link(audio_test_src, user_data->audio_sink_bin);
+     */
+
     // Preparing bus
     user_data->bus = gst_element_get_bus(user_data->playbin);
     user_data->bus_watch_id = gst_bus_add_watch(user_data->bus, cb_bus_watch, user_data);

@@ -11,12 +11,8 @@ import android.view.SurfaceView;
 
 public class EaglUIView extends SurfaceView {
 
-    public Surface getHandle() {
-        return this.getHolder().getSurface();
-    }
-
-    public EaglUIView(Context context, SurfaceHolder.Callback sufaceHolderManager) {
+    public EaglUIView(Context context, SurfaceHolder.Callback surfaceHolderManager) {
         super(context);
-        this.getHolder().addCallback(sufaceHolderManager);
+        this.getHolder().addCallback(surfaceHolderManager);
     }
 }

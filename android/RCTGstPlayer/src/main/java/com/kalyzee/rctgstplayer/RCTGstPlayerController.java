@@ -48,7 +48,7 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
             context.getJSModule(RCTEventEmitter.class).receiveEvent(
                     view.getId(), "onPlayerInit", null
             );
-            
+
             nativeRCTGstSetDrawableSurface(this.view.getHolder().getSurface());
 
             this.isReady = true;
@@ -177,9 +177,9 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i(LOG_TAG, "Surface Changed");
+        Log.i(LOG_TAG, "Surface Changed (" + Integer.toString(width) + "*" + Integer.toString(height) + ")");
         if (this.isReady) {
-            nativeRCTGstSetDrawableSurface(holder.getSurface());
+            nativeRCTGstSetDrawableSurface(this.view.getHolder().getSurface());
         }
     }
 
