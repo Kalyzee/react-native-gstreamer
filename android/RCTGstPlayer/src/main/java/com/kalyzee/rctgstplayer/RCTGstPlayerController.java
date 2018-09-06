@@ -83,20 +83,21 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
     @Override
     public void onVolumeChanged(RCTGstAudioLevel[] audioLevels, int nbChannels) {
         WritableMap event = Arguments.createMap();
-        WritableArray audioLevelArray = Arguments.createArray();
 
-        for (RCTGstAudioLevel audioLevel : audioLevels) {
+        for (int currentChannel = 0; currentChannel < nbChannels; currentChannel++) {
+
+            RCTGstAudioLevel audioLevel = audioLevels[currentChannel];
+
             WritableMap audioLevelMap = Arguments.createMap();
 
             audioLevelMap.putDouble("rms", audioLevel.getRms());
             audioLevelMap.putDouble("peak", audioLevel.getPeak());
             audioLevelMap.putDouble("decay", audioLevel.getDecay());
 
-            audioLevelArray.pushMap(audioLevelMap);
+            event.putMap(Integer.toString(currentChannel), audioLevelMap);
         }
 
         event.putInt("nbChannels", nbChannels);
-        event.putArray("volume", audioLevelArray);
 
         context.getJSModule(RCTEventEmitter.class).receiveEvent(
                 view.getId(), "onVolumeChanged", event

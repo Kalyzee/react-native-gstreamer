@@ -25,10 +25,6 @@ export class GstPlayer extends React.Component {
 
     constructor(props, context) {
         super(props, context)
-
-        this.state = {
-            overlayOpacity: new Animated.Value(props.overlayOpacity !== undefined ? props.overlayOpacity : 1)
-        }
     }
 
     componentDidMount() {
@@ -38,9 +34,6 @@ export class GstPlayer extends React.Component {
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.autoPlay !== this.props.autoPlay && this.props.autoPlay)
             this.play()
-
-        if (prevProps.overlayOpacity !== this.props.overlayOpacity)
-            this.applyOpacity()
     }
 
     // Callbacks
@@ -63,14 +56,11 @@ export class GstPlayer extends React.Component {
         const { old_state, new_state } = _message.nativeEvent
         this.currentGstState = new_state
 
-        this.applyOpacity()
-
         if (this.props.onStateChanged)
             this.props.onStateChanged(old_state, new_state)
     }
 
     onVolumeChanged(_message) {
-        console.log(_message.nativeEvent)
         const audioLevelObject = Object.keys(_message.nativeEvent).filter(key => key !== "target").reduce((obj, key) => {
             obj[key] = _message.nativeEvent[key];
             return obj;
@@ -147,38 +137,6 @@ export class GstPlayer extends React.Component {
         )
     }
 
-    applyOpacity() {
-        let overlayOpacity = 0
-        if (this.currentGstState <= GstState.READY) {
-            overlayOpacity = this.props.overlayOpacity !== undefined ? this.props.overlayOpacity : 1
-        }
-
-        this.setOverlayOpacity(overlayOpacity);
-    }
-
-    setOverlayOpacity(overlayOpacity) {
-        if (this.state.overlayOpacity._value !== overlayOpacity) {
-
-            const isFadingIn = (overlayOpacity > 0)
-            const { overlayFadeInSpeed, overlayFadeOutSpeed } = this.props
-            let duration = 0
-
-            if (isFadingIn && overlayFadeInSpeed !== undefined)
-                duration = overlayFadeInSpeed
-
-            if (!isFadingIn && overlayFadeOutSpeed !== undefined)
-                duration = overlayFadeOutSpeed
-
-            Animated.timing(
-                this.state.overlayOpacity, {
-                    toValue: overlayOpacity,
-                    duration,
-                    useNativeDriver: true
-                }
-            ).start();
-        }
-    }
-
     // Player state shortcuts
     play() {
         this.setGstState(GstState.PLAYING)
@@ -194,17 +152,6 @@ export class GstPlayer extends React.Component {
 
     isReady() {
         return this.isPlayerReady
-    }
-
-    getOverlay() {
-        if (this.props.showOverlay) {
-            return (
-                <Animated.View
-                    style={[styles.overlay, { opacity: this.state.overlayOpacity }, this.props.overlayStyle]}
-                    pointerEvents='box-none'
-                />
-            )
-        }
     }
 
     render() {
@@ -235,7 +182,6 @@ export class GstPlayer extends React.Component {
 
                     style={[styles.player, this.props.playerStyle]}
                 />
-                {this.getOverlay()}
             </View>
         )
     }
