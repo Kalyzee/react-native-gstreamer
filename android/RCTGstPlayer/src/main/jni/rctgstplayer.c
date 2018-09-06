@@ -49,10 +49,10 @@ static JNIEnv *attach_current_thread(void) {
 }
 
 /* Unregister this thread from the VM */
-static void detach_current_thread(void *env) {
+static void detach_current_thread(JNIEnv *env) {
     GST_DEBUG("Detaching thread %p", g_thread_self());
     (*jvm)->DetachCurrentThread(jvm);
-    // TODO : (*env)->DeleteGlobalRef(env, JavaRctGstAudioLevel);
+    (*env)->DeleteGlobalRef(env, JavaRctGstAudioLevel);
 }
 
 /* Retrieve the JNI environment for this thread */
@@ -189,6 +189,14 @@ static void native_rct_gst_init(JNIEnv* env, jobject thiz)
     }
 }
 
+static void native_rct_gst_terminate(JNIEnv *env, jobject thiz)
+{
+    (void)env;
+    (void)thiz;
+
+    rct_gst_terminate(get_user_data());
+}
+
 static jstring native_rct_gst_get_gstreamer_info(JNIEnv* env, jobject thiz)
 {
     (void)env;
@@ -266,6 +274,7 @@ static void native_rct_on_player_init(JNIEnv* env, jobject thiz) {
 
 static JNINativeMethod native_methods[] = {
     { "nativeRCTGstInit", "()V", (void *) native_rct_gst_init },
+    { "nativeRCTGstTerminate", "()V", (void *) native_rct_gst_terminate },
     { "nativeRCTGstGetGStreamerInfo", "()Ljava/lang/String;", (void *) native_rct_gst_get_gstreamer_info },
     { "nativeRCTGstSetPipelineState", "(I)V", (void *) native_rct_gst_set_pipeline_state },
     { "nativeRCTGstSetDrawableSurface", "(Landroid/view/Surface;)V", (void *) native_rct_gst_set_drawable_surface },

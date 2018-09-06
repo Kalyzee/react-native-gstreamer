@@ -231,7 +231,19 @@ static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUser
     user_data->source = source;
 
     if (rct_gst_element_has_attribute(user_data->source, "latency")) {
-        g_object_set(user_data->source, "latency", 0, NULL);
+        g_object_set(user_data->source, "latency", (guint)200, NULL);
+    }
+
+    if (rct_gst_element_has_attribute(user_data->source, "timeout")) {
+        g_object_set(user_data->source, "timeout", (guint64)1000000, NULL);
+    }
+
+    if (rct_gst_element_has_attribute(user_data->source, "tcp-timeout")) {
+        g_object_set(user_data->source, "tcp-timeout", (guint64)4000000, NULL);
+    }
+
+    if (rct_gst_element_has_attribute(user_data->source, "retry")) {
+        g_object_set(user_data->source, "retry", (guint)65535, NULL);
     }
 
     g_signal_connect(source, "pad-added", (GCallback)cb_new_pad, user_data);

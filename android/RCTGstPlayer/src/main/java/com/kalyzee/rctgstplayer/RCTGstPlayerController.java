@@ -31,6 +31,7 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
     // Native methods
     private native String nativeRCTGstGetGStreamerInfo();
     private native void nativeRCTGstInit();
+    private native void nativeRCTGstTerminate();
     private native void nativeRCTGstSetDrawableSurface(Surface drawableSurface);
     private native void nativeRCTGstSetUri(String uri);
     private native void nativeRCTGstSetVolume(double volume);
@@ -185,7 +186,10 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {}
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // nativeRCTGstTerminate();
+        // this.isReady = false;
+    }
 
     // Constructor
     public RCTGstPlayerController(ReactContext context) {
