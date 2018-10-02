@@ -31,6 +31,7 @@
 		3E0593272003D50600B03733 /* GStreamer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GStreamer.framework; path = ../../../../../Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework; sourceTree = "<group>"; };
 		3E452247204C443100935C9E /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		3E452249204C444A00935C9E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		3EC973DE2162482300F68FAE /* RCTGstPlayerEventDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTGstPlayerEventDelegate.h; sourceTree = "<group>"; };
 		3EEA8ED31FEAB68800F41BAA /* RCTGstPlayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTGstPlayerView.h; sourceTree = "<group>"; };
 		3EEA8ED41FEAB68800F41BAA /* RCTGstPlayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTGstPlayerView.m; sourceTree = "<group>"; };
 		3EEA8EE91FEABC7300F41BAA /* gst_ios_init.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = gst_ios_init.m; sourceTree = "<group>"; };
@@ -107,6 +108,7 @@
 				3EEA8ED41FEAB68800F41BAA /* RCTGstPlayerView.m */,
 				3EF2E8831FEA700E00BCC58E /* RCTGstPlayer.h */,
 				3EF2E8841FEA700E00BCC58E /* RCTGstPlayer.m */,
+				3EC973DE2162482300F68FAE /* RCTGstPlayerEventDelegate.h */,
 			);
 			path = RCTGstPlayer;
 			sourceTree = "<group>";
@@ -213,7 +215,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk\"";
+				FRAMEWORK_SEARCH_PATHS = "\"/Users/asapone/Library/Developer/GStreamer/iPhone.sdk\"";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -228,7 +230,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				HEADER_SEARCH_PATHS = "\"/Users/asapone/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -299,7 +301,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk\"";
+				FRAMEWORK_SEARCH_PATHS = "\"/Users/asapone/Library/Developer/GStreamer/iPhone.sdk\"";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -308,7 +310,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = "\"~/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
+				HEADER_SEARCH_PATHS = "\"/Users/asapone/Library/Developer/GStreamer/iPhone.sdk/GStreamer.framework/Headers\"";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (

@@ -25,10 +25,86 @@
     return TRUE;
 }
 
+- (NSArray<NSString *> *)supportedEvents
+{
+    return @[
+             @"onPlayerInit",
+             @"onPadAdded",
+             @"onVolumeChanged",
+             @"onStateChanged",
+             @"onUriChanged",
+             @"onPlayingProgress",
+             @"onBufferingProgress",
+             @"onEOS",
+             @"onElementError",
+             @"onElementLog",
+             ];
+}
+
+- (void)playerInited:(RCTGstPlayerView *)sender {
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onPlayerInit" body:@{}];
+}
+
+- (void)padAdded:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onPadAdded" body:data];
+}
+
+- (void)volumeChanged:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onVolumeChanged" body:data];
+}
+
+- (void)stateChanged:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onStateChanged" body:data];
+}
+
+- (void)uriChanged:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onUriChanged" body:data];
+}
+
+- (void)playingProgress:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onPlayingProgress" body:data];
+}
+
+- (void)bufferingProgress:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onBufferingProgress" body:data];
+}
+
+- (void)eos:(RCTGstPlayerView *)sender
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onEOS" body:@{}];
+}
+
+- (void)elementError:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    [self.bridge.eventDispatcher sendAppEventWithName:@"onElementError" body:data];
+}
+
+- (void)elementLog:(RCTGstPlayerView *)sender withData:(NSMutableDictionary *)data
+{
+    /*
+    RCTEvent *event = [[RCTEvent alloc] init];
+
+    [self.bridge.eventDispatcher sendEvent:event];
+     */
+}
+
+
 // react-native init
 - (UIView *)view
 {
-    return [RCTGstPlayerView getView];
+    RCTGstPlayerView *view = [[RCTGstPlayerView alloc] init];
+    view.delegate = self;
+        
+    // Preparing pipeline
+    rct_gst_init([view getUserData]);
+    
+    return view;
 }
 
 RCT_EXPORT_MODULE();
@@ -52,20 +128,8 @@ RCT_CUSTOM_VIEW_PROPERTY(volume, NSNumber, RCTGstPlayerView)
 }
 RCT_CUSTOM_VIEW_PROPERTY(shareInstance, BOOL, RCTGstPlayerView)
 {
-    [view setShareInstance:[RCTConvert BOOL:json]];
+    // [view setShareInstance:[RCTConvert BOOL:json]];
 }
-
-// Shared events
-RCT_EXPORT_VIEW_PROPERTY(onPlayerInit, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onPadAdded, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onStateChanged, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onVolumeChanged, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onUriChanged, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onPlayingProgress, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onBufferingProgress, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onEOS, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onElementError, RCTBubblingEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(onElementLog, RCTBubblingEventBlock)
 
 // Methods
 RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber *)state) {

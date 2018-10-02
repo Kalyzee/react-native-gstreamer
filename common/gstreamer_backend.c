@@ -436,6 +436,11 @@ void rct_gst_init(RctGstUserData* user_data)
     gst_bin_add_many (GST_BIN (user_data->playbin), audio_test_src, user_data->audio_sink_bin, NULL);
     gst_element_link(audio_test_src, user_data->audio_sink_bin);
     */
+    
+    rct_gst_log(user_data, g_strdup_printf("RCTGstPlayer : version : %s\n",
+                                           rct_gst_get_info(),
+                                           NULL
+                                           ));
 
     // Preparing bus
     user_data->bus = gst_element_get_bus(user_data->playbin);
@@ -466,6 +471,14 @@ void rct_gst_run_loop(RctGstUserData* user_data)
 
 void rct_gst_terminate(RctGstUserData* user_data)
 {
+    user_data->configuration->onElementError = NULL;
+    user_data->configuration->onPlayerInit = NULL;
+    user_data->configuration->onEOS = NULL;
+    user_data->configuration->onPadAdded = NULL;
+    user_data->configuration->onElementLog = NULL;
+    user_data->configuration->onUriChanged = NULL;
+    user_data->configuration->onStateChanged = NULL;
+    user_data->configuration->onVolumeChanged = NULL;
     g_main_loop_quit(user_data->main_loop);
 }
 

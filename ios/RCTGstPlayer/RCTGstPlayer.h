@@ -13,8 +13,9 @@
 #import <Foundation/Foundation.h>
 #import "gst_ios_init.h"
 #import "RCTGstPlayerView.h"
+#import "RCTGstPlayerEventDelegate.h"
 
-@interface RCTGstPlayer : RCTViewManager
+@interface RCTGstPlayer : RCTViewManager <RCTGstPlayerEventDelegate>
 @end
 
 #endif /* RCTGstPlayer_h */

@@ -8,27 +8,12 @@
 #import "RCTGstPlayerView.h"
 
 @implementation RCTGstPlayerView
-
-static gboolean shareInstance;
-static RCTGstPlayerView *instance;
+@synthesize delegate;
 
 // GL surface
 + (Class) layerClass
 {
     return [CAEAGLLayer class];
-}
-
-+ (RCTGstPlayerView *)getView
-{
-    if (shareInstance) {
-        if (!instance)
-            instance = [[RCTGstPlayerView alloc] init];
-    } else {
-        instance = [[RCTGstPlayerView alloc] init];
-    }
-    
-    NSLog(@"Returning View : %@", instance);
-    return instance;
 }
 
 // Constructor
@@ -55,60 +40,14 @@ void onPlayerInit(RCTGstPlayerView *self)
     
     rct_gst_set_drawable_surface([self getUserData], [self getHandle]);
     
-    self.onPlayerInit(@{});
+    [self.delegate playerInited:self];
 }
 
 void onPadAdded(RCTGstPlayerView *self, gchar *name)
 {
     NSString *pad_name = [NSString stringWithUTF8String:name];
-    self.onPadAdded(@{ @"name": pad_name });
-}
-
-void onEOS(RCTGstPlayerView *self)
-{
-    self.onEOS(@{});
-}
-
-void onUriChanged(RCTGstPlayerView *self, gchar* newUri) {
-    NSString *uri = [NSString stringWithUTF8String:newUri];
-    NSLog(@"RCTGstPlayer : URI : %@ - LENGTH : %d", uri, uri.length);
-    self.onUriChanged(@{ @"new_uri": uri });
-}
-
-void onPlayingProgress(RCTGstPlayerView *self, gint64 progress, gint64 duration) {
-    self.onPlayingProgress(@{
-                               @"progress": [NSNumber numberWithInteger:progress],
-                               @"duration": [NSNumber numberWithInteger:duration]
-                               });
-}
-
-void onBufferingProgress(RCTGstPlayerView *self, gint progress) {
-    self.onBufferingProgress(@{
-                                 @"progress": [NSNumber numberWithInteger:progress]
-                                 });
-}
-
-void onElementError(RCTGstPlayerView *self, gchar *source, gchar *message, gchar *debug_info) {
-    self.onElementError(@{
-                            @"source": [NSString stringWithUTF8String:source],
-                            @"message": [NSString stringWithUTF8String:message],
-                            @"debug_info": [NSString stringWithUTF8String:debug_info]
-                            });
-}
-
-void onElementLog(RCTGstPlayerView *self, gchar *newMessage) {
-    NSString *message = [NSString stringWithUTF8String:newMessage];
-    g_print("%s", newMessage);
-    if (self.onElementLog)
-        self.onElementLog(@{ @"message": message });
-}
- 
-void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_state) {
     
-    NSNumber* oldState = [NSNumber numberWithInt:old_state];
-    NSNumber* newState = [NSNumber numberWithInt:new_state];
-
-    self.onStateChanged(@{ @"old_state": oldState, @"new_state": newState });
+    [self.delegate padAdded:self withData:@{ @"name": pad_name }];
 }
 
 void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint nb_channels) {
@@ -123,7 +62,58 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
                                    } forKey: [NSString stringWithFormat:@"%d", i]
          ];
     }
-    self.onVolumeChanged(js_dictionary);
+    
+    [self.delegate volumeChanged:self withData:js_dictionary];
+}
+
+void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_state) {
+    
+    NSNumber* oldState = [NSNumber numberWithInt:old_state];
+    NSNumber* newState = [NSNumber numberWithInt:new_state];
+    
+    [self.delegate stateChanged:self withData:@{ @"old_state": oldState, @"new_state": newState }];
+}
+
+void onUriChanged(RCTGstPlayerView *self, gchar* newUri) {
+    NSString *uri = [NSString stringWithUTF8String:newUri];
+    NSLog(@"RCTGstPlayer : URI : %@ - LENGTH : %d", uri, uri.length);
+    
+    [self.delegate uriChanged:self withData:@{ @"new_uri": uri }];
+}
+
+void onPlayingProgress(RCTGstPlayerView *self, gint64 progress, gint64 duration) {
+    [self.delegate playingProgress:self withData:@{
+                                              @"progress": [NSNumber numberWithInteger:progress],
+                                              @"duration": [NSNumber numberWithInteger:duration]
+                                              }];
+}
+
+void onBufferingProgress(RCTGstPlayerView *self, gint progress) {
+    
+    [self.delegate bufferingProgress:self withData:@{
+                                                     @"progress": [NSNumber numberWithInteger:progress]
+                                                     }];
+}
+
+void onEOS(RCTGstPlayerView *self)
+{
+    [self.delegate eos:self];
+}
+
+void onElementError(RCTGstPlayerView *self, gchar *source, gchar *message, gchar *debug_info) {
+    
+    [self.delegate elementError:self withData:@{
+                                                @"source": [NSString stringWithUTF8String:source],
+                                                @"message": [NSString stringWithUTF8String:message],
+                                                @"debug_info": [NSString stringWithUTF8String:debug_info]
+                                                }];
+}
+
+void onElementLog(RCTGstPlayerView *self, gchar *newMessage) {
+    NSString *message = [NSString stringWithUTF8String:newMessage];
+    g_print("%s", newMessage);
+    
+    [self.delegate elementLog:self withData:@{ @"message": message }];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -148,10 +138,6 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
 -(void)layoutSubviews
 {
     if (![self isReady]) {
-        
-        // Preparing pipeline
-        rct_gst_init([self getUserData]);
-
         // Run it
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             rct_gst_run_loop([self getUserData]);
@@ -163,11 +149,7 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
 
 -(void)removeFromSuperview {
     [super removeFromSuperview];
-    
-    if (!shareInstance) {
-        NSLog(@"Removing video surface : %@", self);
-        rct_gst_terminate([self getUserData]);
-    }
+    rct_gst_terminate([self getUserData]);
 }
 
 // Getters
@@ -179,7 +161,6 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
 - (RctGstUserData *)getUserData
 {
     if (!self->userData) {
-        g_print("Creating user data");
         self->userData = rct_gst_init_user_data();
         self->userData->configuration->owner = (__bridge void *)(self);
     }
@@ -205,9 +186,5 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
     });
 }
 
-// Setters
-- (void)setShareInstance:(BOOL)_shareInstance {
-    shareInstance = _shareInstance;
-}
 @end
 

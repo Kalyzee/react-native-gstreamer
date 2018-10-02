@@ -5,7 +5,9 @@ import {
     UIManager,
     findNodeHandle,
     StyleSheet,
-    Animated
+    Animated,
+    DeviceEventEmitter,
+    Platform
 } from 'react-native'
 
 const PropTypes = require('prop-types')
@@ -23,12 +25,66 @@ export class GstPlayer extends React.Component {
     currentGstState = undefined
     isPlayerReady = false
 
+    listener = {
+        onPlayerInit: undefined,
+        onPadAdded: undefined,
+        onVolumeChanged: undefined,
+        onStateChanged: undefined,
+        onUriChanged: undefined,
+        onPlayingProgress: undefined,
+        onBufferingProgress: undefined,
+        onEOS: undefined,
+        onElementError: undefined,
+        onElementLog: undefined
+    }
+
     constructor(props, context) {
         super(props, context)
     }
 
     componentDidMount() {
         this.playerHandle = findNodeHandle(this.playerViewRef)
+
+        this.listener.onPlayerInit = DeviceEventEmitter.addListener("onPlayerInit", () => {
+            this.onPlayerInit()
+        });
+
+        this.listener.onPadAdded = DeviceEventEmitter.addListener("onPadAdded", (padName) => {
+            this.onPadAdded(padName)
+        });
+
+        this.listener.onVolumeChanged = DeviceEventEmitter.addListener("onVolumeChanged", (volume) => {
+            this.onVolumeChanged(volume)
+        });
+
+        this.listener.onStateChanged = DeviceEventEmitter.addListener("onStateChanged", (states) => {
+            this.onStateChanged(states)
+        });
+
+        this.listener.onUriChanged = DeviceEventEmitter.addListener("onUriChanged", (uri_data) => {
+            this.onUriChanged(uri_data)
+        });
+
+        this.listener.onPlayingProgress = DeviceEventEmitter.addListener("onPlayingProgress", (progress_data) => {
+            this.onPlayingProgress(progress_data)
+        });
+
+        this.listener.onBufferingProgress = DeviceEventEmitter.addListener("onBufferingProgress", (progress_data) => {
+            this.onBufferingProgress(progress_data)
+        });
+
+        this.listener.onEOS = DeviceEventEmitter.addListener("onEOS", () => {
+            this.onEOS()
+        });
+
+        this.listener.onElementError = DeviceEventEmitter.addListener("onElementError", (error_data) => {
+            this.onElementError(error_data)
+        });
+
+        this.listener.onElementLog = DeviceEventEmitter.addListener("onElementLog", (log_data) => {
+            console.log(log_data)
+            this.onElementLog(log_data)
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -45,35 +101,56 @@ export class GstPlayer extends React.Component {
             this.props.onPlayerInit()
     }
 
-    onPadAdded(_message) {
-        const { name } = _message.nativeEvent
+    onPadAdded(name) {
+        if (Platform.OS === 'android') {
+            name = _message.nativeEvent
+        }
 
         if (this.props.onPadAdded)
             this.props.onPadAdded(name)
     }
 
-    onStateChanged(_message) {
-        const { old_state, new_state } = _message.nativeEvent
+    onStateChanged(states) {
+        let old_state = undefined;
+        let new_state = undefined;
+
+        if (Platform.OS === 'android') {
+            old_state = states.nativeEvent.old_state
+            new_state = states.nativeEvent.new_state
+        } else {
+            old_state = states.old_state
+            new_state = states.new_state
+        }
+
         this.currentGstState = new_state
 
         if (this.props.onStateChanged)
             this.props.onStateChanged(old_state, new_state)
     }
 
-    onVolumeChanged(_message) {
-        const audioLevelObject = Object.keys(_message.nativeEvent).filter(key => key !== "target").reduce((obj, key) => {
-            obj[key] = _message.nativeEvent[key];
-            return obj;
-        }, {})
+    onVolumeChanged(volume) {
 
-        const audioLevelArray = Object.values(audioLevelObject)
+        if (Platform.OS === 'android') {
+            volume = Object.keys(volume.nativeEvent).filter(key => key !== "target").reduce((obj, key) => {
+                obj[key] = volume.nativeEvent[key];
+                return obj;
+            }, {})
+        }
+
+        const audioLevelArray = Object.values(volume)
 
         if (this.props.onVolumeChanged)
             this.props.onVolumeChanged(audioLevelArray)
     }
 
-    onUriChanged(_message) {
-        const { new_uri } = _message.nativeEvent
+    onUriChanged(uri_data) {
+        let new_uri = undefined;
+
+        if (Platform.OS === 'android') {
+            new_uri = uri_data.nativeEvent.new_uri
+        } else {
+            new_uri = uri_data.new_uri
+        }
 
         if (this.props.autoPlay)
             this.play()
@@ -82,15 +159,30 @@ export class GstPlayer extends React.Component {
             this.props.onUriChanged(new_uri)
     }
 
-    onBufferingProgress(_message) {
-        const { progress } = _message.nativeEvent
+    onBufferingProgress(progress_data) {
+        let progress = undefined;
+
+        if (Platform.OS === 'android') {
+            progress = progress_data.nativeEvent.progress
+        } else {
+            new_uri = progress_data.progress
+        }
 
         if (this.props.onBufferingProgress)
             this.props.onBufferingProgress(progress)
     }
 
-    onPlayingProgress(_message) {
-        const { progress, duration } = _message.nativeEvent
+    onPlayingProgress(progress_data) {
+        let progress = undefined;
+        let duration = undefined;
+
+        if (Platform.OS === 'android') {
+            progress = progress_data.nativeEvent.progress
+            duration = progress_data.nativeEvent.duration
+        } else {
+            progress = progress_data.progress
+            duration = progress_data.duration
+        }
 
         if (this.props.onPlayingProgress)
             this.props.onPlayingProgress(progress, duration)
@@ -106,15 +198,32 @@ export class GstPlayer extends React.Component {
             this.props.onEOS()
     }
 
-    onElementError(_message) {
-        const { source, message, debug_info } = _message.nativeEvent
+    onElementError(error_data) {
+        let source = undefined;
+        let message = undefined;
+        let debug_info = undefined;
+
+        if (Platform.OS === 'android') {
+            source = error_data.nativeEvent.source
+            message = error_data.nativeEvent.message
+            debug_info = error_data.nativeEvent.debug_info
+        } else {
+            source = error_data.source
+            message = error_data.message
+            debug_info = error_data.debug_info
+        }
 
         if (this.props.onElementError)
             this.props.onElementError(source, message, debug_info)
     }
 
-    onElementLog(_message) {
-        const { message } = _message.nativeEvent
+    onElementLog(log_data) {
+        let message = undefined;
+        if (Platform.OS === 'android') {
+            message = log_data.nativeEvent.message
+        } else {
+            message = log_data.message
+        }
 
         if (this.props.onElementLog)
             this.props.onElementLog(message)
