@@ -36,9 +36,13 @@ RctGstUserData *rct_gst_init_user_data()
 void rct_gst_free_user_data(RctGstUserData *user_data)
 {
     free(user_data->configuration->uri);
+    user_data->configuration->uri = NULL;
     
     free(user_data->configuration);
+    user_data->configuration = NULL;
+    
     free(user_data);
+    user_data = NULL;
 }
 
 /**********************
@@ -95,7 +99,6 @@ void create_video_sink_bin(RctGstUserData *user_data)
 
 static GstBusSyncReply cb_create_window(GstBus *bus, GstMessage *message, RctGstUserData* user_data)
 {
-
     if(!gst_is_video_overlay_prepare_window_handle_message(message))
         return GST_BUS_PASS;
     
@@ -231,11 +234,11 @@ static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUser
     user_data->source = source;
 
     if (rct_gst_element_has_attribute(user_data->source, "latency")) {
-        g_object_set(user_data->source, "latency", (guint)200, NULL);
+        g_object_set(user_data->source, "latency", (guint)250, NULL);
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "timeout")) {
-        g_object_set(user_data->source, "timeout", (guint64)1000000, NULL);
+        g_object_set(user_data->source, "timeout", (guint64)5000000, NULL);
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "tcp-timeout")) {
@@ -272,7 +275,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
 
 
     // Message coming from the playbin
-    if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state) {
+    if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state && user_data->configuration != NULL) {
         
         user_data->current_state = new_state;
         
@@ -425,8 +428,8 @@ void rct_gst_init(RctGstUserData* user_data)
     create_video_sink_bin(user_data);
     g_object_set(user_data->playbin, "video-sink", user_data->video_sink_bin, NULL);
 
-    /*
     // Test purposes
+    /*
     user_data->playbin = gst_pipeline_new("pipeline");
     GstElement *video_test_src = gst_element_factory_make("videotestsrc", "video-test-src");
     gst_bin_add_many (GST_BIN (user_data->playbin), video_test_src, user_data->video_sink_bin, NULL);
@@ -435,7 +438,7 @@ void rct_gst_init(RctGstUserData* user_data)
     GstElement *audio_test_src = gst_element_factory_make("audiotestsrc", "audio-test-src");
     gst_bin_add_many (GST_BIN (user_data->playbin), audio_test_src, user_data->audio_sink_bin, NULL);
     gst_element_link(audio_test_src, user_data->audio_sink_bin);
-    */
+     */
 
     // Preparing bus
     user_data->bus = gst_element_get_bus(user_data->playbin);
@@ -454,18 +457,17 @@ void rct_gst_init(RctGstUserData* user_data)
 void rct_gst_run_loop(RctGstUserData* user_data)
 {
     g_main_loop_run(user_data->main_loop);
+    
+    rct_gst_free_user_data(user_data);
+    
     g_main_loop_unref(user_data->main_loop);
     
-    gst_element_set_state (user_data->playbin, GST_STATE_NULL);
-    
-    gst_object_unref(user_data->playbin);
     g_source_remove(user_data->bus_watch_id);
-
-    rct_gst_free_user_data(user_data);
 }
 
 void rct_gst_terminate(RctGstUserData* user_data)
 {
+    gst_element_set_state (user_data->playbin, GST_STATE_NULL);
     g_main_loop_quit(user_data->main_loop);
 }
 

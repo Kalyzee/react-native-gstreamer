@@ -15,8 +15,9 @@
 - (instancetype)init
 {
     self = [super init];
-    if (self)
+    if (self) {
         gst_ios_init(); // Init GStreamer
+    }
     return self;
 }
 
@@ -38,21 +39,22 @@ RCT_CUSTOM_VIEW_PROPERTY(uri, NSString, RCTGstPlayerView)
 {
     NSString* uri = [RCTConvert NSString:json];
     if (uri.length > 0) {
-        rct_gst_set_uri([view getUserData], g_strdup([uri UTF8String]));
+        [view setUri:uri];
     }
 }
 RCT_CUSTOM_VIEW_PROPERTY(uiRefreshRate, NSNumber, RCTGstPlayerView)
 {
     guint64 refreshRate = [[RCTConvert NSNumber:json] unsignedLongLongValue];
-    rct_gst_set_ui_refresh_rate([view getUserData], refreshRate);
+    [view setRefreshRate:refreshRate];
 }
 RCT_CUSTOM_VIEW_PROPERTY(volume, NSNumber, RCTGstPlayerView)
 {
-    rct_gst_set_volume([view getUserData], [[RCTConvert NSNumber:json] doubleValue]);
+    gdouble volume = [[RCTConvert NSNumber:json] doubleValue];
+    [view setVolume:volume];
 }
 RCT_CUSTOM_VIEW_PROPERTY(shareInstance, BOOL, RCTGstPlayerView)
 {
-    [view setShareInstance:[RCTConvert BOOL:json]];
+    // [view setShareInstance:[RCTConvert BOOL:json]];
 }
 
 // Shared events
@@ -83,7 +85,7 @@ RCT_EXPORT_METHOD(setState:(nonnull NSNumber *)reactTag state:(nonnull NSNumber 
 RCT_EXPORT_METHOD(seek:(nonnull NSNumber *)reactTag position:(nonnull NSNumber *)position) {
     NSNumber *_position = [RCTConvert NSNumber:position];
     gint64 gst_position = [_position longLongValue];
-
+    
     [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
         RCTGstPlayerView *view = (RCTGstPlayerView *)viewRegistry[reactTag];
         if ([view isKindOfClass:[RCTGstPlayerView class]]) {
@@ -91,4 +93,14 @@ RCT_EXPORT_METHOD(seek:(nonnull NSNumber *)reactTag position:(nonnull NSNumber *
         }
     }];
 }
+
+RCT_EXPORT_METHOD(setViewReady:(nonnull NSNumber *)reactTag) {
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+        RCTGstPlayerView *view = (RCTGstPlayerView *)viewRegistry[reactTag];
+        if ([view isKindOfClass:[RCTGstPlayerView class]]) {
+            [view setViewReady:TRUE];
+        }
+    }];
+}
+
 @end

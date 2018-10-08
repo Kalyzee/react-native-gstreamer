@@ -17,6 +17,11 @@
 @interface RCTGstPlayerView : UIView {
     RctGstUserData *userData;
     GstState pipelineState;
+    gboolean is_view_ready;
+    
+    NSString *uri;
+    guint64 refreshRate;
+    gdouble volume;
 }
 
 // react-native events
@@ -39,11 +44,17 @@
 - (gboolean)isReady;
 
 // Methods
+- (void) setViewReady:(gboolean) is_view_ready;
 - (void)setPipelineState:(int)pipelineState;
 - (void)seek:(gint64)position;
 
+- (void)setUri:(NSString*)uri;
+- (void)setRefreshRate:(guint64)refreshRate;
+- (void)setVolume:(gdouble)volume;
+
 // Setters
 - (void)setShareInstance:(BOOL)_shareInstance;
+- (void)setApplicationState:(NSString *)applicationState;
 
 @end
 

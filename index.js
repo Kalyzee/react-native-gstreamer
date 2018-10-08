@@ -5,7 +5,7 @@ import {
     UIManager,
     findNodeHandle,
     StyleSheet,
-    Animated
+    Platform
 } from 'react-native'
 
 const PropTypes = require('prop-types')
@@ -29,6 +29,7 @@ export class GstPlayer extends React.Component {
 
     componentDidMount() {
         this.playerHandle = findNodeHandle(this.playerViewRef)
+        this.setViewReady()
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -36,9 +37,9 @@ export class GstPlayer extends React.Component {
             this.play()
     }
 
+
     // Callbacks
     onPlayerInit() {
-        console.log('Player inited')
         this.isPlayerReady = true
 
         if (this.props.onPlayerInit)
@@ -129,6 +130,16 @@ export class GstPlayer extends React.Component {
         )
     }
 
+    setViewReady() {
+        if (Platform.OS === "ios") {
+            UIManager.dispatchViewManagerCommand(
+                this.playerHandle,
+                UIManager.RCTGstPlayer.Commands.setViewReady,
+                null
+            )
+        }
+    }
+
     seek(position) {
         UIManager.dispatchViewManagerCommand(
             this.playerHandle,
@@ -214,6 +225,7 @@ GstPlayer.propTypes = {
 
     // Methods
     setGstState: PropTypes.func,
+    setViewReady: PropTypes.func,
     play: PropTypes.func,
     pause: PropTypes.func,
     stop: PropTypes.func,
