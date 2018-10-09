@@ -69,6 +69,7 @@ typedef struct {
     GstBin *video_sink_bin;
     GstElement *audio_level_analyser;
     GstElement *audio_sink;
+    GstElement *volume_controller;
     
     // Misc
     GstElement *source;

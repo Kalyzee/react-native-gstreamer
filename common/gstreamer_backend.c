@@ -52,22 +52,28 @@ void create_audio_sink_bin(RctGstUserData *user_data)
 {
     // Create elements
     user_data->audio_sink_bin = gst_bin_new("audio-sink-bin");
+    user_data->volume_controller = gst_element_factory_make("volume", "audio-volume");
     user_data->audio_level_analyser = gst_element_factory_make("level", "audio-level-analyser");
     user_data->audio_sink = gst_element_factory_make("autoaudiosink", "audio-sink");
     
     // Add them
     gst_bin_add_many(GST_BIN(user_data->audio_sink_bin),
+                     user_data->volume_controller,
                      user_data->audio_level_analyser,
                      user_data->audio_sink,
                      NULL);
 
 
     // Link them
+    
+    if(!gst_element_link(user_data->volume_controller, user_data->audio_level_analyser))
+        rct_gst_log(user_data, "RCTGstPlayer : Failed to link volume-controller and audio-level-analyser\n");
+    
     if(!gst_element_link(user_data->audio_level_analyser, user_data->audio_sink))
         rct_gst_log(user_data, "RCTGstPlayer : Failed to link audio-level-analyser and audio-sink\n");
 
     // Creating ghostpad for uri-decode-bin
-    gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->audio_level_analyser, "sink")));
+    gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->volume_controller, "sink")));
 }
 
 /**********************
@@ -231,25 +237,22 @@ static void cb_new_pad(GstElement *element, GstPad *pad, RctGstUserData* user_da
 
 // Remove latency as much as possible
 static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUserData* user_data) {
-    user_data->source = source;
 
     if (rct_gst_element_has_attribute(user_data->source, "latency")) {
-        g_object_set(user_data->source, "latency", (guint)250, NULL);
+        g_object_set(source, "latency", (guint)250, NULL);
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "timeout")) {
-        g_object_set(user_data->source, "timeout", (guint64)5000000, NULL);
+        g_object_set(source, "timeout", (guint64)5000000, NULL);
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "tcp-timeout")) {
-        g_object_set(user_data->source, "tcp-timeout", (guint64)4000000, NULL);
+        g_object_set(source, "tcp-timeout", (guint64)4000000, NULL);
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "retry")) {
-        g_object_set(user_data->source, "retry", (guint)65535, NULL);
+        g_object_set(source, "retry", (guint)65535, NULL);
     }
-
-    g_signal_connect(source, "pad-added", (GCallback)cb_new_pad, user_data);
 }
 
 static gboolean cb_duration_and_progress(RctGstUserData* user_data)
@@ -273,7 +276,6 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
     GstState old_state, new_state, pending_state;
     gst_message_parse_state_changed(msg, &old_state, &new_state, &pending_state);
 
-
     // Message coming from the playbin
     if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state && user_data->configuration != NULL) {
         
@@ -293,9 +295,8 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                 user_data->is_ready = TRUE;
                 
                 // Get video overlay
-                GstElement *video_sink = gst_bin_get_by_interface(GST_BIN(user_data->playbin), GST_TYPE_VIDEO_OVERLAY);
-                user_data->video_overlay = GST_VIDEO_OVERLAY(video_sink);
-                g_object_unref(video_sink);
+                user_data->video_overlay = GST_VIDEO_OVERLAY(user_data->video_sink);
+                // g_object_unref(user_data->video_sink);
 
                 if (user_data->configuration->onPlayerInit) {
                     user_data->configuration->onPlayerInit(user_data->configuration->owner);
@@ -416,21 +417,50 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
     return validity;
 }
 
+void on_pad_added(GstElement *gstelement, GstPad *new_pad, gpointer user_data)
+{
+    rct_gst_log(user_data, "PAD ADDED");
+}
+
 void rct_gst_init(RctGstUserData* user_data)
 {
     // Create a playbin pipeline
-    user_data->playbin = gst_element_factory_make("playbin", "playbin");
+    // user_data->playbin = gst_element_factory_make("playbin", "playbin");
+    GError *error = NULL;
+    user_data->playbin = gst_parse_launch("rtspsrc name=src "
+                                          "src. ! rtph264depay ! h264parse ! vtdec name=h264dec "
+                                          "src. ! rtpvorbisdepay ! vorbisdec name=vorbisdec",
+                                          &error);cd 
+    
+    
+    if (error != NULL)
+    {
+        g_print ("Could not construct pipeline: %s\n", error->message);
+        return;
+    }
+    
+    gst_debug_set_threshold_for_name("rtspsrc", GST_LEVEL_WARNING);
+    gst_debug_set_threshold_for_name("updsrc", GST_LEVEL_WARNING);
+    
+    user_data->source = gst_bin_get_by_name(user_data->playbin, "src");
+        
+    cb_setup_source(user_data->playbin, user_data->source, user_data);
     
     // Create audio with level analyser
     create_audio_sink_bin(user_data);
-    g_object_set(user_data->playbin, "audio-sink", user_data->audio_sink_bin, NULL);
-    
+    gst_bin_add(user_data->playbin, user_data->audio_sink_bin);
+    GstElement *vorbisdec = gst_bin_get_by_name(GST_BIN(user_data->playbin), "vorbisdec");
+    gst_element_link(vorbisdec, user_data->audio_sink_bin);
+
+    // Create video
     create_video_sink_bin(user_data);
-    g_object_set(user_data->playbin, "video-sink", user_data->video_sink_bin, NULL);
+    gst_bin_add(user_data->playbin, user_data->video_sink_bin);
+    GstElement *h264dec = gst_bin_get_by_name(GST_BIN(user_data->playbin), "h264dec");
+    gst_element_link(h264dec, user_data->video_sink_bin);
+    
 
     // Test purposes
     /*
-    user_data->playbin = gst_pipeline_new("pipeline");
     GstElement *video_test_src = gst_element_factory_make("videotestsrc", "video-test-src");
     gst_bin_add_many (GST_BIN (user_data->playbin), video_test_src, user_data->video_sink_bin, NULL);
     gst_element_link(video_test_src, user_data->video_sink_bin);
@@ -445,8 +475,6 @@ void rct_gst_init(RctGstUserData* user_data)
     user_data->bus_watch_id = gst_bus_add_watch(user_data->bus, cb_bus_watch, user_data);
     gst_bus_set_sync_handler(user_data->bus,(GstBusSyncHandler)cb_create_window, user_data, NULL);
     gst_object_unref(user_data->bus);
-    
-    g_signal_connect(G_OBJECT(user_data->playbin), "source-setup", (GCallback) cb_setup_source, user_data);
     
     // Create loop
     user_data->main_loop = g_main_loop_new(NULL, FALSE);
@@ -479,7 +507,8 @@ gchar *rct_gst_get_info()
 static void rct_gst_apply_uri(RctGstUserData* user_data)
 {
     rct_gst_log(user_data, "RCTGstPlayer : rct_gst_apply_uri\n");
-    g_object_set(user_data->playbin, "uri", user_data->configuration->uri, NULL);
+    GstElement *src = gst_bin_get_by_name(GST_BIN(user_data->playbin), "src");
+    g_object_set(src, "location", user_data->configuration->uri, NULL);
     
     if (user_data->configuration->onUriChanged) {
         user_data->configuration->onUriChanged(user_data->configuration->owner ,user_data->configuration->uri);
@@ -587,7 +616,7 @@ void rct_gst_set_volume(RctGstUserData* user_data, gdouble volume)
     user_data->configuration->volume = volume;
     
     if (user_data->is_ready) {
-        g_object_set(user_data->playbin, "volume", user_data->configuration->volume, NULL);
+        g_object_set(user_data->volume_controller, "volume", user_data->configuration->volume, NULL);
     }
 }
 
