@@ -62,14 +62,20 @@ typedef struct {
     
     // Video
     guintptr video_overlay;
+    GstElement *video_queue;
     GstElement *video_sink;
+    GstElement *video_depay;
+    GstElement *h264parse;
+    GstElement *h264dec;
 
     // Audio
     GstBin *audio_sink_bin;
     GstBin *video_sink_bin;
     GstElement *audio_level_analyser;
+    GstElement *audio_queue;
     GstElement *audio_sink;
     GstElement *volume_controller;
+    GstElement *audio_depay;
     
     // Misc
     GstElement *source;

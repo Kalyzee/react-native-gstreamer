@@ -275,9 +275,16 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
 {
     GstState old_state, new_state, pending_state;
     gst_message_parse_state_changed(msg, &old_state, &new_state, &pending_state);
+    
+    // Message coming from the video_sink_bin
+    if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->video_sink_bin) && new_state != old_state && user_data->configuration != NULL) {
+        if (new_state == GST_STATE_NULL && old_state == GST_STATE_READY) {
+            gst_element_sync_state_with_parent(user_data->video_sink_bin);
+        }
+    }
 
     // Message coming from the playbin
-    if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state && user_data->configuration != NULL) {
+    else if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state && user_data->configuration != NULL) {
         
         user_data->current_state = new_state;
         
@@ -290,13 +297,12 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
         );
         
         if (new_state == GST_STATE_READY) {
-            
+
             if (!user_data->is_ready) {
                 user_data->is_ready = TRUE;
                 
                 // Get video overlay
                 user_data->video_overlay = GST_VIDEO_OVERLAY(user_data->video_sink);
-                // g_object_unref(user_data->video_sink);
 
                 if (user_data->configuration->onPlayerInit) {
                     user_data->configuration->onPlayerInit(user_data->configuration->owner);
@@ -309,6 +315,10 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
                     rct_gst_apply_uri(user_data);
                     user_data->must_apply_uri = FALSE;
                 }
+            }
+            
+            if (old_state == GST_STATE_PAUSED) {
+                gst_element_set_state(user_data->video_sink_bin, GST_STATE_NULL);
             }
         }
         
@@ -417,46 +427,94 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
     return validity;
 }
 
-void on_pad_added(GstElement *gstelement, GstPad *new_pad, gpointer user_data)
+void on_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_data)
 {
-    rct_gst_log(user_data, "PAD ADDED");
+    GstCaps *caps = NULL;
+    GstStructure *structure;
+    
+    caps = gst_pad_get_current_caps(new_pad);
+    if (!caps)
+        caps = gst_pad_query_caps(new_pad, NULL);
+    
+    structure = gst_caps_get_structure(caps, 0);
+    
+    const gchar *name = gst_structure_get_string(structure, "media");
+    if (!g_strcmp0(name, "video")) {
+        rct_gst_log(user_data, "Video pad added\n");
+        gst_pad_link(new_pad, gst_element_get_static_pad(user_data->video_queue, "sink"));
+    } else if (!g_strcmp0(name, "audio")) {
+        rct_gst_log(user_data, "Audio pad added\n");
+        gst_pad_link(new_pad, gst_element_get_static_pad(user_data->audio_queue, "sink"));
+    }
+    g_object_ref(new_pad);
+    
+    if (user_data->configuration->onPadAdded) {
+        gchar *name;
+        
+        name = gst_pad_get_name(new_pad);
+        user_data->configuration->onPadAdded(user_data->configuration->owner, name);
+        g_free(name);
+    }
 }
 
 void rct_gst_init(RctGstUserData* user_data)
 {
     // Create a playbin pipeline
-    // user_data->playbin = gst_element_factory_make("playbin", "playbin");
     GError *error = NULL;
-    user_data->playbin = gst_parse_launch("rtspsrc name=src "
-                                          "src. ! rtph264depay ! h264parse ! vtdec name=h264dec "
-                                          "src. ! rtpvorbisdepay ! vorbisdec name=vorbisdec",
-                                          &error);cd 
-    
-    
+    user_data->playbin = gst_pipeline_new("pipeline");
     if (error != NULL)
     {
         g_print ("Could not construct pipeline: %s\n", error->message);
-        return;
     }
     
-    gst_debug_set_threshold_for_name("rtspsrc", GST_LEVEL_WARNING);
-    gst_debug_set_threshold_for_name("updsrc", GST_LEVEL_WARNING);
-    
-    user_data->source = gst_bin_get_by_name(user_data->playbin, "src");
-        
+    // Video components
+    user_data->source = gst_element_factory_make("rtspsrc", "src");
     cb_setup_source(user_data->playbin, user_data->source, user_data);
-    
-    // Create audio with level analyser
-    create_audio_sink_bin(user_data);
-    gst_bin_add(user_data->playbin, user_data->audio_sink_bin);
-    GstElement *vorbisdec = gst_bin_get_by_name(GST_BIN(user_data->playbin), "vorbisdec");
-    gst_element_link(vorbisdec, user_data->audio_sink_bin);
+    gst_bin_add(user_data->playbin, user_data->source);
 
-    // Create video
+    user_data->video_queue = gst_element_factory_make("queue", "video_queue");
+    user_data->video_depay = gst_element_factory_make("rtph264depay", "rtph264depay");
+    user_data->h264parse = gst_element_factory_make("h264parse", "h264parse");
+    user_data->h264dec = gst_element_factory_make("vtdec", "h264dec");
     create_video_sink_bin(user_data);
-    gst_bin_add(user_data->playbin, user_data->video_sink_bin);
-    GstElement *h264dec = gst_bin_get_by_name(GST_BIN(user_data->playbin), "h264dec");
-    gst_element_link(h264dec, user_data->video_sink_bin);
+    
+    gst_bin_add_many(
+                     user_data->playbin,
+                     user_data->video_queue,
+                     user_data->video_depay,
+                     user_data->h264parse,
+                     user_data->h264dec,
+                     user_data->video_sink_bin,
+                     NULL);
+    
+    gst_element_link_many(user_data->video_queue,
+                          user_data->video_depay,
+                          user_data->h264parse,
+                          user_data->h264dec,
+                          user_data->video_sink_bin,
+                          NULL);
+
+    // Audio components
+    user_data->audio_queue = gst_element_factory_make("queue", "audio_queue");
+    user_data->audio_depay = gst_element_factory_make("rtpvorbisdepay", "rtpvorbisdepay");
+    GstElement *vorbisdec = gst_element_factory_make("vorbisdec", "vorbisdec");
+    create_audio_sink_bin(user_data);
+    
+    gst_bin_add_many(user_data->playbin,
+                     user_data->audio_queue,
+                     user_data->audio_depay,
+                     vorbisdec,
+                     user_data->audio_sink_bin,
+                     NULL);
+    
+    gst_element_link_many(user_data->audio_queue,
+                          user_data->audio_depay,
+                          vorbisdec,
+                          user_data->audio_sink_bin,
+                          NULL);
+
+    // Pad creation
+    g_signal_connect(user_data->source, "pad-added", G_CALLBACK(on_pad_added), user_data);
     
 
     // Test purposes

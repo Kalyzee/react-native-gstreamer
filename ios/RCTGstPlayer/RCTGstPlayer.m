@@ -16,8 +16,6 @@
 {
     self = [super init];
     if (self) {
-        gst_debug_set_threshold_from_string("rtspsrc:5", TRUE);
-        gst_debug_set_threshold_from_string("udpsrc:5", TRUE);
         gst_ios_init(); // Init GStreamer
     }
     return self;

@@ -76,6 +76,7 @@ static RCTGstPlayerView *instance;
 // Setters
 - (void)setUri:(NSString *)uri
 {
+    // self->uri = @"rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov";
     self->uri = uri;
     
     if (self->is_view_ready)
