@@ -386,7 +386,7 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* u
             
         case GST_MESSAGE_DURATION_CHANGED:
             user_data->duration = GST_CLOCK_TIME_NONE;
-            cb_duration_and_progress(user_data);
+            // cb_duration_and_progress(user_data);
             break;
             
         default:
