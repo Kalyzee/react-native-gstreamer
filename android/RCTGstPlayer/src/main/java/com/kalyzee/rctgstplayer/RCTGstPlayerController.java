@@ -220,7 +220,7 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
 
     // Manager Shared properties
     void setRctGstUri(String uri) {
-        Log.d(LOG_TAG, "setRctGstUri" + uri);
+        Log.d(LOG_TAG, "setRctGstUri - Java side : " + uri);
         if (uri.length() > 0) {
             nativeRCTGstSetUri(uri);
         } else {

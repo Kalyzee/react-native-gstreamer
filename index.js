@@ -37,7 +37,6 @@ export class GstPlayer extends React.Component {
             this.play()
     }
 
-
     // Callbacks
     onPlayerInit() {
         this.isPlayerReady = true
@@ -123,9 +122,12 @@ export class GstPlayer extends React.Component {
 
     // Methods
     setGstState(state) {
+
+        console.log("setGstState : " + state)
+
         UIManager.dispatchViewManagerCommand(
             this.playerHandle,
-            UIManager.RCTGstPlayer.Commands.setState,
+            UIManager.getViewManagerConfig("RCTGstPlayer").Commands.setState,
             [state]
         )
     }
@@ -134,7 +136,7 @@ export class GstPlayer extends React.Component {
         if (Platform.OS === "ios") {
             UIManager.dispatchViewManagerCommand(
                 this.playerHandle,
-                UIManager.RCTGstPlayer.Commands.setViewReady,
+                UIManager.getViewManagerConfig("RCTGstPlayer").Commands.setViewReady,
                 null
             )
         }
@@ -143,7 +145,7 @@ export class GstPlayer extends React.Component {
     seek(position) {
         UIManager.dispatchViewManagerCommand(
             this.playerHandle,
-            UIManager.RCTGstPlayer.Commands.seek,
+            UIManager.getViewManagerConfig("RCTGstPlayer").Commands.seek,
             [position]
         )
     }
@@ -170,7 +172,6 @@ export class GstPlayer extends React.Component {
             <View
                 style={[styles.playerContainer, this.props.containerStyle]}
                 pointerEvents='box-none'
-                onLayout={this.props.onLayout}
             >
                 <RCTGstPlayer
                     uri={this.props.uri !== undefined ? this.props.uri : ""}
@@ -240,7 +241,7 @@ GstPlayer.propTypes = {
 const styles = StyleSheet.create({
     playerContainer: {
         flex: 1,
-        backgroundColor: '#000000'
+        backgroundColor: '#FFF'
     },
     player: {
         flex: 1

@@ -22,7 +22,7 @@ LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../../../../common
 LOCAL_SRC_FILES := rctgstplayer.c $(LOCAL_PATH)/../../../../../common/gstreamer_backend.c
 LOCAL_LDLIBS := -llog -landroid
 
-LOCAL_SHARED_LIBRARIES := gstreamer_android
+LOCAL_SHARED_LIBRARIES := gstreamer_android libc++_shared
 
 include $(BUILD_SHARED_LIBRARY)
 

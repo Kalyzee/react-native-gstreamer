@@ -238,8 +238,6 @@ static void native_rct_gst_set_uri(JNIEnv* env, jobject thiz, jstring uri_j)
     (void)thiz;
 
     gchar *uri = (gchar *)(*env)->GetStringUTFChars(env, uri_j, 0);
-    __android_log_print(ANDROID_LOG_INFO, "RCTGstPlayer", "uri : %s", uri);
-
     rct_gst_set_uri(get_user_data(), uri);
 }
 
