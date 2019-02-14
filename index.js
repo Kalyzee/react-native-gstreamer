@@ -233,7 +233,7 @@ export class GstPlayer extends React.Component {
     setGstState(state) {
         UIManager.dispatchViewManagerCommand(
             this.playerHandle,
-            UIManager.RCTGstPlayer.Commands.setState,
+            UIManager.getViewManagerConfig("RCTGstPlayer").Commands.setState,
             [state]
         )
     }
@@ -241,7 +241,7 @@ export class GstPlayer extends React.Component {
     seek(position) {
         UIManager.dispatchViewManagerCommand(
             this.playerHandle,
-            UIManager.RCTGstPlayer.Commands.seek,
+            UIManager.getViewManagerConfig("RCTGstPlayer").Commands.seek,
             [position]
         )
     }
@@ -337,7 +337,7 @@ GstPlayer.propTypes = {
 const styles = StyleSheet.create({
     playerContainer: {
         flex: 1,
-        backgroundColor: '#000000'
+        backgroundColor: '#000'
     },
     player: {
         flex: 1
