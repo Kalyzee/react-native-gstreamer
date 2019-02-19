@@ -7,7 +7,6 @@
 
 #include "gstreamer_backend.h"
 #include <stdlib.h>
-#include <android/log.h>
 
 // User data
 RctGstUserData *rct_gst_init_user_data()
@@ -460,7 +459,6 @@ void on_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_
 
 void on_decoder_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_data)
 {
-    __android_log_print(ANDROID_LOG_WARN, "RCTGstPlayer", "DECODER PAD ADDED : %s", gst_pad_get_name(new_pad));
     gst_pad_link(new_pad, gst_element_get_static_pad(user_data->video_sink_bin, "sink"));
 }
 
@@ -483,13 +481,11 @@ void rct_gst_init(RctGstUserData* user_data)
     user_data->video_depay = gst_element_factory_make("rtph264depay", "rtph264depay");
     user_data->h264parse = gst_element_factory_make("h264parse", "h264parse");
 
-    // IF iOS
-    // user_data->h264dec = gst_element_factory_make("vtdec", "h264dec");
-    // ENDIF iOS
-
-    // IF ANDROID
+    #if __APPLE__
+    user_data->h264dec = gst_element_factory_make("vtdec", "h264dec");
+    #else
     user_data->h264dec = gst_element_factory_make("decodebin", "h264dec");
-    // ENDIF ANDROID
+    #endif
 
     create_video_sink_bin(user_data);
 
@@ -507,33 +503,28 @@ void rct_gst_init(RctGstUserData* user_data)
                           user_data->h264dec,
                           NULL);
 
-    // IF iOS
-    // gst_element_link(user_data->h264dec, user_data->video_sink_bin);
-    // ENDIF iOS
-
-    // IF Android
+    #if __APPLE__
+    gst_element_link(user_data->h264dec, user_data->video_sink_bin);
+    #else
     g_signal_connect(user_data->h264dec, "pad-added", G_CALLBACK(on_decoder_pad_added), user_data);
-    // ENDIF Android
+    #endif
 
 
     // Audio components
     user_data->audio_queue = gst_element_factory_make("queue", "audio_queue");
     user_data->audio_depay = gst_element_factory_make("rtpvorbisdepay", "rtpvorbisdepay");
-    GstElement *audio_parse = gst_element_factory_make("oggparse", "oggparse");
     GstElement *vorbisdec = gst_element_factory_make("vorbisdec", "vorbisdec");
     create_audio_sink_bin(user_data);
     
     gst_bin_add_many(user_data->playbin,
                      user_data->audio_queue,
                      user_data->audio_depay,
-                     audio_parse,
                      vorbisdec,
                      user_data->audio_sink_bin,
                      NULL);
     
     gst_element_link_many(user_data->audio_queue,
                           user_data->audio_depay,
-                          audio_parse,
                           vorbisdec,
                           user_data->audio_sink_bin,
                           NULL);

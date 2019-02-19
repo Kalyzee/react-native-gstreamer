@@ -122,9 +122,6 @@ export class GstPlayer extends React.Component {
 
     // Methods
     setGstState(state) {
-
-        console.log("setGstState : " + state)
-
         UIManager.dispatchViewManagerCommand(
             this.playerHandle,
             UIManager.getViewManagerConfig("RCTGstPlayer").Commands.setState,
@@ -241,7 +238,7 @@ GstPlayer.propTypes = {
 const styles = StyleSheet.create({
     playerContainer: {
         flex: 1,
-        backgroundColor: '#FFF'
+        backgroundColor: '#000'
     },
     player: {
         flex: 1
