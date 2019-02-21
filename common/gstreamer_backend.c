@@ -459,7 +459,11 @@ void on_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_
 
 void on_decoder_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_data)
 {
+    GstCaps *caps = gst_pad_get_current_caps(new_pad);
+    g_warning("on_decoder_pad_added : %s", gst_caps_to_string(caps));
     gst_pad_link(new_pad, gst_element_get_static_pad(user_data->video_sink_bin, "sink"));
+
+    g_object_ref(new_pad);
 }
 
 void rct_gst_init(RctGstUserData* user_data)
@@ -514,24 +518,30 @@ void rct_gst_init(RctGstUserData* user_data)
     user_data->audio_queue = gst_element_factory_make("queue", "audio_queue");
     user_data->audio_depay = gst_element_factory_make("rtpvorbisdepay", "rtpvorbisdepay");
     GstElement *vorbisdec = gst_element_factory_make("vorbisdec", "vorbisdec");
+    GstElement *audio_convert = gst_element_factory_make("audioconvert", "audioconvert");
+    GstElement *audio_resample = gst_element_factory_make("audioresample", "audioresample");
     create_audio_sink_bin(user_data);
-    
+
     gst_bin_add_many(user_data->playbin,
                      user_data->audio_queue,
                      user_data->audio_depay,
                      vorbisdec,
+                     audio_convert,
+                     audio_resample,
                      user_data->audio_sink_bin,
                      NULL);
-    
+
     gst_element_link_many(user_data->audio_queue,
                           user_data->audio_depay,
                           vorbisdec,
+                          audio_convert,
+                          audio_resample,
                           user_data->audio_sink_bin,
                           NULL);
 
     // Pad creation
     g_signal_connect(user_data->source, "pad-added", G_CALLBACK(on_pad_added), user_data);
-    
+
 
     // Test purposes
     /*
