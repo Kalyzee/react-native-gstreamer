@@ -26,6 +26,8 @@ LOCAL_SHARED_LIBRARIES := gstreamer_android libc++_shared
 
 include $(BUILD_SHARED_LIBRARY)
 
+LOCAL_CFLAGS+="-Wno-error=unused-command-line-argument"
+
 
 ifeq ($(TARGET_ARCH_ABI),armeabi)
 GSTREAMER_ROOT        := $(GSTREAMER_ROOT_ANDROID)/arm
