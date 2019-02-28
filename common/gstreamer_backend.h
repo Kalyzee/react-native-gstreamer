@@ -66,6 +66,7 @@ typedef struct {
     GstElement *video_sink;
     GstElement *video_depay;
     GstElement *h264parse;
+    GstElement *rtpjitterbuffer;
     GstElement *h264dec;
 
     // Audio

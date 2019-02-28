@@ -65,7 +65,6 @@ void create_audio_sink_bin(RctGstUserData *user_data)
 
 
     // Link them
-
     if(!gst_element_link(user_data->volume_controller, user_data->audio_level_analyser))
         rct_gst_log(user_data, "RCTGstPlayer : Failed to link volume-controller and audio-level-analyser\n");
 
@@ -84,18 +83,30 @@ void create_video_sink_bin(RctGstUserData *user_data)
     // Create elements
     user_data->video_sink_bin = gst_bin_new("video-sink-bin");
     user_data->video_sink = gst_element_factory_make("glimagesink", "video-sink");
+    g_object_set(user_data->video_sink, "sync", FALSE, NULL);
+    GstElement *video_convert = gst_element_factory_make("videoconvert", "video_convert");
+    GstElement *video_post_queue = gst_element_factory_make("queue", "video_post_queue");
 
     // Add them
-    gst_bin_add_many(
-                     user_data->video_sink_bin,
+    gst_bin_add_many(user_data->video_sink_bin,
+                     video_convert,
+                     video_post_queue,
                      user_data->video_sink,
                      NULL
                      );
     
+    // Link them
+    if(!gst_element_link(video_convert, video_post_queue))
+        rct_gst_log(user_data, "RCTGstPlayer : Failed to link video_convert and video_post_queue\n");
+    
+    if(!gst_element_link(video_post_queue, user_data->video_sink))
+        rct_gst_log(user_data, "RCTGstPlayer : Failed to link video_post_queue and video_sink\n");
+
+    
     // Creating ghostpad for playbin
     gst_element_add_pad(
                         GST_BIN(user_data->video_sink_bin),
-                        gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->video_sink, "sink"))
+                        gst_ghost_pad_new("sink", gst_element_get_static_pad(caps_filter, "sink"))
                         );
 }
 
@@ -460,9 +471,9 @@ void on_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_
 void on_decoder_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_data)
 {
     GstCaps *caps = gst_pad_get_current_caps(new_pad);
-    g_warning("on_decoder_pad_added : %s", gst_caps_to_string(caps));
+    rct_gst_log(user_data, gst_caps_to_string(caps));
     gst_pad_link(new_pad, gst_element_get_static_pad(user_data->video_sink_bin, "sink"));
-
+    
     g_object_ref(new_pad);
 }
 
@@ -470,6 +481,7 @@ void rct_gst_init(RctGstUserData* user_data)
 {
     // Create a playbin pipeline
     GError *error = NULL;
+    
     user_data->playbin = gst_pipeline_new("pipeline");
     if (error != NULL)
     {
@@ -480,38 +492,43 @@ void rct_gst_init(RctGstUserData* user_data)
     user_data->source = gst_element_factory_make("rtspsrc", "src");
     cb_setup_source(user_data->playbin, user_data->source, user_data);
     gst_bin_add(user_data->playbin, user_data->source);
-
+    
+    user_data->rtpjitterbuffer = gst_element_factory_make("rtpjitterbuffer", "rtpjitterbuffer");
+    // g_object_set(user_data->rtpjitterbuffer, "mode", 1, NULL);
+    
     user_data->video_queue = gst_element_factory_make("queue", "video_queue");
     user_data->video_depay = gst_element_factory_make("rtph264depay", "rtph264depay");
     user_data->h264parse = gst_element_factory_make("h264parse", "h264parse");
 
     #if __APPLE__
-    user_data->h264dec = gst_element_factory_make("vtdec", "h264dec");
+    // user_data->h264dec = gst_element_factory_make("vtdec", "h264dec");
     #else
-    user_data->h264dec = gst_element_factory_make("decodebin", "h264dec");
     #endif
+    user_data->h264dec = gst_element_factory_make("decodebin", "h264dec");
 
     create_video_sink_bin(user_data);
 
     gst_bin_add_many(user_data->playbin,
-            user_data->video_queue,
-            user_data->video_depay,
-            user_data->h264parse,
-            user_data->h264dec,
-            user_data->video_sink_bin,
-            NULL);
+                     user_data->video_queue,
+                     //user_data->rtpjitterbuffer,
+                     user_data->video_depay,
+                     user_data->h264parse,
+                     user_data->h264dec,
+                     user_data->video_sink_bin,
+                     NULL);
 
     gst_element_link_many(user_data->video_queue,
+                          //user_data->rtpjitterbuffer,
                           user_data->video_depay,
                           user_data->h264parse,
                           user_data->h264dec,
                           NULL);
 
     #if __APPLE__
-    gst_element_link(user_data->h264dec, user_data->video_sink_bin);
+    // gst_element_link(user_data->h264dec, user_data->video_sink_bin);
     #else
-    g_signal_connect(user_data->h264dec, "pad-added", G_CALLBACK(on_decoder_pad_added), user_data);
     #endif
+    g_signal_connect(user_data->h264dec, "pad-added", G_CALLBACK(on_decoder_pad_added), user_data);
 
 
     // Audio components
@@ -521,6 +538,8 @@ void rct_gst_init(RctGstUserData* user_data)
     GstElement *audio_convert = gst_element_factory_make("audioconvert", "audioconvert");
     GstElement *audio_resample = gst_element_factory_make("audioresample", "audioresample");
     create_audio_sink_bin(user_data);
+    
+    GstElement *audio_post_queue = gst_element_factory_make("queue", "audio_post_queue");
 
     gst_bin_add_many(user_data->playbin,
                      user_data->audio_queue,
@@ -528,6 +547,7 @@ void rct_gst_init(RctGstUserData* user_data)
                      vorbisdec,
                      audio_convert,
                      audio_resample,
+                     audio_post_queue,
                      user_data->audio_sink_bin,
                      NULL);
 
@@ -536,6 +556,7 @@ void rct_gst_init(RctGstUserData* user_data)
                           vorbisdec,
                           audio_convert,
                           audio_resample,
+                          audio_post_queue,
                           user_data->audio_sink_bin,
                           NULL);
 
