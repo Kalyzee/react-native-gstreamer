@@ -10,7 +10,7 @@ import java.util.Map;
 public enum Command {
 
     // callable methods from JS
-    setState, seek;
+    setState, seek, destroy;
 
     // Index for js association
     private int index;

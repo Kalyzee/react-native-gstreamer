@@ -4,14 +4,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
-import android.view.View;
-
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
-import com.kalyzee.rctgstplayer.RCTGstPlayerController;
 import com.kalyzee.rctgstplayer.utils.manager.Command;
 
 import java.util.Map;
@@ -20,9 +17,9 @@ import java.util.Map;
  * Created by asapone on 02/01/2018.
  */
 
-public class RCTGstPlayer extends SimpleViewManager {
+public class RCTGstPlayer extends SimpleViewManager<View> {
 
-    private RCTGstPlayerController playerController;
+    private static RCTGstPlayerController playerController;
 
     @Override
     public String getName() {
@@ -31,26 +28,33 @@ public class RCTGstPlayer extends SimpleViewManager {
 
     @Override
     protected View createViewInstance(ThemedReactContext reactContext) {
+        if (playerController == null)
+        {
+            playerController = new RCTGstPlayerController(reactContext);
+            reactContext.addLifecycleEventListener(playerController);
+        }
 
-        this.playerController = new RCTGstPlayerController(reactContext);
-        return this.playerController.getView();
+
+        return playerController.getView();
     }
 
     // Shared properties
     @ReactProp(name = "uri")
     public void setUri(View controllerView, String uri) {
-        this.playerController.setRctGstUri(uri);
+        Log.d(RCTGstPlayerController.LOG_TAG, "ReactProp uri : " + uri);
+        playerController.setRctGstUri(uri);
     }
 
     @ReactProp(name = "volume")
     public void setVolume(View controllerView, double volume) {
-        this.playerController.setRctGstVolume(volume);
+        Log.d(RCTGstPlayerController.LOG_TAG, "ReactProp volume : " + volume);
+        playerController.setRctGstVolume(volume);
     }
 
     @ReactProp(name = "uiRefreshRate")
     public void setUiRefreshRate(View controllerView, int uiRefreshRate) {
-        Log.e(RCTGstPlayerController.LOG_TAG, "setUiRefreshRate" + Integer.toString(uiRefreshRate));
-        this.playerController.setRctGstUiRefreshRate(uiRefreshRate);
+        Log.d(RCTGstPlayerController.LOG_TAG, "ReactProp refreshRate : " + uiRefreshRate);
+        playerController.setRctGstUiRefreshRate(uiRefreshRate);
     }
 
     // Methods
@@ -59,12 +63,17 @@ public class RCTGstPlayer extends SimpleViewManager {
 
         // setState
         if (Command.is(commandType, Command.setState)) {
-            this.playerController.setRctGstState(args.getInt(0));
+            playerController.setRctGstState(args.getInt(0));
         }
 
         // seek
         if (Command.is(commandType, Command.seek)) {
-            this.playerController.seek(args.getInt(0));
+            playerController.seek(args.getInt(0));
+        }
+
+        // destroy
+        if (Command.is(commandType, Command.destroy)) {
+            playerController.destroy();
         }
     }
 

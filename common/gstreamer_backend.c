@@ -250,11 +250,11 @@ static void cb_new_pad(GstElement *element, GstPad *pad, RctGstUserData* user_da
 static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUserData* user_data) {
 
     if (rct_gst_element_has_attribute(user_data->source, "latency")) {
-        g_object_set(source, "latency", (guint)250, NULL);
+        g_object_set(source, "latency", (guint)200, NULL);
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "timeout")) {
-        g_object_set(source, "timeout", (guint64)5000000, NULL);
+        g_object_set(source, "timeout", (guint64)1000000, NULL);
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "tcp-timeout")) {
@@ -262,7 +262,7 @@ static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUser
     }
 
     if (rct_gst_element_has_attribute(user_data->source, "retry")) {
-        g_object_set(source, "retry", (guint)65535, NULL);
+        g_object_set(source, "retry", (guint)65535, NULL);  
     }
 }
 
@@ -271,9 +271,9 @@ static gboolean cb_duration_and_progress(RctGstUserData* user_data)
     if (user_data->current_state == GST_STATE_PLAYING) {
         // If we didn't know it yet, query the stream duration
         if (!GST_CLOCK_TIME_IS_VALID (user_data->duration))
-            gst_element_query_duration(user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
+            gst_element_query_duration(user_data->pipeline, GST_FORMAT_TIME, &user_data->duration);
         
-        if (gst_element_query_position(user_data->playbin, GST_FORMAT_TIME, &user_data->position)) {
+        if (gst_element_query_position(user_data->pipeline, GST_FORMAT_TIME, &user_data->position)) {
             if (user_data->configuration->onPlayingProgress)
                 user_data->configuration->onPlayingProgress(user_data->configuration->owner, user_data->position / GST_MSECOND, user_data->duration / GST_MSECOND);
         }
@@ -295,7 +295,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
     }
 
     // Message coming from the playbin
-    else if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->playbin) && new_state != old_state && user_data->configuration != NULL) {
+    else if(GST_MESSAGE_SRC(msg) == GST_OBJECT(user_data->pipeline) && new_state != old_state && user_data->configuration != NULL) {
         
         user_data->current_state = new_state;
         
@@ -340,7 +340,7 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
         // Get element duration if not known yet
         if (new_state >= GST_STATE_PAUSED) {
             if (!GST_CLOCK_TIME_IS_VALID (user_data->duration)) {
-                gst_element_query_duration (user_data->playbin, GST_FORMAT_TIME, &user_data->duration);
+                gst_element_query_duration (user_data->pipeline, GST_FORMAT_TIME, &user_data->duration);
                 
                 if (user_data->configuration->onPlayingProgress) {
                     user_data->configuration->onPlayingProgress(user_data->configuration->owner, 0, user_data->duration / GST_MSECOND);
@@ -353,8 +353,8 @@ static void cb_state_changed(GstBus *bus, GstMessage *msg, RctGstUserData* user_
             if (GST_CLOCK_TIME_IS_VALID(user_data->desired_position)) {
                 
                 // Restore good base time as we never stored the right one
-                GstClockTime base_time = gst_element_get_base_time(user_data->playbin);
-                gst_element_set_base_time(user_data->playbin, base_time - user_data->desired_position);
+                GstClockTime base_time = gst_element_get_base_time(user_data->pipeline);
+                gst_element_set_base_time(user_data->pipeline, base_time - user_data->desired_position);
                 
                 execute_seek(user_data, user_data->desired_position);
             }
@@ -416,7 +416,7 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
     GstState current_state;
     GstState pending_state;
     
-    gst_element_get_state(user_data->playbin, &current_state, &pending_state, 0);
+    gst_element_get_state(user_data->pipeline, &current_state, &pending_state, 0);
     
     rct_gst_log(user_data,
             g_strdup_printf(
@@ -428,9 +428,9 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
             )
         );
     
-    if (user_data->playbin != NULL && current_state != state) {
+    if (user_data->pipeline != NULL && current_state != state) {
         if (pending_state != state) {
-            validity = gst_element_set_state(user_data->playbin, state);
+            validity = gst_element_set_state(user_data->pipeline, state);
         } else {
             rct_gst_log(user_data, "RCTGstPlayer : Ignoring state change (Already changing to requested state)\n");
         }
@@ -482,7 +482,7 @@ void rct_gst_init(RctGstUserData* user_data)
     // Create a playbin pipeline
     GError *error = NULL;
     
-    user_data->playbin = gst_pipeline_new("pipeline");
+    user_data->pipeline = gst_pipeline_new("pipeline");
     if (error != NULL)
     {
         g_print ("Could not construct pipeline: %s\n", error->message);
@@ -490,45 +490,29 @@ void rct_gst_init(RctGstUserData* user_data)
     
     // Video components
     user_data->source = gst_element_factory_make("rtspsrc", "src");
-    cb_setup_source(user_data->playbin, user_data->source, user_data);
-    gst_bin_add(user_data->playbin, user_data->source);
-    
-    user_data->rtpjitterbuffer = gst_element_factory_make("rtpjitterbuffer", "rtpjitterbuffer");
-    // g_object_set(user_data->rtpjitterbuffer, "mode", 1, NULL);
+    cb_setup_source(user_data->pipeline, user_data->source, user_data);
+    gst_bin_add(user_data->pipeline, user_data->source);
     
     user_data->video_queue = gst_element_factory_make("queue", "video_queue");
     user_data->video_depay = gst_element_factory_make("rtph264depay", "rtph264depay");
-    user_data->h264parse = gst_element_factory_make("h264parse", "h264parse");
 
-    #if __APPLE__
-    user_data->h264dec = gst_element_factory_make("vtdec", "h264dec");
-    #else
-    user_data->h264dec = gst_element_factory_make("decodebin", "h264dec");
-    #endif
+    user_data->decodebin = gst_element_factory_make("decodebin", "h264dec");
 
     create_video_sink_bin(user_data);
 
-    gst_bin_add_many(user_data->playbin,
+    gst_bin_add_many(user_data->pipeline,
                      user_data->video_queue,
-                     //user_data->rtpjitterbuffer,
                      user_data->video_depay,
-                     user_data->h264parse,
-                     user_data->h264dec,
+                     user_data->decodebin,
                      user_data->video_sink_bin,
                      NULL);
 
     gst_element_link_many(user_data->video_queue,
-                          //user_data->rtpjitterbuffer,
                           user_data->video_depay,
-                          user_data->h264parse,
-                          user_data->h264dec,
+                          user_data->decodebin,
                           NULL);
 
-    #if __APPLE__
-    gst_element_link(user_data->h264dec, user_data->video_sink_bin);
-    #else
-    g_signal_connect(user_data->h264dec, "pad-added", G_CALLBACK(on_decoder_pad_added), user_data);
-    #endif
+    g_signal_connect(user_data->decodebin, "pad-added", G_CALLBACK(on_decoder_pad_added), user_data);
 
 
     // Audio components
@@ -541,7 +525,7 @@ void rct_gst_init(RctGstUserData* user_data)
     
     GstElement *audio_post_queue = gst_element_factory_make("queue", "audio_post_queue");
 
-    gst_bin_add_many(user_data->playbin,
+    gst_bin_add_many(user_data->pipeline,
                      user_data->audio_queue,
                      user_data->audio_depay,
                      vorbisdec,
@@ -576,7 +560,7 @@ void rct_gst_init(RctGstUserData* user_data)
      */
 
     // Preparing bus
-    user_data->bus = gst_element_get_bus(user_data->playbin);
+    user_data->bus = gst_element_get_bus(user_data->pipeline);
     user_data->bus_watch_id = gst_bus_add_watch(user_data->bus, cb_bus_watch, user_data);
     gst_bus_set_sync_handler(user_data->bus,(GstBusSyncHandler)cb_create_window, user_data, NULL);
     gst_object_unref(user_data->bus);
@@ -600,7 +584,7 @@ void rct_gst_run_loop(RctGstUserData* user_data)
 
 void rct_gst_terminate(RctGstUserData* user_data)
 {
-    gst_element_set_state (user_data->playbin, GST_STATE_NULL);
+    gst_element_set_state (user_data->pipeline, GST_STATE_NULL);
     g_main_loop_quit(user_data->main_loop);
 }
 
@@ -612,7 +596,7 @@ gchar *rct_gst_get_info()
 static void rct_gst_apply_uri(RctGstUserData* user_data)
 {
     rct_gst_log(user_data, "RCTGstPlayer : rct_gst_apply_uri\n");
-    GstElement *src = gst_bin_get_by_name(GST_BIN(user_data->playbin), "src");
+    GstElement *src = gst_bin_get_by_name(GST_BIN(user_data->pipeline), "src");
     g_object_set(src, "location", user_data->configuration->uri, NULL);
     
     if (user_data->configuration->onUriChanged) {
@@ -647,7 +631,7 @@ static void execute_seek(RctGstUserData* user_data, gint64 position) {
         /* Perform the seek now */
         user_data->last_seek_time = gst_util_get_timestamp();
         gst_element_seek_simple(
-                                user_data->playbin,
+                                user_data->pipeline,
                                 GST_FORMAT_TIME,
                                 GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
                                 position
@@ -685,7 +669,7 @@ void rct_gst_set_uri(RctGstUserData* user_data, gchar *_uri)
         
         rct_gst_set_playbin_state(user_data, GST_STATE_READY);
         
-        gst_element_get_state(user_data->playbin, &current_state, NULL, 0);
+        gst_element_get_state(user_data->pipeline, &current_state, NULL, 0);
         if (current_state == GST_STATE_READY) {
             rct_gst_apply_uri(user_data);
         } else {

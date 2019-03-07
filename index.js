@@ -42,14 +42,14 @@ export class GstPlayer extends React.Component {
         this.isPlayerReady = true
 
         if (this.props.onPlayerInit)
-            this.props.onPlayerInit()
+            this.props.onPlayerInit(this)
     }
 
     onPadAdded(_message) {
         const { name } = _message.nativeEvent
 
         if (this.props.onPadAdded)
-            this.props.onPadAdded(name)
+            this.props.onPadAdded(name, this)
     }
 
     onStateChanged(_message) {
@@ -57,7 +57,7 @@ export class GstPlayer extends React.Component {
         this.currentGstState = new_state
 
         if (this.props.onStateChanged)
-            this.props.onStateChanged(old_state, new_state)
+            this.props.onStateChanged(old_state, new_state, this)
     }
 
     onVolumeChanged(_message) {
@@ -69,7 +69,7 @@ export class GstPlayer extends React.Component {
         const audioLevelArray = Object.values(audioLevelObject)
 
         if (this.props.onVolumeChanged)
-            this.props.onVolumeChanged(audioLevelArray)
+            this.props.onVolumeChanged(audioLevelArray, this)
     }
 
     onUriChanged(_message) {
@@ -79,21 +79,21 @@ export class GstPlayer extends React.Component {
             this.play()
 
         if (this.props.onUriChanged)
-            this.props.onUriChanged(new_uri)
+            this.props.onUriChanged(new_uri, this)
     }
 
     onBufferingProgress(_message) {
         const { progress } = _message.nativeEvent
 
         if (this.props.onBufferingProgress)
-            this.props.onBufferingProgress(progress)
+            this.props.onBufferingProgress(progress, this)
     }
 
     onPlayingProgress(_message) {
         const { progress, duration } = _message.nativeEvent
 
         if (this.props.onPlayingProgress)
-            this.props.onPlayingProgress(progress, duration)
+            this.props.onPlayingProgress(progress, duration, this)
     }
 
     onEOS() {
@@ -103,21 +103,21 @@ export class GstPlayer extends React.Component {
             this.seek(0)
 
         if (this.props.onEOS)
-            this.props.onEOS()
+            this.props.onEOS(this)
     }
 
     onElementError(_message) {
         const { source, message, debug_info } = _message.nativeEvent
 
         if (this.props.onElementError)
-            this.props.onElementError(source, message, debug_info)
+            this.props.onElementError(source, message, debug_info, this)
     }
 
     onElementLog(_message) {
         const { message } = _message.nativeEvent
 
         if (this.props.onElementLog)
-            this.props.onElementLog(message)
+            this.props.onElementLog(message, this)
     }
 
     // Methods
@@ -158,6 +158,14 @@ export class GstPlayer extends React.Component {
 
     stop() {
         this.setGstState(GstState.READY)
+    }
+
+    destroy() {
+        UIManager.dispatchViewManagerCommand(
+            this.playerHandle,
+            UIManager.getViewManagerConfig("RCTGstPlayer").Commands.destroy,
+            null
+        )
     }
 
     isReady() {
@@ -227,6 +235,7 @@ GstPlayer.propTypes = {
     play: PropTypes.func,
     pause: PropTypes.func,
     stop: PropTypes.func,
+    destroy: PropTypes.func,
 
     // Helper methods
     createDrawableSurface: PropTypes.func,

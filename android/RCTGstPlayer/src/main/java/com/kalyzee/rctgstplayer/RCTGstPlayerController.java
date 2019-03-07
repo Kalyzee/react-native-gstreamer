@@ -6,6 +6,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
@@ -19,7 +20,7 @@ import org.freedesktop.gstreamer.GStreamer;
  * Created by asapone on 02/01/2018.
  */
 
-public class RCTGstPlayerController implements RCTGstConfigurationCallable, SurfaceHolder.Callback {
+public class RCTGstPlayerController implements RCTGstConfigurationCallable, SurfaceHolder.Callback, LifecycleEventListener {
 
     public static final String LOG_TAG = "RCTGstPlayer";
 
@@ -183,6 +184,7 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
         Log.i(LOG_TAG, "Surface Changed (" + Integer.toString(width) + "*" + Integer.toString(height) + ")");
         if (this.isReady) {
             nativeRCTGstSetDrawableSurface(this.view.getHolder().getSurface());
+            this.setRctGstState(4);
         }
     }
 
@@ -249,5 +251,25 @@ public class RCTGstPlayerController implements RCTGstConfigurationCallable, Surf
     static {
         System.loadLibrary("gstreamer_android");
         System.loadLibrary("kalyzee-rctgstplayer");
+    }
+
+    @Override
+    public void onHostResume() {
+        Log.d(LOG_TAG, "onHostResume");
+    }
+
+    @Override
+    public void onHostPause() {
+        Log.d(LOG_TAG, "onHostPause");
+    }
+
+    @Override
+    public void onHostDestroy() {
+    }
+
+    public void destroy()
+    {
+        Log.d(LOG_TAG, "destroy");
+        this.setRctGstState(2);
     }
 }

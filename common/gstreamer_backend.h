@@ -53,7 +53,7 @@ typedef struct {
     // Globals items
     RctGstConfiguration *configuration;
     
-    GstPipeline *playbin;
+    GstPipeline *pipeline;
     GMainLoop *main_loop;
     guint bus_watch_id;
     GSource *timeout_source;
@@ -65,9 +65,7 @@ typedef struct {
     GstElement *video_queue;
     GstElement *video_sink;
     GstElement *video_depay;
-    GstElement *h264parse;
-    GstElement *rtpjitterbuffer;
-    GstElement *h264dec;
+    GstElement *decodebin;
 
     // Audio
     GstBin *audio_sink_bin;
