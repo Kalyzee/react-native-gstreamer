@@ -58,6 +58,10 @@ sourceSets {
     }
 }
 
+afterEvaluate {
+    compileDebugJavaWithJavac.dependsOn 'externalNativeBuildDebug'
+    compileReleaseJavaWithJavac.dependsOn 'externalNativeBuildRelease'
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

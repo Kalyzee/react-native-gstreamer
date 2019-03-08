@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id=":react-native-gstreamer" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../../kast-mobileapp/app/android" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":react-native-gstreamer" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/../../../kast-mobileapp/src/app/android" external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -8,7 +8,7 @@
     </facet>
     <facet type="native-android-gradle" name="Native-Android-Gradle">
       <configuration>
-        <option name="SELECTED_BUILD_VARIANT" value="release-armeabi-v7a" />
+        <option name="SELECTED_BUILD_VARIANT" value="debug-armeabi-v7a" />
       </configuration>
     </facet>
     <facet type="android" name="Android">
@@ -20,171 +20,172 @@
           <task>generateReleaseSources</task>
         </afterSyncTasks>
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
-        <option name="MANIFEST_FILE_RELATIVE_PATH" value="/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/AndroidManifest.xml" />
-        <option name="RES_FOLDER_RELATIVE_PATH" value="/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/res" />
+        <option name="MANIFEST_FILE_RELATIVE_PATH" value="/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/AndroidManifest.xml" />
+        <option name="RES_FOLDER_RELATIVE_PATH" value="/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/res" />
         <option name="RES_FOLDERS_RELATIVE_PATH" value="" />
-        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/assets" />
+        <option name="ASSETS_FOLDER_RELATIVE_PATH" value="/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/assets" />
         <option name="PROJECT_TYPE" value="1" />
       </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
-    <output url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes" />
-    <output-test url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/javac/releaseUnitTest/compileReleaseUnitTestJavaWithJavac/classes" />
+    <output url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes" />
+    <output-test url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/javac/releaseUnitTest/compileReleaseUnitTestJavaWithJavac/classes" />
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/apt/release" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/aidl/release" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/buildConfig/release" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/rs/release" isTestSource="false" generated="true" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/res/rs/release" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/res/resValues/release" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/apt/test/release" isTestSource="true" generated="true" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/not_namespaced_r_class_sources" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/r" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/aapt_friendly_merged_manifests" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/annotation_processor_list" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/check-manifest" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/incremental" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/intermediate-jars" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/javac" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/jniLibs" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/library_assets" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/merged_manifests" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/ndkBuild" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/packaged_res" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/public_res" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/res" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/rs" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/shader_assets" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/shaders" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/symbols" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/transforms" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/outputs" />
-      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/tmp" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/apt/release" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/aidl/release" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/buildConfig/release" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/rs/release" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/res/rs/release" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/res/resValues/release" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/apt/test/release" isTestSource="true" generated="true" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/not_namespaced_r_class_sources" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/generated/source/r" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/aapt_friendly_merged_manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/annotation_processor_list" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/check-manifest" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/incremental" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/intermediate-jars" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/javac" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/jniLibs" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/library_assets" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/lint_jar" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/merged_manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/ndkBuild" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/packaged_res" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/public_res" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/res" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/rs" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/shader_assets" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/shaders" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/symbols" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/intermediates/transforms" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/outputs" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/build/tmp" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/aidl">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/aidl" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/aidl">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/aidl" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/assets">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/assets" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/assets">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/assets" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/java">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/java" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/java">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/java" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/jni">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/jni" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/jni">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/jni" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/res">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/res" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/res">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/res" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/resources">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/resources" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/resources">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/resources" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/rs">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/rs" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/rs">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/rs" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/shaders">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/shaders" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/shaders">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/androidTest/shaders" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/aidl">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/aidl" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/aidl">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/aidl" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/assets">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/assets" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/assets">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/assets" type="java-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/java">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/java" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/java">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/java" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/jni">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/jni" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/jni">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/jni" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/res">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/res" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/res">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/res" type="java-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/resources">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/resources" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/resources">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/resources" type="java-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/rs">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/rs" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/rs">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/rs" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/shaders">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/shaders" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/shaders">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/main/shaders" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/aidl">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/aidl" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/aidl">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/aidl" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/assets">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/assets" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/assets">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/assets" type="java-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/java">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/java" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/java">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/java" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/jni">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/jni" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/jni">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/jni" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/res">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/res" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/res">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/res" type="java-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/resources">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/resources" type="java-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/resources">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/resources" type="java-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/rs">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/rs" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/rs">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/rs" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/shaders">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/shaders" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/shaders">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/release/shaders" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/aidl">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/aidl" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/aidl">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/aidl" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/assets">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/assets" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/assets">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/assets" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/java">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/java" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/java">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/java" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/jni">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/jni" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/jni">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/jni" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/res">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/res" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/res">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/res" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/resources">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/resources" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/resources">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/resources" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/rs">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/rs" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/rs">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/rs" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/shaders">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/shaders" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/shaders">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/test/shaders" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/aidl">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/aidl" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/aidl">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/aidl" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/assets">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/assets" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/assets">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/assets" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/java">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/java" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/java">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/java" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/jni">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/jni" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/jni">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/jni" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/res">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/res" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/res">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/res" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/resources">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/resources" type="java-test-resource" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/resources">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/resources" type="java-test-resource" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/rs">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/rs" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/rs">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/rs" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/shaders">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/shaders" isTestSource="true" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/shaders">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/android/RCTGstPlayer/src/testRelease/shaders" isTestSource="true" />
     </content>
-    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/common">
-      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/app/node_modules/react-native-gstreamer/common" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/common">
+      <sourceFolder url="file://$MODULE_DIR$/../../../kast-mobileapp/src/app/node_modules/react-native-gstreamer/common" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.externalNativeBuild" />

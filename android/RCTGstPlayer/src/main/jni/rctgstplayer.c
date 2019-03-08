@@ -215,7 +215,7 @@ static void native_rct_gst_set_drawable_surface(JNIEnv* env, jobject thiz, jobje
 
     native_window = ANativeWindow_fromSurface(env, surface);
     GstState currentState;
-    gst_element_get_state(get_user_data()->playbin, &currentState, NULL, NULL);
+    gst_element_get_state(get_user_data()->pipeline, &currentState, NULL, NULL);
 
     __android_log_print(ANDROID_LOG_INFO, "RCTGstPlayer", "Received surface %p (native window %p)", surface, native_window);
 
