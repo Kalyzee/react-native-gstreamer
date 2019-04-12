@@ -156,10 +156,14 @@ void onUriChanged(RCTGstPlayerView *self, gchar* newUri) {
 }
 
 void onPlayingProgress(RCTGstPlayerView *self, gint64 progress, gint64 duration) {
-    self.onPlayingProgress(@{
+    /*
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.onPlayingProgress(@{
                              @"progress": [NSNumber numberWithInteger:progress],
                              @"duration": [NSNumber numberWithInteger:duration]
                              });
+    });
+     */
 }
 
 void onBufferingProgress(RCTGstPlayerView *self, gint progress) {
@@ -179,8 +183,10 @@ void onElementError(RCTGstPlayerView *self, gchar *source, gchar *message, gchar
 void onElementLog(RCTGstPlayerView *self, gchar *newMessage) {
     NSString *message = [NSString stringWithUTF8String:newMessage];
     g_print("%s", newMessage);
+    /*
     if (self.onElementLog)
         self.onElementLog(@{ @"message": message });
+     */
 }
 
 void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_state) {
@@ -191,18 +197,22 @@ void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_sta
 }
 
 void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint nb_channels) {
-    NSMutableDictionary *js_dictionary = [[NSMutableDictionary alloc] init];
-    
-    for (int i = 0; i < nb_channels; i++) {
-        RctGstAudioLevel *audioChannelLevel = &audioLevel[i];
-        [js_dictionary setObject:@{
-                                   @"decay": @(audioChannelLevel->decay),
-                                   @"rms": @(audioChannelLevel->rms),
-                                   @"peak": @(audioChannelLevel->peak),
-                                   } forKey: [NSString stringWithFormat:@"%d", i]
-         ];
-    }
-    self.onVolumeChanged(js_dictionary);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSMutableDictionary *js_dictionary = [[NSMutableDictionary alloc] init];
+        
+        for (int i = 0; i < nb_channels; i++) {
+            RctGstAudioLevel *audioChannelLevel = &audioLevel[i];
+            [js_dictionary setObject:@{
+                                       @"decay": @(audioChannelLevel->decay),
+                                       @"rms": @(audioChannelLevel->rms),
+                                       @"peak": @(audioChannelLevel->peak),
+                                       } forKey: [NSString stringWithFormat:@"%d", i]
+             ];
+        }
+        
+        self.onVolumeChanged(js_dictionary);
+    });
 }
 
 -(void)removeFromSuperview {

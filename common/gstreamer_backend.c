@@ -173,7 +173,7 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
 
         if(g_strcmp0(name, "level") == 0)
         {
-            /* the values are packed into GValueArrays with the value per channel */
+            // the values are packed into GValueArrays with the value per channel
             const GValue *array_val = gst_structure_get_value(s, "peak");
             
             array_val = gst_structure_get_value(s, "rms");
@@ -220,7 +220,8 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
             free(audio_channels_level);
         }
     }
-    return TRUE;
+     
+     return TRUE;
 }
 
 static gboolean cb_message_buffering(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
@@ -278,7 +279,7 @@ static gboolean cb_duration_and_progress(RctGstUserData* user_data)
                 user_data->configuration->onPlayingProgress(user_data->configuration->owner, user_data->position / GST_MSECOND, user_data->duration / GST_MSECOND);
         }
     }
-    
+
     return TRUE;
 }
 
@@ -397,7 +398,7 @@ static gboolean cb_bus_watch(GstBus *bus, GstMessage *message, RctGstUserData* u
             
         case GST_MESSAGE_DURATION_CHANGED:
             user_data->duration = GST_CLOCK_TIME_NONE;
-            // cb_duration_and_progress(user_data);
+            cb_duration_and_progress(user_data);
             break;
             
         default:
