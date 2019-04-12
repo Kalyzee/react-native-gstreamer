@@ -156,14 +156,12 @@ void onUriChanged(RCTGstPlayerView *self, gchar* newUri) {
 }
 
 void onPlayingProgress(RCTGstPlayerView *self, gint64 progress, gint64 duration) {
-    /*
     dispatch_async(dispatch_get_main_queue(), ^{
         self.onPlayingProgress(@{
                              @"progress": [NSNumber numberWithInteger:progress],
                              @"duration": [NSNumber numberWithInteger:duration]
                              });
     });
-     */
 }
 
 void onBufferingProgress(RCTGstPlayerView *self, gint progress) {
@@ -183,10 +181,8 @@ void onElementError(RCTGstPlayerView *self, gchar *source, gchar *message, gchar
 void onElementLog(RCTGstPlayerView *self, gchar *newMessage) {
     NSString *message = [NSString stringWithUTF8String:newMessage];
     g_print("%s", newMessage);
-    /*
     if (self.onElementLog)
         self.onElementLog(@{ @"message": message });
-     */
 }
 
 void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_state) {
@@ -212,6 +208,7 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
         }
         
         self.onVolumeChanged(js_dictionary);
+        [js_dictionary removeAllObjects];
     });
 }
 

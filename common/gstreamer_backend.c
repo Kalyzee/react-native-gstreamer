@@ -66,10 +66,10 @@ void create_audio_sink_bin(RctGstUserData *user_data)
 
     // Link them
     if(!gst_element_link(user_data->volume_controller, user_data->audio_level_analyser))
-        rct_gst_log(user_data, "RCTGstPlayer : Failed to link volume-controller and audio-level-analyser\n");
+        rct_gst_log(user_data, g_strdup("RCTGstPlayer : Failed to link volume-controller and audio-level-analyser\n"));
 
     if(!gst_element_link(user_data->audio_level_analyser, user_data->audio_sink))
-        rct_gst_log(user_data, "RCTGstPlayer : Failed to link audio-level-analyser and audio-sink\n");
+        rct_gst_log(user_data, g_strdup("RCTGstPlayer : Failed to link audio-level-analyser and audio-sink\n"));
 
     // Creating ghostpad for uri-decode-bin
     gst_element_add_pad(GST_BIN(user_data->audio_sink_bin), gst_ghost_pad_new("sink", gst_element_get_static_pad(user_data->volume_controller, "sink")));
@@ -97,10 +97,10 @@ void create_video_sink_bin(RctGstUserData *user_data)
     
     // Link them
     if(!gst_element_link(video_convert, video_post_queue))
-        rct_gst_log(user_data, "RCTGstPlayer : Failed to link video_convert and video_post_queue\n");
+        rct_gst_log(user_data, g_strdup("RCTGstPlayer : Failed to link video_convert and video_post_queue\n"));
     
     if(!gst_element_link(video_post_queue, user_data->video_sink))
-        rct_gst_log(user_data, "RCTGstPlayer : Failed to link video_post_queue and video_sink\n");
+        rct_gst_log(user_data, g_strdup("RCTGstPlayer : Failed to link video_post_queue and video_sink\n"));
 
     
     // Creating ghostpad for playbin
@@ -151,7 +151,7 @@ static void cb_error(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 
 static void cb_eos(GstBus *bus, GstMessage *msg, RctGstUserData* user_data)
 {
-    rct_gst_log(user_data, "EOS\n");
+    rct_gst_log(user_data, g_strdup("EOS\n"));
     
     if (user_data->configuration->onEOS) {
         user_data->configuration->onEOS(user_data->configuration->owner);
@@ -220,7 +220,7 @@ static gboolean cb_message_element(GstBus *bus, GstMessage *msg, RctGstUserData*
             free(audio_channels_level);
         }
     }
-     
+    
      return TRUE;
 }
 
@@ -269,6 +269,7 @@ static void cb_setup_source(GstElement *pipeline, GstElement *source, RctGstUser
 
 static gboolean cb_duration_and_progress(RctGstUserData* user_data)
 {
+    /*
     if (user_data->current_state == GST_STATE_PLAYING) {
         // If we didn't know it yet, query the stream duration
         if (!GST_CLOCK_TIME_IS_VALID (user_data->duration))
@@ -280,6 +281,7 @@ static gboolean cb_duration_and_progress(RctGstUserData* user_data)
         }
     }
 
+     */
     return TRUE;
 }
 
@@ -433,7 +435,7 @@ GstStateChangeReturn rct_gst_set_playbin_state(RctGstUserData* user_data, GstSta
         if (pending_state != state) {
             validity = gst_element_set_state(user_data->pipeline, state);
         } else {
-            rct_gst_log(user_data, "RCTGstPlayer : Ignoring state change (Already changing to requested state)\n");
+            rct_gst_log(user_data, g_strdup("RCTGstPlayer : Ignoring state change (Already changing to requested state)\n"));
         }
     }
     return validity;
@@ -452,10 +454,10 @@ void on_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_
     
     const gchar *name = gst_structure_get_string(structure, "media");
     if (!g_strcmp0(name, "video")) {
-        rct_gst_log(user_data, "Video pad added\n");
+        rct_gst_log(user_data, g_strdup("Video pad added\n"));
         gst_pad_link(new_pad, gst_element_get_static_pad(user_data->video_queue, "sink"));
     } else if (!g_strcmp0(name, "audio")) {
-        rct_gst_log(user_data, "Audio pad added\n");
+        rct_gst_log(user_data, g_strdup("Audio pad added\n"));
         gst_pad_link(new_pad, gst_element_get_static_pad(user_data->audio_queue, "sink"));
     }
     g_object_ref(new_pad);
@@ -472,7 +474,7 @@ void on_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_
 void on_decoder_pad_added(GstElement *gstelement, GstPad *new_pad, RctGstUserData *user_data)
 {
     GstCaps *caps = gst_pad_get_current_caps(new_pad);
-    rct_gst_log(user_data, gst_caps_to_string(caps));
+    rct_gst_log(user_data, g_strdup(gst_caps_to_string(caps)));
     gst_pad_link(new_pad, gst_element_get_static_pad(user_data->video_sink_bin, "sink"));
     
     g_object_ref(new_pad);
@@ -596,7 +598,7 @@ gchar *rct_gst_get_info()
 
 static void rct_gst_apply_uri(RctGstUserData* user_data)
 {
-    rct_gst_log(user_data, "RCTGstPlayer : rct_gst_apply_uri\n");
+    rct_gst_log(user_data, g_strdup("RCTGstPlayer : rct_gst_apply_uri\n"));
     GstElement *src = gst_bin_get_by_name(GST_BIN(user_data->pipeline), "src");
     g_object_set(src, "location", user_data->configuration->uri, NULL);
     
@@ -718,7 +720,6 @@ void rct_gst_set_drawable_surface(RctGstUserData *user_data, guintptr drawable_s
     gst_video_overlay_prepare_window_handle(user_data->video_overlay);
 }
 
-
 // Utils
 static gboolean rct_gst_element_has_attribute(GstElement *element, const gchar *attribute)
 {
@@ -734,7 +735,11 @@ static gboolean rct_gst_element_has_attribute(GstElement *element, const gchar *
 
 void rct_gst_log(RctGstUserData *user_data, gchar *message)
 {
+    /*
     if (user_data->configuration->onElementLog) {
         user_data->configuration->onElementLog(user_data->configuration->owner, message);
     }
+    */
+    
+    g_free(message);
 }
