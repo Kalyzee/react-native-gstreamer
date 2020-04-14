@@ -193,12 +193,16 @@ void onStateChanged(RCTGstPlayerView *self, GstState old_state, GstState new_sta
 }
 
 void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint nb_channels) {
+
+    RctGstAudioLevel *audioInfo = malloc(nb_channels * sizeof(RctGstAudioLevel));
+    memcpy(audioInfo, audioLevel, nb_channels * sizeof(RctGstAudioLevel));
+
     dispatch_async(dispatch_get_main_queue(), ^{
         
         NSMutableDictionary *js_dictionary = [[NSMutableDictionary alloc] init];
         
         for (int i = 0; i < nb_channels; i++) {
-            RctGstAudioLevel *audioChannelLevel = &audioLevel[i];
+            RctGstAudioLevel *audioChannelLevel = &audioInfo[i];
             [js_dictionary setObject:@{
                                        @"decay": @(audioChannelLevel->decay),
                                        @"rms": @(audioChannelLevel->rms),
@@ -209,6 +213,7 @@ void onVolumeChanged(RCTGstPlayerView *self, RctGstAudioLevel* audioLevel, gint 
         
         self.onVolumeChanged(js_dictionary);
         [js_dictionary removeAllObjects];
+        free(audioInfo);
     });
 }
 
